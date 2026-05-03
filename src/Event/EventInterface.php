@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MarketingAutomation\Event;
+
+interface EventInterface
+{
+    /**
+     * Unique event name (e.g. USER_REGISTERED, MY_PLUGIN_ORDER_PLACED).
+     */
+    public function name(): string;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function payload(): array;
+}

@@ -1,0 +1,98 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "sms_complete_profile",
+      "label": "Send SMS when profile is incomplete",
+      "enabled": true,
+      "priority": 10,
+      "trigger": {
+        "events": ["LOGIN", "PROFILE_COMPLETED"]
+      },
+      "conditions": {
+        "all": [
+          {
+            "field": "profile_completed",
+            "op": "eq",
+            "value": false
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "send_sms",
+          "template_id": "complete_profile",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "discount_no_subscription",
+      "label": "Send discount when user has product but no subscription",
+      "enabled": true,
+      "priority": 20,
+      "trigger": {
+        "events": ["PRODUCT_CREATED", "SUBSCRIPTION_PURCHASED", "SUBSCRIPTION_EXPIRED"]
+      },
+      "conditions": {
+        "all": [
+          {
+            "field": "has_product",
+            "op": "eq",
+            "value": true
+          },
+          {
+            "field": "has_subscription",
+            "op": "eq",
+            "value": false
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "send_discount",
+          "template_id": "product_owner_no_sub",
+          "params": {}
+        }
+      ]
+    },
+    {
+      "id": "subscription_expiry_reminder_3d",
+      "label": "Reminder when subscription expires in 3 days",
+      "enabled": true,
+      "priority": 30,
+      "trigger": {
+        "schedule": {
+          "hook": "uba_engine_daily_subscription_check",
+          "recurrence": "daily"
+        }
+      },
+      "conditions": {
+        "all": [
+          {
+            "field": "has_subscription",
+            "op": "eq",
+            "value": true
+          },
+          {
+            "field": "subscription_status",
+            "op": "eq",
+            "value": "active"
+          },
+          {
+            "field": "subscription_days_until_expiry",
+            "op": "eq",
+            "value": 3
+          }
+        ]
+      },
+      "actions": [
+        {
+          "type": "send_sms",
+          "template_id": "subscription_expiring_3d",
+          "params": {}
+        }
+      ]
+    }
+  ]
+}

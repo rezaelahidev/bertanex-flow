@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/user-behavior-rule.schema.json",
+  "title": "User behavior automation rule (WordPress plugin)",
+  "description": "Declarative IF/THEN rules evaluated against user state. Store as post meta, options, or theme JSON.",
+  "oneOf": [
+    { "$ref": "#/$defs/rulesDocument" },
+    { "$ref": "#/$defs/rule" }
+  ],
+  "$defs": {
+    "rulesDocument": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "rules"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "description": "Semantic version of this document format.",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "default": "1.0.0"
+        },
+        "rules": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/rule" },
+          "minItems": 1
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "conditions", "actions"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "description": "Stable slug for logging, WP post_name, or option keys."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable title shown in admin UI."
+        },
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "priority": {
+          "type": "integer",
+          "description": "Lower runs first when the engine orders rules.",
+          "default": 10
+        },
+        "trigger": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "When to evaluate this rule (hook names are WordPress conventions).",
+          "properties": {
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "USER_REGISTERED",
+                  "PROFILE_COMPLETED",
+                  "PRODUCT_CREATED",
+                  "SUBSCRIPTION_PURCHASED",
+                  "SUBSCRIPTION_EXPIRED",
+                  "INSTALLMENT_DUE",
+                  "INSTALLMENT_OVERDUE",
+                  "LOGIN"
+                ]
+              },
+              "uniqueItems": true
+            },
+            "schedule": {
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Optional cron-style evaluation (plugin registers cron from this).",
+              "properties": {
+                "hook": { "type": "string" },
+                "recurrence": {
+                  "type": "string",
+                  "enum": ["hourly", "twicedaily", "daily", "weekly"]
+                }
+              }
+            }
+          }
+        },
+        "conditions": { "$ref": "#/$defs/conditionGroup" },
+        "actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/action" }
+        }
+      }
+    },
+    "conditionGroup": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["all"],
+          "properties": {
+            "all": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/condition" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["any"],
+          "properties": {
+            "any": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/condition" }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["not"],
+          "properties": {
+            "not": { "$ref": "#/$defs/conditionGroup" }
+          }
+        }
+      ]
+    },
+    "condition": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["field", "op", "value"],
+          "properties": {
+            "field": {
+              "type": "string",
+              "description": "User state field key (see docs/user-states.md).",
+              "enum": [
+                "profile_completed",
+                "has_product",
+                "has_subscription",
+                "subscription_status",
+                "installment_status",
+                "subscription_days_until_expiry"
+              ]
+            },
+            "op": {
+              "type": "string",
+              "enum": ["eq", "neq", "gt", "gte", "lt", "lte", "in", "not_in"]
+            },
+            "value": {
+              "description": "Compared to runtime state; type depends on field."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["field", "op"],
+          "properties": {
+            "field": { "type": "string" },
+            "op": {
+              "type": "string",
+              "enum": ["empty", "not_empty", "truthy", "falsy"]
+            }
+          }
+        }
+      ]
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["send_sms", "send_email", "send_discount", "webhook", "log"]
+        },
+        "template_id": {
+          "type": "string",
+          "description": "Maps to SMS template, email post ID, or translatable string key."
+        },
+        "params": {
+          "type": "object",
+          "description": "Plugin-specific payload (coupon code, URLs, merge tags, etc.).",
+          "additionalProperties": true
+        },
+        "delay_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Defer this action using WP-Cron (wp_schedule_single_event). Omit or 0 for immediate execution."
+        }
+      }
+    }
+  }
+}

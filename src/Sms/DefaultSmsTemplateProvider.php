@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Sms;
+namespace GrowthOrchestrator\Sms;
 
 /**
- * Templates from {@see 'ma_sms_templates'} merged with safe defaults.
+ * Templates from {@see 'gro_sms_templates'} merged with safe defaults.
  */
 final class DefaultSmsTemplateProvider implements SmsTemplateProviderInterface
 {
@@ -13,7 +13,7 @@ final class DefaultSmsTemplateProvider implements SmsTemplateProviderInterface
     {
         $templates = array_merge(
             $this->defaults(),
-            (array) apply_filters('ma_sms_templates', [])
+            (array) apply_filters('gro_sms_templates', [])
         );
 
         return $templates[$templateId] ?? null;

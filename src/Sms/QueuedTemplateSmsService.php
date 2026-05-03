@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Sms;
+namespace GrowthOrchestrator\Sms;
 
 /**
  * Template rendering + rate limit + queue. Actual send happens asynchronously.
@@ -23,7 +23,7 @@ final class QueuedTemplateSmsService implements SmsServiceInterface
         $phone = $this->phones->resolve($userId);
 
         if ($phone === null || $phone === '') {
-            do_action('ma_sms_missing_phone', $userId, $templateId, $context);
+            do_action('gro_sms_missing_phone', $userId, $templateId, $context);
 
             return;
         }
@@ -31,7 +31,7 @@ final class QueuedTemplateSmsService implements SmsServiceInterface
         $template = $this->templates->get($templateId);
 
         if ($template === null || $template === '') {
-            do_action('ma_sms_unknown_template', $templateId, $userId, $context);
+            do_action('gro_sms_unknown_template', $templateId, $userId, $context);
 
             return;
         }
@@ -40,13 +40,13 @@ final class QueuedTemplateSmsService implements SmsServiceInterface
         $body = $this->renderer->render($template, $vars);
 
         if ($body === '') {
-            do_action('ma_sms_empty_body', $userId, $templateId, $context);
+            do_action('gro_sms_empty_body', $userId, $templateId, $context);
 
             return;
         }
 
         if (! $this->rateLimiter->tryConsume($userId)) {
-            do_action('ma_sms_rate_limited', $userId, $templateId, $context);
+            do_action('gro_sms_rate_limited', $userId, $templateId, $context);
 
             return;
         }
@@ -94,7 +94,7 @@ final class QueuedTemplateSmsService implements SmsServiceInterface
         }
 
         /** @var array<string, string|int|float|bool|null> $filtered */
-        $filtered = apply_filters('ma_sms_template_variables', $base, $userId, $context);
+        $filtered = apply_filters('gro_sms_template_variables', $base, $userId, $context);
 
         return $filtered;
     }
@@ -119,6 +119,6 @@ final class QueuedTemplateSmsService implements SmsServiceInterface
         }
 
         /** @var array<string, scalar> */
-        return apply_filters('ma_sms_queue_context', $out, $context);
+        return apply_filters('gro_sms_queue_context', $out, $context);
     }
 }

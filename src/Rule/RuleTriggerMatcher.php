@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
 /**
  * Decides whether an event-driven run should consider a rule (skips schedule-only definitions).

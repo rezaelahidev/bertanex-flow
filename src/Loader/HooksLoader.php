@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Loader;
+namespace GrowthOrchestrator\Loader;
 
 /**
  * Registers WordPress actions and filters from a queue, then flushes on {@see register()}.

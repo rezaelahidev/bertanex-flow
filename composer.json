@@ -1,6 +1,6 @@
 {
-  "name": "marketing-automation/engine",
-  "description": "WordPress marketing automation plugin (events, rules, SMS)",
+  "name": "growth-orchestrator/plugin",
+  "description": "WordPress growth orchestration plugin (events, rules, SMS, background jobs)",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "require": {
@@ -9,7 +9,7 @@
   },
   "autoload": {
     "psr-4": {
-      "MarketingAutomation\\": "src/"
+      "GrowthOrchestrator\\": "src/"
     }
   },
   "config": {

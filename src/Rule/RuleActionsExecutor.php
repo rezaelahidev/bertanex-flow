@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
-use MarketingAutomation\Services\ActionDispatcher;
-use MarketingAutomation\Services\OutboundAction;
+use GrowthOrchestrator\Services\ActionDispatcher;
+use GrowthOrchestrator\Services\OutboundAction;
 
 /**
  * Runs rule actions immediately or defers them via {@see DelayedActionScheduler}.

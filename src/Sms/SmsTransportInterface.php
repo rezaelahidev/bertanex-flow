@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Sms;
+namespace GrowthOrchestrator\Sms;
 
 /**
  * Real send path. Throw on hard failure so the worker can apply retry policy.

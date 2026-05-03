@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
 /**
  * Parses rules documents (full file or single rule object) from JSON strings.

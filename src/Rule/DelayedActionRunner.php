@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
-use MarketingAutomation\Services\ActionDispatcher;
-use MarketingAutomation\Services\OutboundAction;
+use GrowthOrchestrator\Services\ActionDispatcher;
+use GrowthOrchestrator\Services\OutboundAction;
 
 /**
  * Runs one background rule action (Action Scheduler or WP-Cron). Retries with exponential backoff on failure.
@@ -52,7 +52,7 @@ final class DelayedActionRunner
             $this->dispatcher->dispatch($this->toOutbound($uid, $action, $data));
 
             /** @param array<string, mixed> $data */
-            do_action('ma_background_job_succeeded', $data, $uid, $attempt);
+            do_action('gro_background_job_succeeded', $data, $uid, $attempt);
         } catch (\Throwable $e) {
             $this->handleFailure($e, $data, $uid, $attempt);
         }
@@ -63,9 +63,9 @@ final class DelayedActionRunner
      */
     private function handleFailure(\Throwable $e, array $data, int $userId, int $attempt): void
     {
-        $maxAttempts = max(1, (int) apply_filters('ma_background_job_max_attempts', 5, $data, $userId));
+        $maxAttempts = max(1, (int) apply_filters('gro_background_job_max_attempts', 5, $data, $userId));
 
-        $shouldRetry = (bool) apply_filters('ma_background_job_should_retry', true, $e, $attempt, $data, $userId);
+        $shouldRetry = (bool) apply_filters('gro_background_job_should_retry', true, $e, $attempt, $data, $userId);
 
         if (! $shouldRetry || $attempt >= $maxAttempts) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -78,13 +78,13 @@ final class DelayedActionRunner
                 );
             }
 
-            do_action('ma_background_job_exhausted', $e, $data, $userId, $attempt);
+            do_action('gro_background_job_exhausted', $e, $data, $userId, $attempt);
 
             throw $e;
         }
 
         $backoff = (int) apply_filters(
-            'ma_background_job_retry_delay_seconds',
+            'gro_background_job_retry_delay_seconds',
             min(3600, 60 * (2 ** ($attempt - 1))),
             $attempt,
             $e,
@@ -94,7 +94,7 @@ final class DelayedActionRunner
 
         $data['attempt'] = $attempt + 1;
 
-        do_action('ma_background_job_retry_scheduled', $e, $data, $userId, $attempt, $backoff);
+        do_action('gro_background_job_retry_scheduled', $e, $data, $userId, $attempt, $backoff);
 
         $this->scheduler->scheduleEnvelope(max(1, $backoff), $userId, $data);
     }

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
 /**
- * Loads rules from a JSON file; path override via {@see 'ma_rules_json_path'}.
+ * Loads rules from a JSON file; path override via {@see 'gro_rules_json_path'}.
  */
 final class JsonFileRulesRepository implements RulesRepositoryInterface
 {
@@ -23,7 +23,7 @@ final class JsonFileRulesRepository implements RulesRepositoryInterface
     public function getRules(): array
     {
         /** @var string $path */
-        $path = apply_filters('ma_rules_json_path', $this->defaultPath, $this);
+        $path = apply_filters('gro_rules_json_path', $this->defaultPath, $this);
 
         if (! is_readable($path)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -47,7 +47,7 @@ final class JsonFileRulesRepository implements RulesRepositoryInterface
         $this->cachedMtime = $mtime;
 
         /** @var list<RuleDefinition> $rules */
-        $rules = apply_filters('ma_parsed_rules', $this->cache, $path);
+        $rules = apply_filters('gro_parsed_rules', $this->cache, $path);
 
         return $rules;
     }

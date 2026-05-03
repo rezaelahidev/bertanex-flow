@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
 /**
  * Evaluates condition groups (all / any / not) from JSON rules against runtime user state.

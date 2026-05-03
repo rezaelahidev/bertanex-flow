@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Sms;
+namespace GrowthOrchestrator\Sms;
 
 /**
  * Fixed window per user: max sends per hour (site-local hour bucket via {@see wp_date}).
@@ -15,10 +15,10 @@ final class SmsRateLimiter
             return false;
         }
 
-        $max = max(1, (int) apply_filters('ma_sms_rate_limit_per_user_per_hour', 10, $userId));
+        $max = max(1, (int) apply_filters('gro_sms_rate_limit_per_user_per_hour', 10, $userId));
 
         $bucket = wp_date('Y-m-d-H');
-        $key    = 'ma_sms_rl_' . $userId . '_' . $bucket;
+        $key    = 'gro_sms_rl_' . $userId . '_' . $bucket;
 
         $count = (int) get_transient($key);
 

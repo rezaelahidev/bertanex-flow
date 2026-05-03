@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Event;
+namespace GrowthOrchestrator\Event;
 
-use MarketingAutomation\Loader\HooksLoader;
+use GrowthOrchestrator\Loader\HooksLoader;
 
 /**
  * Maps WordPress core/plugin actions to automation events and exposes a small DSL for more mappings.
  *
- * Register extra mappings from {@see 'ma_register_wordpress_event_mappings'}.
+ * Register extra mappings from {@see 'gro_register_wordpress_event_mappings'}.
  */
 final class WordPressEventBridge
 {
@@ -61,7 +61,7 @@ final class WordPressEventBridge
          * @param WordPressEventBridge $bridge
          * @param HooksLoader          $hooks
          */
-        do_action('ma_register_wordpress_event_mappings', $this, $hooks);
+        do_action('gro_register_wordpress_event_mappings', $this, $hooks);
 
         foreach ($this->mappings as $row) {
             $dispatcher = $this->dispatcher;

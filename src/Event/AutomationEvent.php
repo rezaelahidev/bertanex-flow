@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Event;
+namespace GrowthOrchestrator\Event;
 
 /**
  * Generic automation event. Use any string for {@see name()} for custom events.

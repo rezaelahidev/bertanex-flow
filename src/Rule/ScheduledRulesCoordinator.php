@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
 /**
  * Evaluates rules tied to a recurring WP-Cron hook (see JSON {@code trigger.schedule}).
  *
- * Candidate users come from {@see 'ma_scheduled_rules_user_ids'} (default: none).
+ * Candidate users come from {@see 'gro_scheduled_rules_user_ids'} (default: none).
  */
 final class ScheduledRulesCoordinator
 {
@@ -45,7 +45,7 @@ final class ScheduledRulesCoordinator
             }
 
             /** @var list<int|string> $userIds */
-            $userIds = apply_filters('ma_scheduled_rules_user_ids', [], $hookName, $rule);
+            $userIds = apply_filters('gro_scheduled_rules_user_ids', [], $hookName, $rule);
             if (! is_array($userIds) || $userIds === []) {
                 continue;
             }

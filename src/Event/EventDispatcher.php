@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Event;
+namespace GrowthOrchestrator\Event;
 
 /**
  * In-process event bus with WordPress hooks for third-party listeners.
  *
  * - Subscribe with {@see listen()} using a core {@see EventType} value or any custom string.
  * - Use {@see WILDCARD} to receive every dispatched event.
- * - Each dispatch also runs {@see 'ma_event'} and {@see 'ma_event_{NAME}'} (NAME = {@see EventInterface::name()}).
+ * - Each dispatch also runs {@see 'gro_event'} and {@see 'gro_event_{NAME}'} (NAME = {@see EventInterface::name()}).
  */
 final class EventDispatcher
 {
@@ -60,14 +60,14 @@ final class EventDispatcher
          * @param string           $name  {@see EventInterface::name()}
          * @param EventInterface  $event
          */
-        do_action('ma_event', $event->name(), $event);
+        do_action('gro_event', $event->name(), $event);
 
         /**
          * Fires for a specific event name. Hook suffix matches {@see EventInterface::name()} exactly.
          *
          * @param EventInterface $event
          */
-        do_action('ma_event_' . $event->name(), $event);
+        do_action('gro_event_' . $event->name(), $event);
     }
 
     private function invokeListeners(string $key, EventInterface $event): void

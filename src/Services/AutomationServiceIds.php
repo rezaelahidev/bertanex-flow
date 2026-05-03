@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Services;
+namespace GrowthOrchestrator\Services;
 
 /**
  * Built-in registry keys for {@see AutomationServices}.

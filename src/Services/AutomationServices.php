@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Services;
+namespace GrowthOrchestrator\Services;
 
 /**
  * Registry of pluggable automation backends (SMS, email, CRM push, etc.).
  *
- * Services are plain objects; contracts live in their own namespaces (e.g. {@see \MarketingAutomation\Sms\SmsServiceInterface}).
- * Third-party code typically runs on {@see 'ma_register_automation_services'} to {@see replace()} defaults.
+ * Services are plain objects; contracts live in their own namespaces (e.g. {@see \GrowthOrchestrator\Sms\SmsServiceInterface}).
+ * Third-party code typically runs on {@see 'gro_register_automation_services'} to {@see replace()} defaults.
  */
 final class AutomationServices
 {

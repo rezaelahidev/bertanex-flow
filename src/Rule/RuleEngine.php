@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
-use MarketingAutomation\Event\EventDispatcher;
-use MarketingAutomation\Event\EventInterface;
+use GrowthOrchestrator\Event\EventDispatcher;
+use GrowthOrchestrator\Event\EventInterface;
 
 /**
  * Event-driven evaluation of JSON rules: trigger → conditions → actions (with optional delay).

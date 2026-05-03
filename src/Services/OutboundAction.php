@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Services;
+namespace GrowthOrchestrator\Services;
 
 /**
  * Normalized outbound step produced by the rule engine (aligns with docs/rule-schema action "type").

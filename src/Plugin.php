@@ -2,36 +2,36 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation;
+namespace GrowthOrchestrator;
 
-use MarketingAutomation\Event\AutomationEvent;
-use MarketingAutomation\Event\EventDispatcher;
-use MarketingAutomation\Event\WordPressEventBridge;
-use MarketingAutomation\Loader\HooksLoader;
-use MarketingAutomation\Rule\ConditionEvaluator;
-use MarketingAutomation\Rule\DelayedActionRunner;
-use MarketingAutomation\Rule\DelayedActionScheduler;
-use MarketingAutomation\Rule\JsonFileRulesRepository;
-use MarketingAutomation\Rule\RuleActionsExecutor;
-use MarketingAutomation\Rule\RuleEngine;
-use MarketingAutomation\Rule\ScheduledRulesCoordinator;
-use MarketingAutomation\Rule\UserStateProviderInterface;
-use MarketingAutomation\Rule\WordPressRulesScheduler;
-use MarketingAutomation\Rule\WordPressUserStateProvider;
-use MarketingAutomation\Services\ActionDispatcher;
-use MarketingAutomation\Services\AutomationServiceIds;
-use MarketingAutomation\Services\AutomationServices;
-use MarketingAutomation\Sms\DefaultSmsTemplateProvider;
-use MarketingAutomation\Sms\LoggingSmsTransport;
-use MarketingAutomation\Sms\QueuedTemplateSmsService;
-use MarketingAutomation\Sms\SmsDeliveryWorker;
-use MarketingAutomation\Sms\SmsJobQueue;
-use MarketingAutomation\Sms\SmsPhoneResolver;
-use MarketingAutomation\Sms\SmsRateLimiter;
-use MarketingAutomation\Sms\SmsServiceInterface;
-use MarketingAutomation\Sms\SmsTemplateProviderInterface;
-use MarketingAutomation\Sms\SmsTemplateRenderer;
-use MarketingAutomation\Sms\SmsTransportInterface;
+use GrowthOrchestrator\Event\AutomationEvent;
+use GrowthOrchestrator\Event\EventDispatcher;
+use GrowthOrchestrator\Event\WordPressEventBridge;
+use GrowthOrchestrator\Loader\HooksLoader;
+use GrowthOrchestrator\Rule\ConditionEvaluator;
+use GrowthOrchestrator\Rule\DelayedActionRunner;
+use GrowthOrchestrator\Rule\DelayedActionScheduler;
+use GrowthOrchestrator\Rule\JsonFileRulesRepository;
+use GrowthOrchestrator\Rule\RuleActionsExecutor;
+use GrowthOrchestrator\Rule\RuleEngine;
+use GrowthOrchestrator\Rule\ScheduledRulesCoordinator;
+use GrowthOrchestrator\Rule\UserStateProviderInterface;
+use GrowthOrchestrator\Rule\WordPressRulesScheduler;
+use GrowthOrchestrator\Rule\WordPressUserStateProvider;
+use GrowthOrchestrator\Services\ActionDispatcher;
+use GrowthOrchestrator\Services\AutomationServiceIds;
+use GrowthOrchestrator\Services\AutomationServices;
+use GrowthOrchestrator\Sms\DefaultSmsTemplateProvider;
+use GrowthOrchestrator\Sms\LoggingSmsTransport;
+use GrowthOrchestrator\Sms\QueuedTemplateSmsService;
+use GrowthOrchestrator\Sms\SmsDeliveryWorker;
+use GrowthOrchestrator\Sms\SmsJobQueue;
+use GrowthOrchestrator\Sms\SmsPhoneResolver;
+use GrowthOrchestrator\Sms\SmsRateLimiter;
+use GrowthOrchestrator\Sms\SmsServiceInterface;
+use GrowthOrchestrator\Sms\SmsTemplateProviderInterface;
+use GrowthOrchestrator\Sms\SmsTemplateRenderer;
+use GrowthOrchestrator\Sms\SmsTransportInterface;
 
 final class Plugin
 {
@@ -59,7 +59,7 @@ final class Plugin
          *
          * @param AutomationServices $services
          */
-        do_action('ma_register_automation_services', $services);
+        do_action('gro_register_automation_services', $services);
 
         $actionDispatcher = $this->container->get(ActionDispatcher::class);
 
@@ -68,7 +68,7 @@ final class Plugin
          *
          * @param ActionDispatcher $actionDispatcher
          */
-        do_action('ma_register_action_handlers', $actionDispatcher);
+        do_action('gro_register_action_handlers', $actionDispatcher);
 
         $this->container->get(RuleEngine::class);
 
@@ -99,7 +99,7 @@ final class Plugin
 
                 $eventDispatcher->dispatch(new AutomationEvent($name, $payload));
             },
-            'ma_emit_event',
+            'gro_emit_event',
             10,
             2
         );
@@ -176,7 +176,7 @@ final class Plugin
 
         $c->singleton(
             JsonFileRulesRepository::class,
-            static fn () => new JsonFileRulesRepository(\MA_PLUGIN_DIR . 'rules/default.rules.json')
+            static fn () => new JsonFileRulesRepository(\GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json')
         );
 
         $c->singleton(ConditionEvaluator::class, static fn () => new ConditionEvaluator());

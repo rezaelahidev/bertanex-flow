@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
-use MarketingAutomation\Loader\HooksLoader;
+use GrowthOrchestrator\Loader\HooksLoader;
 
 /**
  * Registers WP-Cron events and hook listeners for rules that declare {@code trigger.schedule}.

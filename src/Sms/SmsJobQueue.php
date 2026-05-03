@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Sms;
+namespace GrowthOrchestrator\Sms;
 
 /**
  * Queues SMS jobs for Action Scheduler (async) or WP-Cron fallback.
  */
 final class SmsJobQueue
 {
-    public const HOOK  = 'ma_sms_deliver';
-    public const GROUP = 'marketing-automation-sms';
+    public const HOOK  = 'gro_sms_deliver';
+    public const GROUP = 'growth-orchestrator-sms';
 
     /**
      * @param array<string, mixed> $job Must include: user_id, template_id, to, body, attempt (int). Optional: meta.
      */
     public function push(array $job): void
     {
-        $job = apply_filters('ma_sms_queue_job', $job);
+        $job = apply_filters('gro_sms_queue_job', $job);
 
         $json = wp_json_encode($job);
         if ($json === false) {
@@ -25,7 +25,7 @@ final class SmsJobQueue
         }
 
         $useAs = apply_filters(
-            'ma_sms_queue_use_action_scheduler',
+            'gro_sms_queue_use_action_scheduler',
             function_exists('as_enqueue_async_action')
         );
 
@@ -51,7 +51,7 @@ final class SmsJobQueue
         $runAt = time() + max(1, $delaySeconds);
 
         $useAs = apply_filters(
-            'ma_sms_queue_use_action_scheduler',
+            'gro_sms_queue_use_action_scheduler',
             function_exists('as_schedule_single_action')
         );
 

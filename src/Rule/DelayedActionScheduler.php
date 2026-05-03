@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Rule;
+namespace GrowthOrchestrator\Rule;
 
 /**
  * Schedules delayed rule actions. Prefers Action Scheduler when loaded; falls back to WP-Cron.
@@ -10,10 +10,10 @@ namespace MarketingAutomation\Rule;
 final class DelayedActionScheduler
 {
     /** @see add_action() callback in {@see DelayedActionRunner} */
-    public const HOOK = 'ma_delayed_rule_action';
+    public const HOOK = 'gro_delayed_rule_action';
 
     /** Action Scheduler group for Tools → Scheduled Actions UI. */
-    public const ACTION_SCHEDULER_GROUP = 'marketing-automation';
+    public const ACTION_SCHEDULER_GROUP = 'growth-orchestrator';
 
     /**
      * @param array<string, mixed> $action Original JSON action row (including type, template_id, params).
@@ -51,7 +51,7 @@ final class DelayedActionScheduler
         }
 
         $useAs = apply_filters(
-            'ma_use_action_scheduler_for_background_jobs',
+            'gro_use_action_scheduler_for_background_jobs',
             function_exists('as_schedule_single_action')
         );
 

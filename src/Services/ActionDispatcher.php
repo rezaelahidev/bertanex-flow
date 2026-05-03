@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Services;
+namespace GrowthOrchestrator\Services;
 
-use MarketingAutomation\Sms\SmsServiceInterface;
+use GrowthOrchestrator\Sms\SmsServiceInterface;
 
 /**
  * Routes rule actions to registered services and WordPress hooks for extension.
@@ -50,7 +50,7 @@ final class ActionDispatcher
          *
          * @param OutboundAction $action
          */
-        do_action('ma_unhandled_outbound_action', $action);
+        do_action('gro_unhandled_outbound_action', $action);
     }
 
     private function registerCoreHandlers(): void
@@ -71,17 +71,17 @@ final class ActionDispatcher
              *
              * @param OutboundAction $action
              */
-            do_action('ma_outbound_send_email', $action);
+            do_action('gro_outbound_send_email', $action);
         };
 
         $this->handlers['send_discount'] = function (OutboundAction $action): void {
             /** @param OutboundAction $action */
-            do_action('ma_outbound_send_discount', $action);
+            do_action('gro_outbound_send_discount', $action);
         };
 
         $this->handlers['webhook'] = function (OutboundAction $action): void {
             /** @param OutboundAction $action */
-            do_action('ma_outbound_webhook', $action);
+            do_action('gro_outbound_webhook', $action);
         };
 
         $this->handlers['log'] = function (OutboundAction $action): void {

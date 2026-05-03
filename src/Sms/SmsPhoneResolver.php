@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Sms;
+namespace GrowthOrchestrator\Sms;
 
 /**
  * Resolves MSISDN / phone for a user. Filter wins, then common meta keys.
@@ -15,13 +15,13 @@ final class SmsPhoneResolver
             return null;
         }
 
-        $filtered = apply_filters('ma_sms_user_phone', null, $userId);
+        $filtered = apply_filters('gro_sms_user_phone', null, $userId);
 
         if (is_string($filtered) && $filtered !== '') {
             return $this->normalize($filtered);
         }
 
-        foreach (['ma_phone', 'billing_phone', 'phone'] as $metaKey) {
+        foreach (['gro_phone', 'ma_phone', 'billing_phone', 'phone'] as $metaKey) {
             $raw = get_user_meta($userId, $metaKey, true);
             if (is_string($raw) && $raw !== '') {
                 return $this->normalize($raw);

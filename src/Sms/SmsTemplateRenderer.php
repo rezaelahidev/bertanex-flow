@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Sms;
+namespace GrowthOrchestrator\Sms;
 
 /**
  * Renders SMS templates: placeholders {@code {variable_name}} replaced from a flat variable map.
@@ -20,7 +20,7 @@ final class SmsTemplateRenderer
                 $key = $m[1];
 
                 if (! array_key_exists($key, $variables)) {
-                    return (string) apply_filters('ma_sms_template_missing_var', '', $key, $variables);
+                    return (string) apply_filters('gro_sms_template_missing_var', '', $key, $variables);
                 }
 
                 $val = $variables[$key];

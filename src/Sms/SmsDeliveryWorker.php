@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Sms;
+namespace GrowthOrchestrator\Sms;
 
 /**
  * Action Scheduler / WP-Cron worker: delivers one queued SMS with backoff retries.
@@ -40,7 +40,7 @@ final class SmsDeliveryWorker
         try {
             $this->transport->deliver($to, $body, $job);
 
-            do_action('ma_sms_delivered', $job, $attempt);
+            do_action('gro_sms_delivered', $job, $attempt);
         } catch (\Throwable $e) {
             $this->handleFailure($e, $job, $attempt);
         }
@@ -51,9 +51,9 @@ final class SmsDeliveryWorker
      */
     private function handleFailure(\Throwable $e, array $job, int $attempt): void
     {
-        $max = max(1, (int) apply_filters('ma_sms_delivery_max_attempts', 5, $job));
+        $max = max(1, (int) apply_filters('gro_sms_delivery_max_attempts', 5, $job));
 
-        $shouldRetry = (bool) apply_filters('ma_sms_delivery_should_retry', true, $e, $attempt, $job);
+        $shouldRetry = (bool) apply_filters('gro_sms_delivery_should_retry', true, $e, $attempt, $job);
 
         if (! $shouldRetry || $attempt >= $max) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -66,7 +66,7 @@ final class SmsDeliveryWorker
                 );
             }
 
-            do_action('ma_sms_delivery_exhausted', $e, $job, $attempt);
+            do_action('gro_sms_delivery_exhausted', $e, $job, $attempt);
 
             throw $e;
         }
@@ -74,14 +74,14 @@ final class SmsDeliveryWorker
         $job['attempt'] = $attempt + 1;
 
         $delay = (int) apply_filters(
-            'ma_sms_delivery_retry_seconds',
+            'gro_sms_delivery_retry_seconds',
             min(600, 30 * (2 ** ($attempt - 1))),
             $attempt,
             $e,
             $job
         );
 
-        do_action('ma_sms_delivery_retry_scheduled', $e, $job, $attempt, $delay);
+        do_action('gro_sms_delivery_retry_scheduled', $e, $job, $attempt, $delay);
 
         $this->queue->scheduleRetry($delay, $job);
     }

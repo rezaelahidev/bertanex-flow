@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation;
+namespace GrowthOrchestrator;
 
 /**
  * Lightweight service locator with shared (singleton) factories.

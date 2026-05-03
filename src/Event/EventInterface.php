@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketingAutomation\Event;
+namespace GrowthOrchestrator\Event;
 
 interface EventInterface
 {

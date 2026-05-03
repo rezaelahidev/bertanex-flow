@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MarketingAutomation\Rule;
+
+/**
+ * Snapshot of user fields used by the rule engine (see docs/user-states.md).
+ *
+ * @return array{
+ *     profile_completed?: bool,
+ *     has_product?: bool,
+ *     has_subscription?: bool,
+ *     subscription_status?: string,
+ *     installment_status?: string,
+ *     subscription_days_until_expiry?: int|null
+ * }
+ */
+interface UserStateProviderInterface
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function getStateForUser(int $userId): array;
+}

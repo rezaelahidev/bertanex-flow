@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace GrowthOrchestrator\Rule;
 
 /**
- * Evaluates condition groups (all / any / not) from JSON rules against runtime user state.
+ * Recursive condition groups backed by plug-in operators ({@see ConditionOperatorRegistry}).
  *
  * @phpstan-import-type ConditionGroup from RuleDefinition
  */
 final class ConditionEvaluator
 {
+    public function __construct(
+        private readonly ConditionOperatorRegistry $registry
+    ) {
+    }
+
     /**
      * @param ConditionGroup       $group
      * @param array<string, mixed> $state
@@ -101,42 +106,46 @@ final class ConditionEvaluator
      */
     private function evaluateLeaf(array $leaf, array $state): bool
     {
-        $field = (string) $leaf['field'];
-        $op    = (string) $leaf['op'];
-        $actual = $state[$field] ?? null;
-
-        return match ($op) {
-            'eq'       => $actual == ($leaf['value'] ?? null),
-            'neq'      => $actual != ($leaf['value'] ?? null),
-            'gt'       => $this->numeric($actual) > $this->numeric($leaf['value'] ?? null),
-            'gte'      => $this->numeric($actual) >= $this->numeric($leaf['value'] ?? null),
-            'lt'       => $this->numeric($actual) < $this->numeric($leaf['value'] ?? null),
-            'lte'      => $this->numeric($actual) <= $this->numeric($leaf['value'] ?? null),
-            'in'       => in_array($actual, (array) ($leaf['value'] ?? []), true),
-            'not_in'   => ! in_array($actual, (array) ($leaf['value'] ?? []), true),
-            'empty'    => $this->isEmpty($actual),
-            'not_empty'=> ! $this->isEmpty($actual),
-            'truthy'   => (bool) $actual,
-            'falsy'    => ! (bool) $actual,
-            default    => false,
-        };
-    }
-
-    private function numeric(mixed $value): float
-    {
-        if (is_numeric($value)) {
-            return (float) $value;
+        /**
+         * Let extensions short-circuit a single predicate before operator registry runs.
+         *
+         * @param bool|null                                   $carry
+         * @param array<string, mixed>                        $leaf  Raw JSON leaf ({@code field},{@code op},{@code value}…).
+         * @param array<string, mixed>                        $state Merged contextual state snapshot.
+         */
+        $intercept = apply_filters('gro_condition_evaluate_leaf', null, $leaf, $state);
+        if (is_bool($intercept)) {
+            return $intercept;
         }
 
-        return 0.0;
-    }
+        /** @phpstan-ignore-next-line */
+        $field = isset($leaf['field']) ? (string) $leaf['field'] : '';
 
-    private function isEmpty(mixed $value): bool
-    {
-        if ($value === null || $value === '') {
-            return true;
+        /** @phpstan-ignore-next-line */
+        $resolvedValue = apply_filters(
+            'gro_condition_field_value',
+            $field !== '' ? ($state[$field] ?? null) : null,
+            $field,
+            $state,
+            $leaf
+        );
+
+        /** @phpstan-ignore-next-line */
+        $actual = apply_filters(
+            'gro_condition_resolve_actual_operand',
+            $resolvedValue,
+            $field,
+            $state,
+            $leaf
+        );
+
+        /** @phpstan-ignore-next-line */
+        $operator = isset($leaf['op']) ? (string) $leaf['op'] : '';
+
+        if ($operator === '') {
+            return false;
         }
 
-        return $value === [];
+        return $this->registry->evaluate($operator, $actual, $leaf, $state);
     }
 }

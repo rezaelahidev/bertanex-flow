@@ -64,6 +64,21 @@ final class RuleEngine
                 continue;
             }
 
+            /**
+             * Fires after a rule's conditions matched and actions are about to run.
+             *
+             * @param array{rule_id: string, rule_label: string, user_id: int, event: string} $context
+             */
+            do_action(
+                'gro_rule_matched',
+                [
+                    'rule_id'    => $rule->id,
+                    'rule_label' => (string) ($rule->label ?? ''),
+                    'user_id'    => $userId,
+                    'event'      => $eventName,
+                ]
+            );
+
             $this->executor->execute($userId, $rule->actions, $rule->id, $eventName, $rawPayload);
         }
     }

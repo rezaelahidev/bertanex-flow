@@ -53,4 +53,33 @@ final readonly class RuleDefinition
             actions: $actions
         );
     }
+
+    /**
+     * Canonical shape for persistence / editor export (DB or JSON mirrors).
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        /** @phpstan-var list<ActionRow> $ordered */
+        $ordered = array_values($this->actions);
+
+        $out = [
+            'id'         => $this->id,
+            'enabled'    => $this->enabled,
+            'priority'   => $this->priority,
+            'conditions' => $this->conditions,
+            'actions'    => $ordered,
+        ];
+
+        if ($this->label !== null && $this->label !== '') {
+            $out['label'] = $this->label;
+        }
+
+        if ($this->trigger !== null) {
+            $out['trigger'] = $this->trigger;
+        }
+
+        return $out;
+    }
 }

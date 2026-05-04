@@ -25,6 +25,7 @@ final class DefaultSmsTemplateProvider implements SmsTemplateProviderInterface
     private function defaults(): array
     {
         return [
+            'welcome_registered'         => 'Welcome {name}! Your account at {site_name} is ready: {site_url}',
             'complete_profile'         => 'Hi {name}, please complete your profile at {site_url}. — {site_name}',
             'subscription_expiring_3d' => 'Hi {name}, your subscription renews soon. — {site_name}',
             'product_owner_no_sub'     => 'Hi {name}, you have a special offer: {site_name}',

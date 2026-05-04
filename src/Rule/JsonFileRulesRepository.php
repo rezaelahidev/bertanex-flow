@@ -20,10 +20,36 @@ final class JsonFileRulesRepository implements RulesRepositoryInterface
     ) {
     }
 
-    public function getRules(): array
+    /**
+     * Path after {@see 'gro_rules_json_path'} (for tooling / admin fallbacks).
+     */
+    public function getResolvedPath(): string
     {
         /** @var string $path */
         $path = apply_filters('gro_rules_json_path', $this->defaultPath, $this);
+
+        return $path;
+    }
+
+    /**
+     * Raw JSON from the rules file, or empty string if missing/unreadable.
+     */
+    public function readRawDocument(): string
+    {
+        $path = $this->getResolvedPath();
+
+        if (! is_readable($path)) {
+            return '';
+        }
+
+        $json = file_get_contents($path);
+
+        return $json === false ? '' : $json;
+    }
+
+    public function getRules(): array
+    {
+        $path = $this->getResolvedPath();
 
         if (! is_readable($path)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {

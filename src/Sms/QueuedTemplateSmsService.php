@@ -59,6 +59,17 @@ final class QueuedTemplateSmsService implements SmsServiceInterface
             'attempt'     => 1,
             'context'     => $this->trimContext($context),
         ]);
+
+        /**
+         * Fires after an SMS render was accepted and queued for async delivery ({@see SmsJobQueue}).
+         *
+         * @param array{user_id: int, template_id: string, to: string} $summary Recipient is sanitized by listeners such as {@see AutomationAuditLogger}.
+         */
+        do_action('gro_sms_job_enqueued', [
+            'user_id'     => $userId,
+            'template_id' => $templateId,
+            'to'          => $phone,
+        ]);
     }
 
     /**

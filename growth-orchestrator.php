@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator;
 
+use GrowthOrchestrator\Db\RulesDbSchema;
 use GrowthOrchestrator\Loader\HooksLoader;
 
 if (! defined('ABSPATH')) {
@@ -39,6 +40,13 @@ $growth_orch_action_scheduler = GROWTH_ORCH_PLUGIN_DIR . 'vendor/woocommerce/act
 if (is_readable($growth_orch_action_scheduler)) {
     require_once $growth_orch_action_scheduler;
 }
+
+register_activation_hook(
+    GROWTH_ORCH_PLUGIN_FILE,
+    static function (): void {
+        RulesDbSchema::onPluginActivate(GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json');
+    }
+);
 
 $container = new Container();
 $hooks       = new HooksLoader();

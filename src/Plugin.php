@@ -4,16 +4,25 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator;
 
+use GrowthOrchestrator\Admin\RulesAdminPage;
+use GrowthOrchestrator\Admin\RulesDocumentService;
+use GrowthOrchestrator\Db\RulesDbSchema;
 use GrowthOrchestrator\Event\AutomationEvent;
 use GrowthOrchestrator\Event\EventDispatcher;
 use GrowthOrchestrator\Event\WordPressEventBridge;
 use GrowthOrchestrator\Loader\HooksLoader;
+use GrowthOrchestrator\Logging\AutomationAuditLogger;
 use GrowthOrchestrator\Rule\ConditionEvaluator;
+use GrowthOrchestrator\Rule\ConditionOperatorRegistry;
+use GrowthOrchestrator\Rule\DatabaseRulesRepository;
 use GrowthOrchestrator\Rule\DelayedActionRunner;
+use GrowthOrchestrator\Rule\DelegatingRulesRepository;
 use GrowthOrchestrator\Rule\DelayedActionScheduler;
 use GrowthOrchestrator\Rule\JsonFileRulesRepository;
+use GrowthOrchestrator\Rule\OptionRulesRepository;
 use GrowthOrchestrator\Rule\RuleActionsExecutor;
 use GrowthOrchestrator\Rule\RuleEngine;
+use GrowthOrchestrator\Rule\RulesRepositoryInterface;
 use GrowthOrchestrator\Rule\ScheduledRulesCoordinator;
 use GrowthOrchestrator\Rule\UserStateProviderInterface;
 use GrowthOrchestrator\Rule\WordPressRulesScheduler;
@@ -23,6 +32,8 @@ use GrowthOrchestrator\Services\AutomationServiceIds;
 use GrowthOrchestrator\Services\AutomationServices;
 use GrowthOrchestrator\Sms\DefaultSmsTemplateProvider;
 use GrowthOrchestrator\Sms\LoggingSmsTransport;
+use GrowthOrchestrator\Sms\TwilioSmsConfig;
+use GrowthOrchestrator\Sms\TwilioSmsTransport;
 use GrowthOrchestrator\Sms\QueuedTemplateSmsService;
 use GrowthOrchestrator\Sms\SmsDeliveryWorker;
 use GrowthOrchestrator\Sms\SmsJobQueue;
@@ -45,8 +56,15 @@ final class Plugin
     {
         $this->registerServices();
 
+        $this->hooks->add_action($this, 'bootstrapPersistence', 'plugins_loaded', 2, 0);
         $this->hooks->add_action($this, 'onPluginsLoaded', 'plugins_loaded', 5, 0);
         $this->hooks->register();
+    }
+
+    public function bootstrapPersistence(): void
+    {
+        RulesDbSchema::upgradeIfNeeded();
+        RulesDbSchema::maybeHydrateFromLegacySourcesOnce(GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json');
     }
 
     public function onPluginsLoaded(): void
@@ -69,6 +87,8 @@ final class Plugin
          * @param ActionDispatcher $actionDispatcher
          */
         do_action('gro_register_action_handlers', $actionDispatcher);
+
+        $this->container->get(AutomationAuditLogger::class)->register();
 
         $this->container->get(RuleEngine::class);
 
@@ -106,6 +126,10 @@ final class Plugin
 
         $this->container->get(WordPressEventBridge::class)->register($this->hooks);
 
+        if (is_admin()) {
+            $this->container->get(RulesAdminPage::class)->register($this->hooks);
+        }
+
         $this->container->get(WordPressRulesScheduler::class)->register($this->hooks);
 
         $this->hooks->register();
@@ -116,6 +140,8 @@ final class Plugin
         $c = $this->container;
 
         $c->singleton(EventDispatcher::class, static fn () => new EventDispatcher());
+
+        $c->singleton(AutomationAuditLogger::class, static fn () => new AutomationAuditLogger());
 
         $c->singleton(
             WordPressEventBridge::class,
@@ -133,7 +159,23 @@ final class Plugin
             )
         );
 
-        $c->singleton(SmsTransportInterface::class, static fn () => new LoggingSmsTransport());
+        $c->singleton(SmsTransportInterface::class, static function (): SmsTransportInterface {
+            /**
+             * Force a transport (tests, alternate providers).
+             *
+             * @param SmsTransportInterface|null $transport Return an implementation from the callback.
+             */
+            $filtered = apply_filters('gro_sms_transport', null);
+            if ($filtered instanceof SmsTransportInterface) {
+                return $filtered;
+            }
+
+            $twilio = new TwilioSmsConfig();
+
+            return $twilio->isConfigured()
+                ? new TwilioSmsTransport($twilio)
+                : new LoggingSmsTransport();
+        });
 
         $c->singleton(SmsTemplateRenderer::class, static fn () => new SmsTemplateRenderer());
 
@@ -179,7 +221,56 @@ final class Plugin
             static fn () => new JsonFileRulesRepository(\GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json')
         );
 
-        $c->singleton(ConditionEvaluator::class, static fn () => new ConditionEvaluator());
+        $c->singleton(
+            OptionRulesRepository::class,
+            static fn (Container $c) => new OptionRulesRepository(
+                $c->get(JsonFileRulesRepository::class)
+            )
+        );
+
+        $c->singleton(DatabaseRulesRepository::class, static function (): DatabaseRulesRepository {
+            global $wpdb;
+
+            return new DatabaseRulesRepository($wpdb);
+        });
+
+        $c->singleton(
+            DelegatingRulesRepository::class,
+            static fn (Container $c) => new DelegatingRulesRepository(
+                $c->get(DatabaseRulesRepository::class),
+                $c->get(OptionRulesRepository::class),
+                $c->get(JsonFileRulesRepository::class)
+            )
+        );
+
+        $c->singleton(
+            RulesRepositoryInterface::class,
+            static fn (Container $c) => $c->get(DelegatingRulesRepository::class)
+        );
+
+        $c->singleton(
+            RulesDocumentService::class,
+            static fn (Container $c) => new RulesDocumentService(
+                $c->get(DatabaseRulesRepository::class),
+                $c->get(OptionRulesRepository::class)
+            )
+        );
+
+        $c->singleton(
+            RulesAdminPage::class,
+            static fn (Container $c) => new RulesAdminPage(
+                $c->get(RulesDocumentService::class)
+            )
+        );
+
+        $c->singleton(ConditionOperatorRegistry::class, static fn () => new ConditionOperatorRegistry());
+
+        $c->singleton(
+            ConditionEvaluator::class,
+            static fn (Container $c) => new ConditionEvaluator(
+                $c->get(ConditionOperatorRegistry::class)
+            )
+        );
 
         $c->singleton(DelayedActionScheduler::class, static fn () => new DelayedActionScheduler());
 
@@ -202,7 +293,7 @@ final class Plugin
         $c->singleton(
             ScheduledRulesCoordinator::class,
             static fn (Container $c) => new ScheduledRulesCoordinator(
-                $c->get(JsonFileRulesRepository::class),
+                $c->get(RulesRepositoryInterface::class),
                 $c->get(UserStateProviderInterface::class),
                 $c->get(ConditionEvaluator::class),
                 $c->get(RuleActionsExecutor::class)
@@ -212,7 +303,7 @@ final class Plugin
         $c->singleton(
             WordPressRulesScheduler::class,
             static fn (Container $c) => new WordPressRulesScheduler(
-                $c->get(JsonFileRulesRepository::class),
+                $c->get(RulesRepositoryInterface::class),
                 $c->get(ScheduledRulesCoordinator::class)
             )
         );
@@ -221,7 +312,7 @@ final class Plugin
             RuleEngine::class,
             static fn (Container $c) => new RuleEngine(
                 $c->get(EventDispatcher::class),
-                $c->get(JsonFileRulesRepository::class),
+                $c->get(RulesRepositoryInterface::class),
                 $c->get(UserStateProviderInterface::class),
                 $c->get(ConditionEvaluator::class),
                 $c->get(RuleActionsExecutor::class)

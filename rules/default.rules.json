@@ -2,6 +2,25 @@
   "version": "1.0.0",
   "rules": [
     {
+      "id": "sms_welcome_user_registered",
+      "label": "Welcome SMS after user registration",
+      "enabled": true,
+      "priority": 5,
+      "trigger": {
+        "events": ["USER_REGISTERED"]
+      },
+      "conditions": {
+        "all": []
+      },
+      "actions": [
+        {
+          "type": "send_sms",
+          "template_id": "welcome_registered",
+          "params": {}
+        }
+      ]
+    },
+    {
       "id": "sms_complete_profile",
       "label": "Send SMS when profile is incomplete",
       "enabled": true,

@@ -20,12 +20,29 @@ final class DelayedActionScheduler
      */
     public function schedule(int $delaySeconds, int $userId, array $action, string $ruleId, string $eventName): void
     {
-        $this->scheduleEnvelope($delaySeconds, $userId, [
+        $queued = $this->scheduleEnvelope($delaySeconds, $userId, [
             'action'   => $action,
             'rule_id'  => $ruleId,
             'event'    => $eventName,
             'attempt'  => 1,
         ]);
+
+        if (! $queued) {
+            return;
+        }
+
+        $actionType = (string) ($action['type'] ?? '');
+
+        /**
+         * Fires after a delayed rule action is queued (Action Scheduler preferred).
+         *
+         * @param int    $userId
+         * @param string $ruleId
+         * @param string $eventName
+         * @param int    $delaySeconds
+         * @param string $actionType
+         */
+        do_action('gro_delayed_rule_action_scheduled', $userId, $ruleId, $eventName, $delaySeconds, $actionType);
     }
 
     /**
@@ -33,10 +50,10 @@ final class DelayedActionScheduler
      *
      * @param array{action: array<string, mixed>, rule_id: string, event: string, attempt: int, ...}|array<string, mixed> $envelope
      */
-    public function scheduleEnvelope(int $delaySeconds, int $userId, array $envelope): void
+    public function scheduleEnvelope(int $delaySeconds, int $userId, array $envelope): bool
     {
         if ($delaySeconds < 1 || $userId < 1) {
-            return;
+            return false;
         }
 
         if (! isset($envelope['attempt']) || (int) $envelope['attempt'] < 1) {
@@ -47,7 +64,7 @@ final class DelayedActionScheduler
 
         $payload = wp_json_encode($envelope);
         if ($payload === false) {
-            return;
+            return false;
         }
 
         $useAs = apply_filters(
@@ -56,16 +73,18 @@ final class DelayedActionScheduler
         );
 
         if ($useAs && function_exists('as_schedule_single_action')) {
-            as_schedule_single_action(
+            $id = as_schedule_single_action(
                 $runAt,
                 self::HOOK,
                 [$userId, $payload],
                 self::ACTION_SCHEDULER_GROUP
             );
 
-            return;
+            return $id !== false;
         }
 
-        wp_schedule_single_event($runAt, self::HOOK, [$userId, $payload]);
+        $ok = wp_schedule_single_event($runAt, self::HOOK, [$userId, $payload]);
+
+        return $ok !== false;
     }
 }

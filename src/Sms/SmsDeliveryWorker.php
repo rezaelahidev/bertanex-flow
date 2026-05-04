@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Sms;
 
+use GrowthOrchestrator\Sms\Exception\SmsTransportException;
+
 /**
  * Action Scheduler / WP-Cron worker: delivers one queued SMS with backoff retries.
  */
@@ -53,7 +55,12 @@ final class SmsDeliveryWorker
     {
         $max = max(1, (int) apply_filters('gro_sms_delivery_max_attempts', 5, $job));
 
-        $shouldRetry = (bool) apply_filters('gro_sms_delivery_should_retry', true, $e, $attempt, $job);
+        $defaultRetry = true;
+        if ($e instanceof SmsTransportException) {
+            $defaultRetry = $e->retrySuggested();
+        }
+
+        $shouldRetry = (bool) apply_filters('gro_sms_delivery_should_retry', $defaultRetry, $e, $attempt, $job);
 
         if (! $shouldRetry || $attempt >= $max) {
             if (defined('WP_DEBUG') && WP_DEBUG) {

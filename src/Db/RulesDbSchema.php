@@ -14,7 +14,7 @@ use GrowthOrchestrator\Rule\OptionRulesRepository;
  */
 final class RulesDbSchema
 {
-    public const SCHEMA_VERSION_OPTION = 'gro_rules_db_schema_version';
+    public const SCHEMA_VERSION_OPTION = 'growth_orchestrator_rules_schema_version';
 
     /** Bump when altering DDL so dbDelta detects schema changes reliably. */
     public const SCHEMA_VERSION = '2026-02-06-3';
@@ -92,7 +92,7 @@ SQL;
         dbDelta($sql);
     }
 
-    public const SOURCES_HYDRATED_OPTION = 'gro_rules_sources_hydrated_v1';
+    public const SOURCES_HYDRATED_OPTION = 'growth_orchestrator_rules_sources_hydrated_v1';
 
     /**
      * One-time copy from legacy option JSON or bundled defaults when the table is still empty.

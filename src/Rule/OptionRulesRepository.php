@@ -12,7 +12,7 @@ namespace GrowthOrchestrator\Rule;
  */
 final class OptionRulesRepository implements RulesRepositoryInterface
 {
-    public const DEFAULT_OPTION_NAME = 'gro_rules_document';
+    public const DEFAULT_OPTION_NAME = 'growth_orchestrator_rules_document';
 
     public function __construct(
         private readonly JsonFileRulesRepository $fileFallback,

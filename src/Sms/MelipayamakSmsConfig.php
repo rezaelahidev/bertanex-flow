@@ -13,11 +13,11 @@ namespace GrowthOrchestrator\Sms;
  */
 final class MelipayamakSmsConfig
 {
-    public const OPTION_USERNAME = 'gro_melipayamak_username';
+    public const OPTION_USERNAME = 'growth_orchestrator_melipayamak_username';
 
-    public const OPTION_PASSWORD = 'gro_melipayamak_password';
+    public const OPTION_PASSWORD = 'growth_orchestrator_melipayamak_password';
 
-    public const OPTION_FROM = 'gro_melipayamak_from';
+    public const OPTION_FROM = 'growth_orchestrator_melipayamak_from';
 
     /**
      * @return array{username: string, password: string, from: string}|null

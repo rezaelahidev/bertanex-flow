@@ -14,7 +14,7 @@ final class SmsSettingsModel
 {
     public const SETTINGS_GROUP = 'growth_orchestrator_sms';
 
-    public const OPTION_PROVIDER = 'gro_sms_transport_provider';
+    public const OPTION_PROVIDER = 'growth_orchestrator_sms_transport_provider';
 
     public function registerSettings(): void
     {

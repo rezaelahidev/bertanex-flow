@@ -9,7 +9,7 @@ namespace GrowthOrchestrator\Sms;
  */
 final class SmsTransportResolver
 {
-    private const OPTION_PROVIDER = 'gro_sms_transport_provider';
+    private const OPTION_PROVIDER = 'growth_orchestrator_sms_transport_provider';
 
     public function resolve(): SmsTransportInterface
     {

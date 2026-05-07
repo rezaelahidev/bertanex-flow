@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace GrowthOrchestrator;
 
 use GrowthOrchestrator\Admin\Controllers\RulesController;
+use GrowthOrchestrator\Admin\Controllers\SmsSettingsController;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
+use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
 use GrowthOrchestrator\Admin\Views\RulesPageView;
+use GrowthOrchestrator\Admin\Views\SmsSettingsPageView;
 use GrowthOrchestrator\Db\RulesDbSchema;
 use GrowthOrchestrator\Event\AutomationEvent;
 use GrowthOrchestrator\Event\EventDispatcher;
@@ -32,9 +35,6 @@ use GrowthOrchestrator\Services\ActionDispatcher;
 use GrowthOrchestrator\Services\AutomationServiceIds;
 use GrowthOrchestrator\Services\AutomationServices;
 use GrowthOrchestrator\Sms\DefaultSmsTemplateProvider;
-use GrowthOrchestrator\Sms\LoggingSmsTransport;
-use GrowthOrchestrator\Sms\TwilioSmsConfig;
-use GrowthOrchestrator\Sms\TwilioSmsTransport;
 use GrowthOrchestrator\Sms\QueuedTemplateSmsService;
 use GrowthOrchestrator\Sms\SmsDeliveryWorker;
 use GrowthOrchestrator\Sms\SmsJobQueue;
@@ -43,7 +43,7 @@ use GrowthOrchestrator\Sms\SmsRateLimiter;
 use GrowthOrchestrator\Sms\SmsServiceInterface;
 use GrowthOrchestrator\Sms\SmsTemplateProviderInterface;
 use GrowthOrchestrator\Sms\SmsTemplateRenderer;
-use GrowthOrchestrator\Sms\SmsTransportInterface;
+use GrowthOrchestrator\Sms\SmsTransportResolver;
 
 final class Plugin
 {
@@ -129,6 +129,7 @@ final class Plugin
 
         if (is_admin()) {
             $this->container->get(RulesController::class)->register($this->hooks);
+            $this->container->get(SmsSettingsController::class)->register($this->hooks);
         }
 
         $this->container->get(WordPressRulesScheduler::class)->register($this->hooks);
@@ -160,23 +161,19 @@ final class Plugin
             )
         );
 
-        $c->singleton(SmsTransportInterface::class, static function (): SmsTransportInterface {
-            /**
-             * Force a transport (tests, alternate providers).
-             *
-             * @param SmsTransportInterface|null $transport Return an implementation from the callback.
-             */
-            $filtered = apply_filters('gro_sms_transport', null);
-            if ($filtered instanceof SmsTransportInterface) {
-                return $filtered;
-            }
+        $c->singleton(SmsSettingsModel::class, static fn () => new SmsSettingsModel());
 
-            $twilio = new TwilioSmsConfig();
+        $c->singleton(SmsSettingsPageView::class, static fn () => new SmsSettingsPageView());
 
-            return $twilio->isConfigured()
-                ? new TwilioSmsTransport($twilio)
-                : new LoggingSmsTransport();
-        });
+        $c->singleton(
+            SmsSettingsController::class,
+            static fn (Container $c) => new SmsSettingsController(
+                $c->get(SmsSettingsModel::class),
+                $c->get(SmsSettingsPageView::class)
+            )
+        );
+
+        $c->singleton(SmsTransportResolver::class, static fn () => new SmsTransportResolver());
 
         $c->singleton(SmsTemplateRenderer::class, static fn () => new SmsTemplateRenderer());
 
@@ -191,7 +188,7 @@ final class Plugin
         $c->singleton(
             SmsDeliveryWorker::class,
             static fn (Container $c) => new SmsDeliveryWorker(
-                $c->get(SmsTransportInterface::class),
+                $c->get(SmsTransportResolver::class),
                 $c->get(SmsJobQueue::class)
             )
         );

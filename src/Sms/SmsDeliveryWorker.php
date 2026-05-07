@@ -12,7 +12,7 @@ use GrowthOrchestrator\Sms\Exception\SmsTransportException;
 final class SmsDeliveryWorker
 {
     public function __construct(
-        private readonly SmsTransportInterface $transport,
+        private readonly SmsTransportResolver $transportResolver,
         private readonly SmsJobQueue $queue
     ) {
     }
@@ -40,7 +40,7 @@ final class SmsDeliveryWorker
         $attempt = max(1, (int) ($job['attempt'] ?? 1));
 
         try {
-            $this->transport->deliver($to, $body, $job);
+            $this->transportResolver->resolve()->deliver($to, $body, $job);
 
             do_action('gro_sms_delivered', $job, $attempt);
         } catch (\Throwable $e) {

@@ -7,7 +7,7 @@ namespace GrowthOrchestrator\Rule;
 /**
  * Runtime user state snapshots are purely filter-driven closures ({@see 'gro_user_state_specs'}).
  *
- * Ship sensible defaults wired to legacy `gro_`/`ma_*` meta keys—extend/replace maps without editing core PHP.
+ * Baseline meta keys use growth_orchestrator_* and growth_subscriptions_* prefixes.
  */
 final class WordPressUserStateProvider implements UserStateProviderInterface
 {
@@ -45,15 +45,14 @@ final class WordPressUserStateProvider implements UserStateProviderInterface
     private function baselineSpecifications(): array
     {
         return [
-            'profile_completed'               => fn (int $uid): bool => $this->boolMeta($uid, 'gro_profile_completed', 'ma_profile_completed'),
-            'has_product'                   => fn (int $uid): bool => $this->boolMeta($uid, 'gro_has_product', 'ma_has_product'),
-            'has_subscription'              => fn (int $uid): bool => $this->boolMeta($uid, 'gro_has_subscription', 'ma_has_subscription'),
-            'subscription_status'           => fn (int $uid): string => $this->stringMeta($uid, 'gro_subscription_status', 'ma_subscription_status'),
-            'installment_status'            => fn (int $uid): string => $this->stringMeta($uid, 'gro_installment_status', 'ma_installment_status'),
+            'profile_completed' => fn (int $uid): bool => $this->boolMeta($uid, 'growth_orchestrator_profile_completed'),
+            'has_product' => fn (int $uid): bool => $this->boolMeta($uid, 'growth_orchestrator_has_product'),
+            'has_subscription' => fn (int $uid): bool => $this->boolMeta($uid, 'growth_subscriptions_has_subscription'),
+            'subscription_status' => fn (int $uid): string => $this->stringMeta($uid, 'growth_subscriptions_subscription_status'),
+            'installment_status' => fn (int $uid): string => $this->stringMeta($uid, 'growth_orchestrator_installment_status'),
             'subscription_days_until_expiry' => fn (int $uid): ?int => $this->nullableIntMeta(
                 $uid,
-                'gro_subscription_days_until_expiry',
-                'ma_subscription_days_until_expiry'
+                'growth_subscriptions_days_until_expiry'
             ),
         ];
     }
@@ -70,30 +69,23 @@ final class WordPressUserStateProvider implements UserStateProviderInterface
         return is_array($filtered) ? $filtered : $this->baselineSpecifications();
     }
 
-    private function boolMeta(int $userId, string $primaryKey, string $legacyKey): bool
+    private function boolMeta(int $userId, string $key): bool
     {
-        $primary = get_user_meta($userId, $primaryKey, true);
-        if ($primary !== '' && $primary !== null) {
-            return (bool) $primary;
-        }
+        $v = get_user_meta($userId, $key, true);
 
-        return (bool) get_user_meta($userId, $legacyKey, true);
+        return $v !== '' && $v !== null && (bool) $v;
     }
 
-    private function stringMeta(int $userId, string $primaryKey, string $legacyKey): string
+    private function stringMeta(int $userId, string $key): string
     {
-        $primary = get_user_meta($userId, $primaryKey, true);
-        if (is_string($primary) && $primary !== '') {
-            return $primary;
-        }
+        $v = get_user_meta($userId, $key, true);
 
-        return (string) get_user_meta($userId, $legacyKey, true);
+        return is_string($v) ? $v : '';
     }
 
-    private function nullableIntMeta(int $userId, string $primaryKey, string $legacyKey): ?int
+    private function nullableIntMeta(int $userId, string $key): ?int
     {
-        $primary = get_user_meta($userId, $primaryKey, true);
-        $v       = ($primary !== '' && $primary !== null) ? $primary : get_user_meta($userId, $legacyKey, true);
+        $v = get_user_meta($userId, $key, true);
 
         return $this->nullableInt($v);
     }

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator;
 
-use GrowthOrchestrator\Admin\RulesAdminPage;
-use GrowthOrchestrator\Admin\RulesDocumentService;
+use GrowthOrchestrator\Admin\Controllers\RulesController;
+use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
+use GrowthOrchestrator\Admin\Views\RulesPageView;
 use GrowthOrchestrator\Db\RulesDbSchema;
 use GrowthOrchestrator\Event\AutomationEvent;
 use GrowthOrchestrator\Event\EventDispatcher;
@@ -127,7 +128,7 @@ final class Plugin
         $this->container->get(WordPressEventBridge::class)->register($this->hooks);
 
         if (is_admin()) {
-            $this->container->get(RulesAdminPage::class)->register($this->hooks);
+            $this->container->get(RulesController::class)->register($this->hooks);
         }
 
         $this->container->get(WordPressRulesScheduler::class)->register($this->hooks);
@@ -249,17 +250,20 @@ final class Plugin
         );
 
         $c->singleton(
-            RulesDocumentService::class,
-            static fn (Container $c) => new RulesDocumentService(
+            RulesDocumentModel::class,
+            static fn (Container $c) => new RulesDocumentModel(
                 $c->get(DatabaseRulesRepository::class),
                 $c->get(OptionRulesRepository::class)
             )
         );
 
+        $c->singleton(RulesPageView::class, static fn () => new RulesPageView());
+
         $c->singleton(
-            RulesAdminPage::class,
-            static fn (Container $c) => new RulesAdminPage(
-                $c->get(RulesDocumentService::class)
+            RulesController::class,
+            static fn (Container $c) => new RulesController(
+                $c->get(RulesDocumentModel::class),
+                $c->get(RulesPageView::class)
             )
         );
 

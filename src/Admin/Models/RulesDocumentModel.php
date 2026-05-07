@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin;
+namespace GrowthOrchestrator\Admin\Models;
 
 use GrowthOrchestrator\Db\RulesDbSchema;
 use GrowthOrchestrator\Rule\DatabaseRulesRepository;
@@ -12,9 +12,9 @@ use GrowthOrchestrator\Rule\OptionRulesRepository;
 use GrowthOrchestrator\Rule\RuleDefinition;
 
 /**
- * Hydrates editor JSON from authoritative storage and persists validated documents into `{prefix}growth_orchestrator_rules`.
+ * Model: rules document I/O for the admin editor (DB primary, legacy option/file fallback).
  */
-final class RulesDocumentService
+final class RulesDocumentModel
 {
     public function __construct(
         private readonly DatabaseRulesRepository $database,
@@ -40,6 +40,26 @@ final class RulesDocumentService
 
         /** @phpstan-ignore-next-line */
         return apply_filters('gro_rules_editor_document_json', $legacy, 'legacy-option-or-file');
+    }
+
+    /**
+     * Parse JSON for read-only preview in the view (does not persist).
+     *
+     * @return array{error: ?string, definitions: list<RuleDefinition>}
+     */
+    public function parseForDisplay(string $documentJson): array
+    {
+        try {
+            return [
+                'error'        => null,
+                'definitions' => $this->parser->parse($documentJson),
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'error'        => $e->getMessage(),
+                'definitions' => [],
+            ];
+        }
     }
 
     /**

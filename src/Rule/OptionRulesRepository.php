@@ -8,7 +8,7 @@ namespace GrowthOrchestrator\Rule;
  * Legacy option + JSON file fallthrough when the `{prefix}growth_orchestrator_rules` table is empty.
  *
  * Prefer {@see DelegatingRulesRepository} for runtime resolution and {@see DatabaseRulesRepository}
- * plus {@see \GrowthOrchestrator\Admin\RulesDocumentService} for authoring.
+ * plus {@see \GrowthOrchestrator\Admin\Models\RulesDocumentModel} / {@see \GrowthOrchestrator\Admin\Controllers\RulesController} for authoring.
  */
 final class OptionRulesRepository implements RulesRepositoryInterface
 {

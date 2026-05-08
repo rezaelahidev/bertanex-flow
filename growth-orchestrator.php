@@ -9,6 +9,7 @@
  * Author:            Your Company
  * License:           GPL-2.0-or-later
  * Text Domain:       growth-orchestrator
+ * Domain Path: /languages
  *
  * @package GrowthOrchestrator
  */

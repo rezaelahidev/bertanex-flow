@@ -6,6 +6,7 @@ import {
   parseDocumentFromTextarea,
   ruleToEditable,
   serializeDocument,
+  slugLabel,
   stringT,
   type ActionRowUi,
   type ConditionRow,
@@ -40,7 +41,10 @@ function normalizeConfig(raw: GroRulesEditorConfig | undefined): GroRulesEditorC
     defaultVersion: raw?.defaultVersion ?? '1.0.0',
     recurrences: raw?.recurrences ?? ['hourly', 'twicedaily', 'daily', 'weekly'],
     operators: raw?.operators ?? ['eq'],
+    operatorLabels: raw?.operatorLabels ?? {},
     actionTypes: raw?.actionTypes ?? ['send_sms'],
+    actionTypeLabels: raw?.actionTypeLabels ?? {},
+    recurrenceLabels: raw?.recurrenceLabels ?? {},
     suggestedFields: raw?.suggestedFields ?? [],
     events: raw?.events ?? [],
   };
@@ -61,6 +65,26 @@ function removeCollapsedAria(cfg: GroRulesEditorConfig, ruleNum: number, ruleTit
 
 function t(cfg: GroRulesEditorConfig, key: string, fallback: string): string {
   return stringT(cfg, key, fallback);
+}
+
+function conditionToggleAria(cfg: GroRulesEditorConfig, expanded: boolean, num: number, summary: string): string {
+  const key = expanded ? 'accordionCollapseCondition' : 'accordionExpandCondition';
+  const fallback = expanded ? 'Collapse condition %s' : 'Expand condition %s';
+  return stringT(cfg, key, fallback).replace('%s', `#${String(num)}: ${summary}`);
+}
+
+function actionToggleAria(cfg: GroRulesEditorConfig, expanded: boolean, num: number, summary: string): string {
+  const key = expanded ? 'accordionCollapseAction' : 'accordionExpandAction';
+  const fallback = expanded ? 'Collapse action %s' : 'Expand action %s';
+  return stringT(cfg, key, fallback).replace('%s', `#${String(num)}: ${summary}`);
+}
+
+function removeConditionItemAria(cfg: GroRulesEditorConfig, num: number, summary: string): string {
+  return stringT(cfg, 'removeConditionAria', 'Remove condition %s from this rule').replace('%s', `#${String(num)}: ${summary}`);
+}
+
+function removeActionItemAria(cfg: GroRulesEditorConfig, num: number, summary: string): string {
+  return stringT(cfg, 'removeActionAria', 'Remove action %s from this rule').replace('%s', `#${String(num)}: ${summary}`);
 }
 
 function bootstrapFromTextarea(textareaId: string, cfg: GroRulesEditorConfig): {
@@ -192,7 +216,7 @@ function TriggersBlock({ ruleIndex, editable: te, onChange }: TriggersBlockProps
             >
               {(cfg.recurrences ?? []).map((r) => (
                 <option key={r} value={r}>
-                  {r}
+                  {slugLabel(cfg.recurrenceLabels, r)}
                 </option>
               ))}
             </select>
@@ -204,115 +228,195 @@ function TriggersBlock({ ruleIndex, editable: te, onChange }: TriggersBlockProps
 }
 
 interface ConditionsBlockProps {
+  ruleIndex: number;
   editable: EditableRule;
   onChange: (next: EditableRule) => void;
 }
 
-function ConditionsBlock({ editable: e, onChange }: ConditionsBlockProps): React.ReactElement {
+interface ConditionItemAccordionProps {
+  ruleIndex: number;
+  idx: number;
+  c: ConditionRow;
+  suggested: string[];
+  editable: EditableRule;
+  onChange: (next: EditableRule) => void;
+}
+
+function ConditionItemAccordion({
+  ruleIndex,
+  idx,
+  c,
+  suggested,
+  editable: e,
+  onChange,
+}: ConditionItemAccordionProps): React.ReactElement {
+  const cfg = useContext(CfgContext);
+  const [expanded, setExpanded] = useState(false);
+  const match = suggested.includes(c.field);
+  const fieldSelValue = match ? c.field : '__custom__';
+  const setCondition = (row: ConditionRow): void => {
+    onChange({ ...e, conditions: e.conditions.map((x, i) => (i === idx ? row : x)) });
+  };
+
+  const fieldShown = (c.field || '').trim() || t(cfg, 'fieldPlaceholder', 'State field key');
+  const opShown = slugLabel(cfg.operatorLabels, c.op);
+  const panelId = `gro-cond-panel-${ruleIndex}-${idx}`;
+  const titleId = `gro-cond-summary-${ruleIndex}-${idx}`;
+  const numHuman = idx + 1;
+
+  const ariaToggle = conditionToggleAria(cfg, expanded, numHuman, `${fieldShown} · ${opShown}`);
+  const removeAria = removeConditionItemAria(cfg, numHuman, fieldShown);
+
+  return (
+    <article className={`gro-rule-card gro-rule-card--nested ${expanded ? '' : 'gro-rule-card--collapsed'}`}>
+      <div className="gro-rule-card__accordion-row">
+        <button
+          type="button"
+          className="gro-rule-card__accordion-trigger"
+          aria-expanded={expanded}
+          aria-controls={panelId}
+          aria-label={ariaToggle}
+          id={titleId}
+          onClick={() => setExpanded((v) => !v)}
+        >
+          <span className="gro-rule-card__accordion-trigger-inner">
+            <span
+              className={`gro-row-chevron ${expanded ? 'gro-row-chevron--expanded' : 'gro-row-chevron--collapsed'}`}
+              aria-hidden
+            />
+            <span className="gro-rule-card__index-badge" aria-hidden>
+              #{numHuman}
+            </span>
+            <span className="gro-rule-card__summary-stack">
+              <span className="gro-rule-card__summary-main gro-rule-card__summary-main--mono">{fieldShown}</span>
+              <span className="gro-rule-card__summary-meta">
+                <span className="gro-rule-card__summary-chip">
+                  <span className="gro-rule-card__meta-key">{t(cfg, 'opCol', 'Operator')}</span>{' '}
+                  <strong className="gro-rule-card__meta-val">{opShown}</strong>
+                </span>
+              </span>
+            </span>
+          </span>
+        </button>
+        <div className="gro-rule-card__accordion-toolbar">
+          <button
+            type="button"
+            className="button button-small button-link-delete gro-rule-card__remove-collapsed"
+            aria-label={removeAria}
+            onClick={(ev) => {
+              ev.preventDefault();
+              ev.stopPropagation();
+              const next = e.conditions.filter((_, i) => i !== idx);
+              onChange({
+                ...e,
+                conditions: next.length ? next : [{ field: '', op: 'eq', valueJson: '', pattern: '' }],
+              });
+            }}
+          >
+            {t(cfg, 'removeRow', 'Remove')}
+          </button>
+        </div>
+      </div>
+      <div
+        role="region"
+        className="gro-rule-card__panel gro-rule-card__panel--nested"
+        id={panelId}
+        aria-labelledby={titleId}
+        hidden={!expanded}
+      >
+        <div className="gro-rule-card__body gro-rule-card__body--nested">
+          <div className="gro-condition-item-fields">
+            <div className="gro-nested-field gro-nested-field--full">
+              <label>
+                <strong>{t(cfg, 'fieldCol', 'Field')}</strong>
+                <select
+                  value={fieldSelValue}
+                  onChange={(ev) => {
+                    const v = ev.target.value;
+                    if (v === '__custom__') setCondition({ ...c, field: match ? '' : c.field });
+                    else setCondition({ ...c, field: v });
+                  }}
+                >
+                  <option value="__custom__">{t(cfg, 'customField', 'Custom…')}</option>
+                  {suggested.map((sf) => (
+                    <option key={sf} value={sf}>
+                      {sf}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  className="regular-text"
+                  placeholder={t(cfg, 'fieldPlaceholder', 'State field key')}
+                  style={{ display: fieldSelValue === '__custom__' ? undefined : 'none', marginTop: '8px' }}
+                  value={match ? '' : c.field}
+                  onChange={(ev) => setCondition({ ...c, field: ev.target.value })}
+                />
+              </label>
+            </div>
+            <div className="gro-nested-field gro-nested-field--full">
+              <label>
+                <strong>{t(cfg, 'opCol', 'Operator')}</strong>
+                <select value={c.op} onChange={(ev) => setCondition({ ...c, op: ev.target.value })}>
+                  {operatorOptions(cfg, c.op).map((o) => (
+                    <option key={o} value={o}>
+                      {slugLabel(cfg.operatorLabels, o)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            {c.op === 'regex' ? (
+              <div className="gro-nested-field gro-nested-field--full">
+                <label>
+                  <strong>{t(cfg, 'patternCol', 'Pattern (regex)')}</strong>
+                  <input
+                    type="text"
+                    className="code"
+                    placeholder={t(cfg, 'regexPatternPlaceholder', '/^...$/')}
+                    value={c.pattern}
+                    onChange={(ev) => setCondition({ ...c, pattern: ev.target.value })}
+                  />
+                </label>
+              </div>
+            ) : null}
+            {opsNeedValue(c.op) ? (
+              <div className="gro-nested-field gro-nested-field--full">
+                <label>
+                  <strong>{t(cfg, 'valueCol', 'Value (JSON)')}</strong>
+                  <textarea
+                    rows={3}
+                    value={c.valueJson}
+                    placeholder={t(cfg, 'valueJsonPlaceholder', 'Examples: true, false, 3, "text", []')}
+                    onChange={(ev) => setCondition({ ...c, valueJson: ev.target.value })}
+                  />
+                </label>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ConditionsBlock({ ruleIndex, editable: e, onChange }: ConditionsBlockProps): React.ReactElement {
   const cfg = useContext(CfgContext);
   const suggested = cfg.suggestedFields ?? [];
-
-  const setCondition = (idx: number, row: ConditionRow): void => {
-    onChange({ ...e, conditions: e.conditions.map((c, i) => (i === idx ? row : c)) });
-  };
 
   return (
     <div className="gro-rule-section">
       <h4>{t(cfg, 'conditionsHeading', 'Conditions (all must match)')}</h4>
-      <div className="gro-conditions-table-wrap">
-        <table className="widefat gro-conditions-table">
-          <thead>
-            <tr>
-              <th>{t(cfg, 'fieldCol', 'Field')}</th>
-              <th>{t(cfg, 'opCol', 'Operator')}</th>
-              <th>{t(cfg, 'patternCol', 'Pattern (regex)')}</th>
-              <th>{t(cfg, 'valueCol', 'Value (JSON)')}</th>
-              <th aria-label={t(cfg, 'removeRow', 'Remove')} />
-            </tr>
-          </thead>
-          <tbody>
-            {e.conditions.map((c, idx) => {
-              const match = suggested.includes(c.field);
-              const fieldSelValue = match ? c.field : '__custom__';
-
-              return (
-                <tr key={idx}>
-                  <td>
-                    <select
-                      value={fieldSelValue}
-                      onChange={(ev) => {
-                        const v = ev.target.value;
-                        if (v === '__custom__') setCondition(idx, { ...c, field: match ? '' : c.field });
-                        else setCondition(idx, { ...c, field: v });
-                      }}
-                    >
-                      <option value="__custom__">{t(cfg, 'customField', 'Custom…')}</option>
-                      {suggested.map((sf) => (
-                        <option key={sf} value={sf}>
-                          {sf}
-                        </option>
-                      ))}
-                    </select>
-                    <br />
-                    <input
-                      type="text"
-                      className="regular-text"
-                      placeholder={t(cfg, 'fieldPlaceholder', 'State field key')}
-                      style={{ display: fieldSelValue === '__custom__' ? undefined : 'none' }}
-                      value={match ? '' : c.field}
-                      onChange={(ev) => setCondition(idx, { ...c, field: ev.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <select value={c.op} onChange={(ev) => setCondition(idx, { ...c, op: ev.target.value })}>
-                      {operatorOptions(cfg, c.op).map((o) => (
-                        <option key={o} value={o}>
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td style={{ display: c.op === 'regex' ? undefined : 'none' }}>
-                    <input
-                      type="text"
-                      className="code"
-                      placeholder="/^...$/"
-                      value={c.pattern}
-                      onChange={(ev) => setCondition(idx, { ...c, pattern: ev.target.value })}
-                    />
-                  </td>
-                  <td style={{ display: opsNeedValue(c.op) ? undefined : 'none' }}>
-                    <textarea
-                      rows={2}
-                      value={c.valueJson}
-                      placeholder='true, false, 3, "text", []'
-                      onChange={(ev) => setCondition(idx, { ...c, valueJson: ev.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      className="button button-small"
-                      onClick={() => {
-                        const next = e.conditions.filter((_, i) => i !== idx);
-                        onChange({
-                          ...e,
-                          conditions: next.length ? next : [{ field: '', op: 'eq', valueJson: '', pattern: '' }],
-                        });
-                      }}
-                    >
-                      {t(cfg, 'removeRow', 'Remove')}
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="gro-sub-accordion-list" role="list">
+        {e.conditions.map((c, idx) => (
+          <div key={idx} className="gro-sub-accordion-list__item" role="listitem">
+            <ConditionItemAccordion ruleIndex={ruleIndex} idx={idx} c={c} suggested={suggested} editable={e} onChange={onChange} />
+          </div>
+        ))}
       </div>
       <button
         type="button"
-        className="button"
+        className="button gro-nested-list-add-button"
         onClick={() => onChange({ ...e, conditions: [...e.conditions, { field: '', op: 'eq', valueJson: '', pattern: '' }] })}
       >
         {t(cfg, 'addCondition', 'Add condition')}
@@ -322,91 +426,176 @@ function ConditionsBlock({ editable: e, onChange }: ConditionsBlockProps): React
 }
 
 interface ActionsBlockProps {
+  ruleIndex: number;
   editable: EditableRule;
   onChange: (next: EditableRule) => void;
 }
 
-function ActionsBlock({ editable: e, onChange }: ActionsBlockProps): React.ReactElement {
+interface ActionItemAccordionProps {
+  ruleIndex: number;
+  idx: number;
+  row: ActionRowUi;
+  editable: EditableRule;
+  onChange: (next: EditableRule) => void;
+}
+
+function ActionItemAccordion({ ruleIndex, idx, row: a, editable: e, onChange }: ActionItemAccordionProps): React.ReactElement {
   const cfg = useContext(CfgContext);
+  const [expanded, setExpanded] = useState(false);
   const at = cfg.actionTypes ?? ['log'];
 
-  const patchAction = (idx: number, row: ActionRowUi): void => {
-    onChange({ ...e, actions: e.actions.map((a, i) => (i === idx ? row : a)) });
+  const patchAction = (nextRow: ActionRowUi): void => {
+    onChange({ ...e, actions: e.actions.map((x, i) => (i === idx ? nextRow : x)) });
   };
+
+  const typeLabel = slugLabel(cfg.actionTypeLabels, at.includes(a.type) ? a.type : at[0]);
+  const templateShown = (a.template_id || '').trim() || '—';
+  const delayShown = `${String(a.delay_seconds)}s`;
+  const panelId = `gro-act-panel-${ruleIndex}-${idx}`;
+  const titleId = `gro-act-summary-${ruleIndex}-${idx}`;
+  const numHuman = idx + 1;
+  const summaryLine = `${typeLabel} · ${templateShown}`;
+  const ariaToggle = actionToggleAria(cfg, expanded, numHuman, summaryLine);
+  const removeAria = removeActionItemAria(cfg, numHuman, typeLabel);
+
+  return (
+    <article className={`gro-rule-card gro-rule-card--nested ${expanded ? '' : 'gro-rule-card--collapsed'}`}>
+      <div className="gro-rule-card__accordion-row">
+        <button
+          type="button"
+          className="gro-rule-card__accordion-trigger"
+          aria-expanded={expanded}
+          aria-controls={panelId}
+          aria-label={ariaToggle}
+          id={titleId}
+          onClick={() => setExpanded((v) => !v)}
+        >
+          <span className="gro-rule-card__accordion-trigger-inner">
+            <span
+              className={`gro-row-chevron ${expanded ? 'gro-row-chevron--expanded' : 'gro-row-chevron--collapsed'}`}
+              aria-hidden
+            />
+            <span className="gro-rule-card__index-badge" aria-hidden>
+              #{numHuman}
+            </span>
+            <span className="gro-rule-card__summary-stack">
+              <span className="gro-rule-card__summary-main">{typeLabel}</span>
+              <span className="gro-rule-card__summary-meta">
+                <span className="gro-rule-card__summary-chip gro-rule-card__summary-chip--id">
+                  <code>{templateShown}</code>
+                </span>
+                <span className="gro-rule-card__summary-sep" aria-hidden>
+                  {' · '}
+                </span>
+                <span className="gro-rule-card__summary-chip">
+                  <span className="gro-rule-card__meta-key">{t(cfg, 'delaySeconds', 'delay_seconds')}</span>{' '}
+                  <strong className="gro-rule-card__meta-val">{delayShown}</strong>
+                </span>
+              </span>
+            </span>
+          </span>
+        </button>
+        <div className="gro-rule-card__accordion-toolbar">
+          <button
+            type="button"
+            className="button button-small button-link-delete gro-rule-card__remove-collapsed"
+            aria-label={removeAria}
+            onClick={(ev) => {
+              ev.preventDefault();
+              ev.stopPropagation();
+              const next = e.actions.filter((_, i) => i !== idx);
+              onChange({
+                ...e,
+                actions: next.length ? next : [{ type: at[0], template_id: '', delay_seconds: 0, paramsJson: '{}' }],
+              });
+            }}
+          >
+            {t(cfg, 'removeAction', 'Remove action')}
+          </button>
+        </div>
+      </div>
+      <div
+        role="region"
+        className="gro-rule-card__panel gro-rule-card__panel--nested"
+        id={panelId}
+        aria-labelledby={titleId}
+        hidden={!expanded}
+      >
+        <div className="gro-rule-card__body gro-rule-card__body--nested">
+          <div className="gro-action-row gro-action-row--nested">
+            <div className="gro-action-row__grid">
+            <p className="gro-action-field gro-action-field--type">
+              <label>
+                <strong>{t(cfg, 'actionType', 'Type')}</strong>
+                <select value={at.includes(a.type) ? a.type : at[0]} onChange={(ev) => patchAction({ ...a, type: ev.target.value })}>
+                  {at.map((x) => (
+                    <option key={x} value={x}>
+                      {slugLabel(cfg.actionTypeLabels, x)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </p>
+            <p className="gro-action-field gro-action-field--template">
+              <label>
+                <strong>{t(cfg, 'templateId', 'template_id')}</strong>
+                <input
+                  type="text"
+                  className="regular-text code"
+                  value={a.template_id}
+                  onChange={(ev) => patchAction({ ...a, template_id: ev.target.value })}
+                />
+              </label>
+            </p>
+            <p className="gro-action-field gro-action-field--delay">
+              <label>
+                <strong>{t(cfg, 'delaySeconds', 'delay_seconds')}</strong>
+                <input
+                  type="number"
+                  min={0}
+                  step={1}
+                  inputMode="numeric"
+                  value={a.delay_seconds}
+                  onChange={(ev) => patchAction({ ...a, delay_seconds: parseInt(ev.target.value, 10) || 0 })}
+                />
+              </label>
+            </p>
+          </div>
+          <p className="gro-action-row__params">
+            <label>
+              <strong>{t(cfg, 'paramsJson', 'params (JSON object)')}</strong>
+              <textarea
+                rows={4}
+                className="large-text code"
+                value={a.paramsJson}
+                onChange={(ev) => patchAction({ ...a, paramsJson: ev.target.value })}
+              />
+            </label>
+          </p>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ActionsBlock({ ruleIndex, editable: e, onChange }: ActionsBlockProps): React.ReactElement {
+  const cfg = useContext(CfgContext);
+  const at = cfg.actionTypes ?? ['log'];
 
   return (
     <div className="gro-rule-section">
       <h4>{t(cfg, 'actionsHeading', 'Actions')}</h4>
-      {e.actions.map((a, idx) => (
-        <div key={idx} className="gro-action-row">
-          <div className="gro-action-row__grid">
-            <p>
-              <label>
-                <strong>{t(cfg, 'actionType', 'Type')}</strong>
-              </label>
-              <select value={at.includes(a.type) ? a.type : at[0]} onChange={(ev) => patchAction(idx, { ...a, type: ev.target.value })}>
-                {at.map((x) => (
-                  <option key={x} value={x}>
-                    {x}
-                  </option>
-                ))}
-              </select>
-            </p>
-            <p>
-              <label>
-                <strong>{t(cfg, 'templateId', 'template_id')}</strong>
-              </label>
-              <input
-                type="text"
-                className="regular-text code"
-                value={a.template_id}
-                onChange={(ev) => patchAction(idx, { ...a, template_id: ev.target.value })}
-              />
-            </p>
-            <p>
-              <label>
-                <strong>{t(cfg, 'delaySeconds', 'delay_seconds')}</strong>
-              </label>
-              <input
-                type="number"
-                min={0}
-                step={1}
-                value={a.delay_seconds}
-                onChange={(ev) => patchAction(idx, { ...a, delay_seconds: parseInt(ev.target.value, 10) || 0 })}
-              />
-            </p>
+      <div className="gro-sub-accordion-list" role="list">
+        {e.actions.map((a, idx) => (
+          <div key={idx} className="gro-sub-accordion-list__item" role="listitem">
+            <ActionItemAccordion ruleIndex={ruleIndex} idx={idx} row={a} editable={e} onChange={onChange} />
           </div>
-          <p>
-            <label>
-              <strong>{t(cfg, 'paramsJson', 'params (JSON object)')}</strong>
-            </label>
-            <textarea
-              rows={4}
-              className="large-text code"
-              value={a.paramsJson}
-              onChange={(ev) => patchAction(idx, { ...a, paramsJson: ev.target.value })}
-            />
-          </p>
-          <span className="gro-rule-card__actions-row">
-            <button
-              type="button"
-              className="button button-small"
-              onClick={() => {
-                const next = e.actions.filter((_, i) => i !== idx);
-                onChange({
-                  ...e,
-                  actions: next.length ? next : [{ type: at[0], template_id: '', delay_seconds: 0, paramsJson: '{}' }],
-                });
-              }}
-            >
-              {t(cfg, 'removeAction', 'Remove action')}
-            </button>
-          </span>
-        </div>
-      ))}
+        ))}
+      </div>
       <button
         type="button"
-        className="button"
+        className="button gro-nested-list-add-button"
         onClick={() =>
           onChange({
             ...e,
@@ -566,8 +755,8 @@ function SimpleRuleCard({
         </header>
         <div className="gro-rule-card__body">
           <TriggersBlock ruleIndex={ruleIndex} editable={e.trigger} onChange={(trigger) => onChange({ ...e, trigger })} />
-          <ConditionsBlock editable={e} onChange={onChange} />
-          <ActionsBlock editable={e} onChange={onChange} />
+          <ConditionsBlock ruleIndex={ruleIndex} editable={e} onChange={onChange} />
+          <ActionsBlock ruleIndex={ruleIndex} editable={e} onChange={onChange} />
         </div>
       </div>
     </article>

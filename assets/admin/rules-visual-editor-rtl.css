@@ -1,0 +1,22 @@
+/**
+ * RTL tweaks for Growth Orchestrator rules visual editor (.rtl on body).
+ */
+
+.rtl .gro-rule-card__chevron::before {
+	transform: scaleX(-1) rotate(-45deg);
+}
+
+.rtl .gro-rule-card:not(.gro-rule-card--collapsed) .gro-rule-card__chevron::before {
+	transform: scaleX(-1) rotate(45deg);
+	margin-top: 0;
+}
+
+.rtl .gro-row-chevron--collapsed::before {
+	transform: scaleX(-1) rotate(-45deg);
+	margin-top: -0.15rem;
+}
+
+.rtl .gro-row-chevron--expanded::before {
+	transform: scaleX(-1) rotate(45deg);
+	margin-top: 0;
+}

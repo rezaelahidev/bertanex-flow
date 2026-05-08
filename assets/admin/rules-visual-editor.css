@@ -1,6 +1,6 @@
 /* Growth Orchestrator — Rules visual editor (admin) */
 
-.gro-rules-visual-inner {
+:root {
 	--gro-r-1: 6px;
 	--gro-r-2: 8px;
 	--gro-space-1: 6px;
@@ -33,9 +33,10 @@
 
 .gro-rules-editor-tabs .nav-tab {
 	cursor: pointer;
-	border-radius: var(--gro-r-1) var(--gro-r-1) 0 0;
 	min-height: 44px;
+	margin: 0 10px 0 0;
 	padding-inline: 16px;
+	border-radius: var(--gro-r-1) var(--gro-r-1) 0 0;
 	transition: background-color 0.12s ease, color 0.12s ease;
 }
 
@@ -43,6 +44,10 @@
 	outline: 2px solid var(--gro-c-focus);
 	outline-offset: 2px;
 	box-shadow: 0 0 0 4px var(--gro-c-focus-ring);
+}
+
+.gro-rules-editor-tabs .nav-tab:active, .gro-rules-editor-tabs .nav-tab:focus {
+	background-color: var(--gro-c-surface);
 }
 
 .gro-rules-visual {
@@ -75,7 +80,7 @@
 	display: flex;
 	align-items: center;
 	gap: var(--gro-space-2);
-	margin-left: auto;
+	margin-inline-start: auto;
 }
 
 .gro-rules-visual__version label {
@@ -127,7 +132,7 @@
 }
 
 .gro-rule-card--advanced {
-	border-left: 3px solid #dba617;
+	border-inline-start: 3px solid #dba617;
 }
 
 .gro-rule-card__accordion-row {
@@ -146,9 +151,9 @@
 	margin: 0;
 	padding: 0;
 	border: none;
-	background: transparent;
+	background: #eee;
 	cursor: pointer;
-	text-align: left;
+	text-align: start;
 	font-family: inherit;
 	font-size: 14px;
 	line-height: 1.45;
@@ -158,11 +163,12 @@
 }
 
 .gro-rule-card__accordion-trigger:hover {
-	background: var(--gro-c-surface-muted);
+	background: var(--gro-c-surface);
 }
 
 .gro-rule-card__accordion-trigger:focus {
 	outline: none;
+	background: var(--gro-c-surface);
 	box-shadow: inset 0 0 0 2px var(--gro-c-focus);
 }
 
@@ -179,7 +185,8 @@
 	align-items: flex-start;
 	flex-wrap: nowrap;
 	gap: var(--gro-space-2);
-	padding: var(--gro-space-3) var(--gro-space-2) var(--gro-space-3) var(--gro-space-3);
+	padding-block: var(--gro-space-3);
+	padding-inline: var(--gro-space-3) var(--gro-space-2);
 }
 
 .gro-rule-card__accordion-toolbar {
@@ -188,7 +195,6 @@
 	justify-content: center;
 	flex-shrink: 0;
 	padding: var(--gro-space-2) var(--gro-space-3);
-	border-left: 1px solid var(--gro-c-border);
 	background: var(--gro-c-surface);
 	align-self: stretch;
 }
@@ -196,7 +202,7 @@
 @media (max-width: 600px) {
 	.gro-rule-card__accordion-toolbar {
 		flex: 1 1 100%;
-		border-left: none;
+		border-inline-start: none;
 		border-top: 1px solid var(--gro-c-border);
 		justify-content: flex-end;
 	}
@@ -276,6 +282,40 @@
 }
 
 .gro-rule-card:not(.gro-rule-card--collapsed) .gro-rule-card__chevron::before {
+	transform: rotate(45deg);
+	margin-top: 0;
+}
+
+/* Nested rows (conditions / actions): explicit expanded/collapsed state on the chevron */
+.gro-row-chevron {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.65rem;
+	min-width: 1.65rem;
+	min-height: 1.65rem;
+	flex-shrink: 0;
+	align-self: center;
+	color: var(--gro-c-text-secondary);
+	border-radius: var(--gro-r-1);
+}
+
+.gro-row-chevron::before {
+	content: "";
+	display: block;
+	width: 0.45rem;
+	height: 0.45rem;
+	border-right: 2px solid currentcolor;
+	border-bottom: 2px solid currentcolor;
+	transition: transform 0.18s ease, margin-top 0.18s ease;
+}
+
+.gro-row-chevron--collapsed::before {
+	transform: rotate(-45deg);
+	margin-top: -0.15rem;
+}
+
+.gro-row-chevron--expanded::before {
 	transform: rotate(45deg);
 	margin-top: 0;
 }
@@ -430,6 +470,135 @@
 	padding: var(--gro-space-3) var(--gro-space-3) var(--gro-space-4);
 }
 
+/* Conditions & actions: nested accordions inside rule body */
+.gro-sub-accordion-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gro-space-3);
+	margin: 0 0 var(--gro-space-2) 0;
+	padding: 0;
+}
+
+.gro-sub-accordion-list__item {
+	margin: 0;
+}
+
+.gro-nested-list-add-button {
+	margin-top: var(--gro-space-2);
+}
+
+.gro-rule-card--nested {
+	box-shadow: var(--gro-shadow-sm);
+}
+
+.gro-rule-card__body .gro-rule-card.gro-rule-card--nested:last-child {
+	margin-bottom: 0;
+}
+
+.gro-rule-card--nested .gro-rule-card__accordion-row {
+	min-height: 44px;
+}
+
+.gro-rule-card--nested .gro-rule-card__accordion-trigger {
+	min-height: 44px;
+	font-size: 13px;
+}
+
+.gro-rule-card--nested .gro-rule-card__accordion-trigger-inner {
+	padding-block: var(--gro-space-2);
+	padding-inline: var(--gro-space-2);
+}
+
+.gro-rule-card--nested .gro-rule-card__index-badge {
+	min-width: 1.75rem;
+	height: 1.45rem;
+	padding: 0 6px;
+	font-size: 11px;
+}
+
+	padding: var(--gro-space-2);
+}
+
+.gro-rule-card__panel--nested {
+	border-top: 1px solid var(--gro-c-border);
+}
+
+.gro-rule-card__body--nested {
+	padding: var(--gro-space-3);
+	background: var(--gro-c-surface);
+}
+
+.gro-condition-item-fields {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gro-space-3);
+}
+
+.gro-nested-field label {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gro-space-1);
+	margin: 0;
+	cursor: inherit;
+	line-height: 1.4;
+	font-weight: 500;
+	font-size: 13px;
+	color: var(--gro-c-text);
+}
+
+.gro-nested-field label strong {
+	display: block;
+	font-weight: 600;
+	margin: 0;
+	font-size: 13px;
+	color: var(--gro-c-text);
+}
+
+.gro-nested-field select,
+.gro-nested-field input[type="text"],
+.gro-nested-field textarea {
+	width: 100%;
+	max-width: 100%;
+	min-height: 38px;
+	box-sizing: border-box;
+	padding: 6px 10px;
+	font-size: 14px;
+	line-height: 1.4;
+	border-radius: var(--gro-r-1);
+	border: 1px solid var(--gro-c-border-strong);
+	background-color: var(--gro-c-surface);
+	color: var(--gro-c-text);
+}
+
+.gro-nested-field textarea {
+	min-height: 5rem;
+	padding: var(--gro-space-2);
+	font-family: Consolas, Monaco, monospace;
+	font-size: 13px;
+	line-height: 1.45;
+	resize: vertical;
+}
+
+.gro-nested-field select:focus,
+.gro-nested-field input[type="text"]:focus,
+.gro-nested-field textarea:focus {
+	border-color: var(--gro-c-focus);
+	box-shadow: 0 0 0 1px var(--gro-c-focus);
+	outline: none;
+}
+
+.gro-action-row--nested {
+	border: none;
+	box-shadow: none;
+	background: transparent;
+	padding: 0;
+	margin: 0;
+}
+
+.gro-action-row--nested .gro-action-row__grid {
+	margin-bottom: var(--gro-space-3);
+}
+
 .gro-rule-card__actions-row {
 	display: flex;
 	flex-wrap: wrap;
@@ -568,7 +737,7 @@
 
 .gro-conditions-table th {
 	background: var(--gro-c-surface-elevated);
-	text-align: left;
+	text-align: start;
 	font-weight: 600;
 	color: var(--gro-c-text);
 }
@@ -604,17 +773,135 @@
 
 .gro-action-row__grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: var(--gro-space-2);
-	margin-bottom: var(--gro-space-2);
+	grid-template-columns:
+		minmax(11rem, 1fr)
+		minmax(14rem, 2.25fr)
+		minmax(9rem, 12rem);
+	gap: var(--gro-space-3) var(--gro-space-3);
+	margin-bottom: var(--gro-space-3);
+	align-items: start;
 }
 
-.gro-action-row label {
+@media (max-width: 782px) {
+	.gro-action-row__grid {
+		grid-template-columns: 1fr;
+		gap: var(--gro-space-2);
+		margin-bottom: var(--gro-space-2);
+	}
+}
+
+.gro-action-field {
+	margin: 0;
+	min-width: 0;
+}
+
+.gro-action-field label {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gro-space-1);
+	margin: 0;
+	align-items: stretch;
+	cursor: inherit;
+	line-height: 1.4;
+	min-height: 0;
+	font-weight: 500;
+	font-size: 13px;
+	color: var(--gro-c-text);
+}
+
+.gro-action-field label strong {
 	display: block;
 	font-weight: 600;
 	font-size: 13px;
-	margin-bottom: var(--gro-space-1);
+	margin: 0;
 	color: var(--gro-c-text);
+}
+
+.gro-action-field select,
+.gro-action-field input[type='text'],
+.gro-action-field input[type='number'] {
+	width: 100%;
+	max-width: 100%;
+	min-height: 38px;
+	box-sizing: border-box;
+	padding: 6px 10px;
+	font-size: 14px;
+	line-height: 1.4;
+	border-radius: var(--gro-r-1);
+	border: 1px solid var(--gro-c-border-strong);
+	background-color: var(--gro-c-surface);
+	color: var(--gro-c-text);
+}
+
+.gro-action-field input[type='number'] {
+	max-width: 100%;
+}
+
+@media (max-width: 782px) {
+	.gro-action-field input[type='number'] {
+		max-width: none;
+	}
+}
+
+.gro-action-field--type select {
+	cursor: pointer;
+}
+
+.gro-action-field select:focus,
+.gro-action-field input[type='text']:focus,
+.gro-action-field input[type='number']:focus {
+	border-color: var(--gro-c-focus);
+	box-shadow: 0 0 0 1px var(--gro-c-focus);
+	outline: none;
+}
+
+.gro-action-row__params {
+	margin: 0 0 var(--gro-space-2);
+}
+
+.gro-action-row__params label {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gro-space-1);
+	margin: 0;
+	align-items: stretch;
+	font-weight: 500;
+	font-size: 13px;
+	color: var(--gro-c-text);
+}
+
+.gro-action-row__params label strong {
+	display: block;
+	font-weight: 600;
+	margin: 0;
+}
+
+.gro-action-row__params textarea.large-text.code:focus {
+	border-color: var(--gro-c-focus);
+	box-shadow: 0 0 0 1px var(--gro-c-focus);
+	outline: none;
+}
+
+.gro-action-row textarea.large-text.code {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	min-height: 5.5rem;
+	box-sizing: border-box;
+	padding: var(--gro-space-2);
+	font-family: Consolas, Monaco, monospace;
+	font-size: 13px;
+	line-height: 1.45;
+	border-radius: var(--gro-r-1);
+	border: 1px solid var(--gro-c-border-strong);
+	background-color: var(--gro-c-surface);
+}
+
+.gro-action-row .gro-rule-card__actions-row {
+	display: inline-flex;
+	margin-top: var(--gro-space-1);
+	flex-wrap: wrap;
+	gap: var(--gro-space-1);
 }
 
 .gro-badge {
@@ -637,10 +924,11 @@
 
 .gro-banner {
 	padding: var(--gro-space-3);
-	border-left: 4px solid #dba617;
+	border-inline-start: 4px solid #dba617;
 	background: #fcf9e8;
 	margin: 0 0 var(--gro-space-3);
-	border-radius: 0 var(--gro-r-1) var(--gro-r-1) 0;
+	border-start-end-radius: var(--gro-r-1);
+	border-end-end-radius: var(--gro-r-1);
 	font-size: 13px;
 	line-height: 1.55;
 	color: var(--gro-c-text);
@@ -658,11 +946,30 @@
 }
 
 .gro-banner--error {
-	border-left-color: #d63638;
+	border-inline-start-color: #d63638;
 	background: #fcf0f1;
 	color: var(--gro-c-text);
 }
 
 .gro-banner p {
 	margin: 0;
+}
+
+/* JSON/code fields stay LTR inside RTL admin */
+.gro-rules-json-textarea {
+	direction: ltr;
+	unicode-bidi: isolate;
+	text-align: left;
+}
+
+.gro-rules-visual-inner .gro-conditions-table textarea,
+.gro-rules-visual-inner .gro-conditions-table input[type="text"],
+.gro-rules-visual-inner .gro-schedule-fields input[type="text"],
+.gro-rules-visual-inner .gro-action-field input[type="text"],
+.gro-rules-visual-inner .gro-action-field input[type="number"],
+.gro-rules-visual-inner .gro-action-row__params textarea.large-text.code,
+.gro-rules-visual-inner .gro-nested-field textarea,
+.gro-rules-visual-inner .gro-nested-field input[type="text"] {
+	direction: ltr;
+	unicode-bidi: isolate;
 }

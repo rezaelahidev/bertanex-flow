@@ -104,7 +104,7 @@ if ($context->showSuccessNotice) {
                     name="gro_rules_json"
                     id="gro_rules_json"
                     rows="24"
-                    class="large-text code"
+                    class="large-text code gro-rules-json-textarea"
                     style="width: 100%; max-width: 960px; font-family: monospace;"
                     spellcheck="false"
                 ><?php echo esc_textarea($context->textareaValue); ?></textarea>

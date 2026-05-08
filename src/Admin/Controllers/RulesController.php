@@ -101,25 +101,34 @@ final class RulesController
             return;
         }
 
-        if (! \defined('GROWTH_ORCH_PLUGIN_URL') || ! \defined('GROWTH_ORCH_VERSION')) {
+        if (! \defined('GROWTH_ORCH_PLUGIN_URL') || ! \defined('GROWTH_ORCH_PLUGIN_DIR')) {
             return;
         }
 
         $base = GROWTH_ORCH_PLUGIN_URL . 'assets/admin/';
-        $ver  = (string) GROWTH_ORCH_VERSION;
 
+        $cssVer = self::assetFileVersion('assets/admin/rules-visual-editor.css');
         wp_enqueue_style(
             'gro-rules-visual-editor',
             $base . 'rules-visual-editor.css',
             [],
-            $ver
+            $cssVer
         );
+
+        if (is_rtl()) {
+            wp_enqueue_style(
+                'gro-rules-visual-editor-rtl',
+                $base . 'rules-visual-editor-rtl.css',
+                ['gro-rules-visual-editor'],
+                self::assetFileVersion('assets/admin/rules-visual-editor-rtl.css')
+            );
+        }
 
         wp_enqueue_script(
             'gro-rules-visual-editor',
             $base . 'rules-visual-editor.bundle.js',
             [],
-            $ver,
+            self::assetFileVersion('assets/admin/rules-visual-editor.bundle.js'),
             true
         );
 
@@ -144,6 +153,8 @@ final class RulesController
             ['send_sms', 'send_email', 'send_discount', 'webhook', 'log']
         );
 
+        $recurrences = ['hourly', 'twicedaily', 'daily', 'weekly'];
+
         /** @phpstan-ignore-next-line */
         $suggestedFields = apply_filters(
             'gro_rules_editor_suggested_condition_fields',
@@ -161,10 +172,13 @@ final class RulesController
             'groRulesEditor',
             [
                 'defaultVersion'   => '1.0.0',
-                'recurrences'       => ['hourly', 'twicedaily', 'daily', 'weekly'],
+                'recurrences'      => $recurrences,
                 'events'           => $events,
                 'operators'        => $operators,
+                'operatorLabels'   => self::operatorLabelsForSlugs($operators),
                 'actionTypes'      => $actionTypes,
+                'actionTypeLabels' => self::actionTypeLabelsForSlugs($actionTypes),
+                'recurrenceLabels' => self::recurrenceLabelsForSlugs($recurrences),
                 'suggestedFields'  => $suggestedFields,
                 'strings'          => [
                     'errInvalidRoot'   => __('JSON must be an object with a "rules" array.', 'growth-orchestrator'),
@@ -186,6 +200,12 @@ final class RulesController
                     'removeRuleShort'  => __('Remove', 'growth-orchestrator'),
                     'accordionExpand'   => __('Expand settings for rule %s', 'growth-orchestrator'),
                     'accordionCollapse' => __('Collapse settings for rule %s', 'growth-orchestrator'),
+                    'accordionExpandCondition' => __('Expand condition %s', 'growth-orchestrator'),
+                    'accordionCollapseCondition' => __('Collapse condition %s', 'growth-orchestrator'),
+                    'accordionExpandAction' => __('Expand action %s', 'growth-orchestrator'),
+                    'accordionCollapseAction' => __('Collapse action %s', 'growth-orchestrator'),
+                    'removeConditionAria' => __('Remove condition %s from this rule', 'growth-orchestrator'),
+                    'removeActionAria' => __('Remove action %s from this rule', 'growth-orchestrator'),
                     'removeRuleCollapsedAria' => __('Remove %s permanently from this list', 'growth-orchestrator'),
                     'ruleListHeading' => __('Configured rules', 'growth-orchestrator'),
                     'disabledLabel'   => __('Disabled', 'growth-orchestrator'),
@@ -216,9 +236,108 @@ final class RulesController
                     'paramsJson'       => __('params (JSON object)', 'growth-orchestrator'),
                     'removeAction'     => __('Remove action', 'growth-orchestrator'),
                     'addAction'        => __('Add action', 'growth-orchestrator'),
+                    'regexPatternPlaceholder' => __('/^...$/', 'growth-orchestrator'),
+                    'valueJsonPlaceholder' => __('Examples: true, false, 3, "text", []', 'growth-orchestrator'),
                 ],
             ]
         );
+    }
+
+    /**
+     * @param list<string> $slugs
+     * @return array<string, string>
+     */
+    private static function operatorLabelsForSlugs(array $slugs): array
+    {
+        $out = [];
+        foreach ($slugs as $op) {
+            if (! is_string($op) || $op === '') {
+                continue;
+            }
+            $out[$op] = self::operatorSlugLabel($op);
+        }
+
+        return $out;
+    }
+
+    private static function operatorSlugLabel(string $op): string
+    {
+        return match ($op) {
+            'eq' => __('Equals', 'growth-orchestrator'),
+            'neq' => __('Not equals', 'growth-orchestrator'),
+            'gt' => __('Greater than', 'growth-orchestrator'),
+            'gte' => __('Greater than or equal', 'growth-orchestrator'),
+            'lt' => __('Less than', 'growth-orchestrator'),
+            'lte' => __('Less than or equal', 'growth-orchestrator'),
+            'in' => __('In list', 'growth-orchestrator'),
+            'not_in' => __('Not in list', 'growth-orchestrator'),
+            'empty' => __('Is empty', 'growth-orchestrator'),
+            'not_empty' => __('Is not empty', 'growth-orchestrator'),
+            'truthy' => __('Is truthy', 'growth-orchestrator'),
+            'falsy' => __('Is falsy', 'growth-orchestrator'),
+            'regex' => __('Matches regex', 'growth-orchestrator'),
+            'starts_with' => __('Starts with', 'growth-orchestrator'),
+            'ends_with' => __('Ends with', 'growth-orchestrator'),
+            'contains' => __('Contains', 'growth-orchestrator'),
+            default => $op,
+        };
+    }
+
+    /**
+     * @param list<string> $slugs
+     * @return array<string, string>
+     */
+    private static function actionTypeLabelsForSlugs(array $slugs): array
+    {
+        $out = [];
+        foreach ($slugs as $slug) {
+            if (! is_string($slug) || $slug === '') {
+                continue;
+            }
+            $out[$slug] = self::actionTypeSlugLabel($slug);
+        }
+
+        return $out;
+    }
+
+    private static function actionTypeSlugLabel(string $slug): string
+    {
+        return match ($slug) {
+            'send_sms' => __('Send SMS', 'growth-orchestrator'),
+            'send_email' => __('Send email', 'growth-orchestrator'),
+            'send_discount' => __('Send discount', 'growth-orchestrator'),
+            'webhook' => __('Webhook', 'growth-orchestrator'),
+            'log' => __('Log', 'growth-orchestrator'),
+            default => $slug,
+        };
+    }
+
+    /**
+     * @param list<string> $slugs
+     * @return array<string, string>
+     */
+    private static function recurrenceLabelsForSlugs(array $slugs): array
+    {
+        $out = [];
+        foreach ($slugs as $slug) {
+            if (! is_string($slug) || $slug === '') {
+                continue;
+            }
+            $out[$slug] = self::recurrenceSlugLabel($slug);
+        }
+
+        return $out;
+    }
+
+    private static function recurrenceSlugLabel(string $slug): string
+    {
+        return match ($slug) {
+            'hourly' => __('Hourly', 'growth-orchestrator'),
+            'twicedaily' => __('Twice daily', 'growth-orchestrator'),
+            'daily' => __('Daily', 'growth-orchestrator'),
+            'weekly' => __('Weekly', 'growth-orchestrator'),
+            default => $slug,
+        };
     }
 
     private static function eventTypeLabel(EventType $type): string
@@ -281,6 +400,21 @@ final class RulesController
         );
 
         $this->view->render($context);
+    }
+
+    /**
+     * Cache-bust admin assets from file modification time (falls back to plugin version).
+     *
+     * @param non-empty-string $relativePath Path under the plugin root (e.g. assets/admin/foo.css).
+     */
+    private static function assetFileVersion(string $relativePath): string
+    {
+        $path = \GROWTH_ORCH_PLUGIN_DIR . ltrim($relativePath, '/');
+        $mtime = @filemtime($path);
+
+        return $mtime !== false
+            ? (string) $mtime
+            : (\defined('GROWTH_ORCH_VERSION') ? (string) \GROWTH_ORCH_VERSION : '0');
     }
 
     private function errorCodeForThrowable(\Throwable $e): string

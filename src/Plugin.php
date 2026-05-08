@@ -57,9 +57,19 @@ final class Plugin
     {
         $this->registerServices();
 
+        $this->hooks->add_action($this, 'loadTextdomain', 'plugins_loaded', 1, 0);
         $this->hooks->add_action($this, 'bootstrapPersistence', 'plugins_loaded', 2, 0);
         $this->hooks->add_action($this, 'onPluginsLoaded', 'plugins_loaded', 5, 0);
         $this->hooks->register();
+    }
+
+    public function loadTextdomain(): void
+    {
+        load_plugin_textdomain(
+            'growth-orchestrator',
+            false,
+            dirname(\plugin_basename(\GROWTH_ORCH_PLUGIN_FILE)) . '/languages'
+        );
     }
 
     public function bootstrapPersistence(): void

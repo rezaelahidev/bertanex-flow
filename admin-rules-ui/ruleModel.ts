@@ -3,7 +3,11 @@ export interface GroRulesEditorConfig {
   recurrences?: string[];
   events?: { value: string; label: string }[];
   operators?: string[];
+  /** Display labels for operator slugs (from PHP i18n). */
+  operatorLabels?: Record<string, string>;
   actionTypes?: string[];
+  actionTypeLabels?: Record<string, string>;
+  recurrenceLabels?: Record<string, string>;
   suggestedFields?: string[];
   strings?: Record<string, string>;
 }
@@ -64,6 +68,12 @@ const OPERATORS_NO_VALUE: Record<string, true> = {
 export function stringT(cfg: GroRulesEditorConfig, key: string, fallback: string): string {
   const s = cfg.strings?.[key];
   return s !== undefined ? String(s) : fallback;
+}
+
+/** Localized label for a slug, or the slug if no map entry. */
+export function slugLabel(map: Record<string, string> | undefined, slug: string): string {
+  const v = map?.[slug];
+  return v !== undefined && v !== '' ? v : slug;
 }
 
 export function parseDocumentJson(text: string, errMsg: string): RulesDocument {

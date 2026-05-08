@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Template: Growth Orchestrator → Rules (JSON editor + overview).
+ * Template: Automation rules editor (JSON + visual builder overview).
  *
  * @var \GrowthOrchestrator\Admin\ViewModels\RulesPageContext $context
  */
@@ -20,7 +20,7 @@ if ($context->showSuccessNotice) {
 
 ?>
 <div class="wrap gro-rules-admin">
-    <h1><?php echo esc_html__('Growth Orchestrator — Rules', 'growth-orchestrator'); ?></h1>
+    <h1><?php echo esc_html__('Automation Rules', 'growth-orchestrator'); ?></h1>
     <p class="description">
         <?php echo esc_html__(
             'Rules are stored in the growth_orchestrator_rules database table. When the table is empty, this editor mirrors the legacy option/plugin JSON until first save hydrates persistence.',

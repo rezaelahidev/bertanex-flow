@@ -15,20 +15,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Growth Orchestrator"
-msgstr "هماهنگ‌ساز رشد"
-
 msgid "Rules"
 msgstr "قواعد"
+
+msgid "Automation Rules"
+msgstr "قواعد خودکارسازی"
 
 msgid "SMS"
 msgstr "پیامک"
 
 msgid "SMS settings"
 msgstr "تنظیمات پیامک"
-
-msgid "Growth Orchestrator — Rules"
-msgstr "هماهنگ‌ساز رشد — قواعد"
 
 msgid "Growth Orchestrator — SMS"
 msgstr "هماهنگ‌ساز رشد — پیامک"

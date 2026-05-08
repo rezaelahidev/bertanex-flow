@@ -357,22 +357,13 @@ final class RulesController
     public function onAdminMenu(): void
     {
         add_menu_page(
-            __('Growth Orchestrator', 'growth-orchestrator'),
-            __('Growth Orchestrator', 'growth-orchestrator'),
+            __('Automation Rules', 'growth-orchestrator'),
+            __('Rules', 'growth-orchestrator'),
             'manage_options',
             self::PAGE_SLUG,
             [$this, 'render'],
             'dashicons-clipboard',
             58
-        );
-
-        add_submenu_page(
-            self::PAGE_SLUG,
-            __('Rules', 'growth-orchestrator'),
-            __('Rules', 'growth-orchestrator'),
-            'manage_options',
-            self::PAGE_SLUG,
-            [$this, 'render']
         );
     }
 

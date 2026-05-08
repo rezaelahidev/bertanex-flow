@@ -29,7 +29,10 @@ if ($context->showSuccessNotice) {
     </p>
 
     <?php if ($context->parseError !== null) : ?>
-        <div class="notice notice-error">
+        <div
+            class="notice notice-error"
+            data-gro-rules-parse-error="1"
+        >
             <p>
                 <strong><?php echo esc_html__('JSON error (preview only; saved value unchanged):', 'growth-orchestrator'); ?></strong>
                 <?php echo esc_html($context->parseError); ?>
@@ -68,23 +71,46 @@ if ($context->showSuccessNotice) {
 
     <hr style="margin: 24px 0;" />
 
-    <h2><?php echo esc_html__('Rules JSON', 'growth-orchestrator'); ?></h2>
+    <h2><?php echo esc_html__('Rule editor', 'growth-orchestrator'); ?></h2>
+    <p class="description">
+        <?php echo esc_html__(
+            'Use the visual builder for common IF / THEN pairs, or edit raw JSON when you need nested condition groups (any/not), mixed triggers, or fields not exposed here.',
+            'growth-orchestrator'
+        ); ?>
+    </p>
+
+    <nav class="nav-tab-wrapper gro-rules-editor-tabs" role="tablist" aria-label="<?php echo esc_attr__('Rules editor mode', 'growth-orchestrator'); ?>">
+        <button type="button" role="tab" class="nav-tab nav-tab-active" data-gro-tab="visual" aria-selected="true" id="gro-rules-tab-visual">
+            <?php echo esc_html__('Visual builder', 'growth-orchestrator'); ?>
+        </button>
+        <button type="button" role="tab" class="nav-tab" data-gro-tab="raw" aria-selected="false" id="gro-rules-tab-raw">
+            <?php echo esc_html__('Raw JSON', 'growth-orchestrator'); ?>
+        </button>
+    </nav>
+
     <form method="post" action="<?php echo esc_url($context->formActionUrl); ?>">
         <?php wp_nonce_field('gro_rules_save'); ?>
         <input type="hidden" name="gro_rules_save" value="1" />
-        <p>
-            <label for="gro_rules_json" class="screen-reader-text">
-                <?php echo esc_html__('Rules JSON', 'growth-orchestrator'); ?>
-            </label>
-            <textarea
-                name="gro_rules_json"
-                id="gro_rules_json"
-                rows="24"
-                class="large-text code"
-                style="width: 100%; max-width: 960px; font-family: monospace;"
-                spellcheck="false"
-            ><?php echo esc_textarea($context->textareaValue); ?></textarea>
-        </p>
+
+        <div id="gro-rules-panel-visual" class="gro-rules-visual" role="tabpanel" tabindex="0" aria-labelledby="gro-rules-tab-visual" aria-hidden="false">
+            <div id="gro-rules-visual-root" class="gro-rules-visual-mount"></div>
+            <noscript><p><?php echo esc_html__('Enable JavaScript to use the visual rule builder.', 'growth-orchestrator'); ?></p></noscript>
+        </div>
+
+        <div id="gro-rules-panel-raw" role="tabpanel" tabindex="0" aria-labelledby="gro-rules-tab-raw" aria-hidden="true" hidden style="margin-top: 1em;">
+            <label for="gro_rules_json"><strong><?php echo esc_html__('Rules document (JSON)', 'growth-orchestrator'); ?></strong></label>
+            <p>
+                <textarea
+                    name="gro_rules_json"
+                    id="gro_rules_json"
+                    rows="24"
+                    class="large-text code"
+                    style="width: 100%; max-width: 960px; font-family: monospace;"
+                    spellcheck="false"
+                ><?php echo esc_textarea($context->textareaValue); ?></textarea>
+            </p>
+        </div>
+
         <?php submit_button(__('Save rules', 'growth-orchestrator')); ?>
     </form>
 </div>

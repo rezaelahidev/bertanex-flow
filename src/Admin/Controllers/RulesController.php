@@ -7,7 +7,9 @@ namespace GrowthOrchestrator\Admin\Controllers;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
 use GrowthOrchestrator\Admin\ViewModels\RulesPageContext;
 use GrowthOrchestrator\Admin\Views\RulesPageView;
+use GrowthOrchestrator\Event\EventType;
 use GrowthOrchestrator\Loader\HooksLoader;
+use GrowthOrchestrator\Rule\BuiltinConditionOperators;
 
 /**
  * Controller: wires WordPress hooks, delegates persistence to {@see RulesDocumentModel}, renders via {@see RulesPageView}.
@@ -28,6 +30,7 @@ final class RulesController
     {
         $hooks->add_action($this, 'onAdminMenu', 'admin_menu', 9, 0);
         $hooks->add_action($this, 'onAdminInit', 'admin_init', 1, 0);
+        $hooks->add_action($this, 'enqueueAssets', 'admin_enqueue_scripts', 10, 1);
     }
 
     public function onAdminInit(): void
@@ -90,6 +93,146 @@ final class RulesController
             )
         );
         exit;
+    }
+
+    public function enqueueAssets(string $hook_suffix): void
+    {
+        if ($hook_suffix !== 'toplevel_page_' . self::PAGE_SLUG) {
+            return;
+        }
+
+        if (! \defined('GROWTH_ORCH_PLUGIN_URL') || ! \defined('GROWTH_ORCH_VERSION')) {
+            return;
+        }
+
+        $base = GROWTH_ORCH_PLUGIN_URL . 'assets/admin/';
+        $ver  = (string) GROWTH_ORCH_VERSION;
+
+        wp_enqueue_style(
+            'gro-rules-visual-editor',
+            $base . 'rules-visual-editor.css',
+            [],
+            $ver
+        );
+
+        wp_enqueue_script(
+            'gro-rules-visual-editor',
+            $base . 'rules-visual-editor.bundle.js',
+            [],
+            $ver,
+            true
+        );
+
+        $events = [];
+
+        foreach (EventType::cases() as $case) {
+            $events[] = [
+                'value' => $case->value,
+                'label' => self::eventTypeLabel($case),
+            ];
+        }
+
+        /** @phpstan-ignore-next-line */
+        $operators = apply_filters(
+            'gro_rules_editor_operator_choices',
+            array_keys(BuiltinConditionOperators::defaultHandlers())
+        );
+
+        /** @phpstan-ignore-next-line */
+        $actionTypes = apply_filters(
+            'gro_rules_editor_action_type_choices',
+            ['send_sms', 'send_email', 'send_discount', 'webhook', 'log']
+        );
+
+        /** @phpstan-ignore-next-line */
+        $suggestedFields = apply_filters(
+            'gro_rules_editor_suggested_condition_fields',
+            [
+                'profile_completed',
+                'has_product',
+                'has_subscription',
+                'subscription_status',
+                'subscription_days_until_expiry',
+            ]
+        );
+
+        wp_localize_script(
+            'gro-rules-visual-editor',
+            'groRulesEditor',
+            [
+                'defaultVersion'   => '1.0.0',
+                'recurrences'       => ['hourly', 'twicedaily', 'daily', 'weekly'],
+                'events'           => $events,
+                'operators'        => $operators,
+                'actionTypes'      => $actionTypes,
+                'suggestedFields'  => $suggestedFields,
+                'strings'          => [
+                    'errInvalidRoot'   => __('JSON must be an object with a "rules" array.', 'growth-orchestrator'),
+                    'noRules'          => __('No rules. Add one or paste JSON in the Raw JSON tab.', 'growth-orchestrator'),
+                    'addRule'          => __('Add rule', 'growth-orchestrator'),
+                    'versionLabel'     => __('Format version', 'growth-orchestrator'),
+                    'advancedBadge'    => __('Advanced', 'growth-orchestrator'),
+                    'advancedDesc'     => __('This rule uses triggers or nested conditions that the visual editor does not edit. Change it under Raw JSON; the card will reload after a successful parse.', 'growth-orchestrator'),
+                    'placeholderLabel' => __('Label (optional)', 'growth-orchestrator'),
+                    'untitledRuleSummary' => __('Untitled rule', 'growth-orchestrator'),
+                    'ruleDetailsHeading'   => __('Rule details', 'growth-orchestrator'),
+                    'enabledLabel'     => __('Enabled', 'growth-orchestrator'),
+                    'priorityLabel'    => __('Priority', 'growth-orchestrator'),
+                    'ruleIdShort'      => __('id', 'growth-orchestrator'),
+                    'dupRule'          => __('Duplicate', 'growth-orchestrator'),
+                    'up'               => __('Move up', 'growth-orchestrator'),
+                    'down'             => __('Move down', 'growth-orchestrator'),
+                    'removeRule'       => __('Remove rule', 'growth-orchestrator'),
+                    'removeRuleShort'  => __('Remove', 'growth-orchestrator'),
+                    'accordionExpand'   => __('Expand settings for rule %s', 'growth-orchestrator'),
+                    'accordionCollapse' => __('Collapse settings for rule %s', 'growth-orchestrator'),
+                    'removeRuleCollapsedAria' => __('Remove %s permanently from this list', 'growth-orchestrator'),
+                    'ruleListHeading' => __('Configured rules', 'growth-orchestrator'),
+                    'disabledLabel'   => __('Disabled', 'growth-orchestrator'),
+                    'collapsedIdLabel'      => __('Rule ID:', 'growth-orchestrator'),
+                    'collapsedPriorityLabel' => __('Priority:', 'growth-orchestrator'),
+                    'confirmRemove'    => __('Remove this rule?', 'growth-orchestrator'),
+                    'confirmRemoveAdv' => __('Remove this rule from the document?', 'growth-orchestrator'),
+                    'triggerHeading'   => __('When to run', 'growth-orchestrator'),
+                    'triggerNone'      => __('Evaluate without event filter', 'growth-orchestrator'),
+                    'triggerEvents'    => __('On automation events', 'growth-orchestrator'),
+                    'triggerSchedule'  => __('On a schedule (cron)', 'growth-orchestrator'),
+                    'customEventsLabel'=> __('Additional event names (comma-separated)', 'growth-orchestrator'),
+                    'hookLabel'        => __('Cron hook', 'growth-orchestrator'),
+                    'recurrenceLabel'  => __('Recurrence', 'growth-orchestrator'),
+                    'conditionsHeading'=> __('Conditions (all must match)', 'growth-orchestrator'),
+                    'fieldCol'         => __('Field', 'growth-orchestrator'),
+                    'opCol'            => __('Operator', 'growth-orchestrator'),
+                    'patternCol'       => __('Pattern (regex)', 'growth-orchestrator'),
+                    'valueCol'         => __('Value (JSON)', 'growth-orchestrator'),
+                    'customField'      => __('Custom…', 'growth-orchestrator'),
+                    'fieldPlaceholder' => __('State field key', 'growth-orchestrator'),
+                    'removeRow'        => __('Remove', 'growth-orchestrator'),
+                    'addCondition'     => __('Add condition', 'growth-orchestrator'),
+                    'actionsHeading'   => __('Actions', 'growth-orchestrator'),
+                    'actionType'       => __('Type', 'growth-orchestrator'),
+                    'templateId'       => __('template_id', 'growth-orchestrator'),
+                    'delaySeconds'     => __('delay_seconds', 'growth-orchestrator'),
+                    'paramsJson'       => __('params (JSON object)', 'growth-orchestrator'),
+                    'removeAction'     => __('Remove action', 'growth-orchestrator'),
+                    'addAction'        => __('Add action', 'growth-orchestrator'),
+                ],
+            ]
+        );
+    }
+
+    private static function eventTypeLabel(EventType $type): string
+    {
+        return match ($type) {
+            EventType::UserRegistered        => __('User registered', 'growth-orchestrator'),
+            EventType::ProfileCompleted      => __('Profile completed', 'growth-orchestrator'),
+            EventType::ProductCreated        => __('Product created', 'growth-orchestrator'),
+            EventType::SubscriptionPurchased => __('Subscription purchased', 'growth-orchestrator'),
+            EventType::SubscriptionExpired   => __('Subscription expired', 'growth-orchestrator'),
+            EventType::InstallmentDue        => __('Installment due', 'growth-orchestrator'),
+            EventType::InstallmentOverdue    => __('Installment overdue', 'growth-orchestrator'),
+            EventType::Login                 => __('User login', 'growth-orchestrator'),
+        };
     }
 
     public function onAdminMenu(): void

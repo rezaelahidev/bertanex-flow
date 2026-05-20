@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace GrowthOrchestrator;
 
 use GrowthOrchestrator\Admin\Controllers\RulesController;
-use GrowthOrchestrator\Admin\Controllers\SmsSettingsController;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
+use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
 use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
 use GrowthOrchestrator\Admin\Views\RulesPageView;
-use GrowthOrchestrator\Admin\Views\SmsSettingsPageView;
 use GrowthOrchestrator\Db\RulesDbSchema;
 use GrowthOrchestrator\Event\AutomationEvent;
 use GrowthOrchestrator\Event\EventDispatcher;
@@ -57,7 +56,8 @@ final class Plugin
     {
         $this->registerServices();
 
-        $this->hooks->add_action($this, 'loadTextdomain', 'plugins_loaded', 1, 0);
+        $this->hooks->add_action($this, 'loadTextdomain', 'plugins_loaded', 0, 0);
+        $this->hooks->add_action($this, 'loadTextdomain', 'init', 0, 0);
         $this->hooks->add_action($this, 'bootstrapPersistence', 'plugins_loaded', 2, 0);
         $this->hooks->add_action($this, 'onPluginsLoaded', 'plugins_loaded', 5, 0);
         $this->hooks->register();
@@ -65,11 +65,7 @@ final class Plugin
 
     public function loadTextdomain(): void
     {
-        load_plugin_textdomain(
-            'growth-orchestrator',
-            false,
-            dirname(\plugin_basename(\GROWTH_ORCH_PLUGIN_FILE)) . '/languages'
-        );
+        I18n::loadTextdomain();
     }
 
     public function bootstrapPersistence(): void
@@ -139,7 +135,6 @@ final class Plugin
 
         if (is_admin()) {
             $this->container->get(RulesController::class)->register($this->hooks);
-            $this->container->get(SmsSettingsController::class)->register($this->hooks);
         }
 
         $this->container->get(WordPressRulesScheduler::class)->register($this->hooks);
@@ -172,16 +167,6 @@ final class Plugin
         );
 
         $c->singleton(SmsSettingsModel::class, static fn () => new SmsSettingsModel());
-
-        $c->singleton(SmsSettingsPageView::class, static fn () => new SmsSettingsPageView());
-
-        $c->singleton(
-            SmsSettingsController::class,
-            static fn (Container $c) => new SmsSettingsController(
-                $c->get(SmsSettingsModel::class),
-                $c->get(SmsSettingsPageView::class)
-            )
-        );
 
         $c->singleton(SmsTransportResolver::class, static fn () => new SmsTransportResolver());
 
@@ -266,11 +251,15 @@ final class Plugin
 
         $c->singleton(RulesPageView::class, static fn () => new RulesPageView());
 
+        $c->singleton(RulesEditorSettingsModel::class, static fn () => new RulesEditorSettingsModel());
+
         $c->singleton(
             RulesController::class,
             static fn (Container $c) => new RulesController(
                 $c->get(RulesDocumentModel::class),
-                $c->get(RulesPageView::class)
+                $c->get(RulesPageView::class),
+                $c->get(RulesEditorSettingsModel::class),
+                $c->get(SmsSettingsModel::class)
             )
         );
 

@@ -25,6 +25,22 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
+if (PHP_VERSION_ID < 80100 || PHP_VERSION_ID >= 80500) {
+    add_action(
+        'admin_notices',
+        static function (): void {
+            echo '<div class="notice notice-error"><p>';
+            echo esc_html__(
+                'Growth Orchestrator requires PHP 8.1 through 8.4.',
+                'growth-orchestrator'
+            );
+            echo '</p></div>';
+        }
+    );
+
+    return;
+}
+
 define('GROWTH_ORCH_PLUGIN_FILE', __FILE__);
 define('GROWTH_ORCH_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('GROWTH_ORCH_PLUGIN_URL', plugin_dir_url(__FILE__));

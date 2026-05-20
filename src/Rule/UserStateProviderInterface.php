@@ -12,7 +12,6 @@ namespace GrowthOrchestrator\Rule;
  *     has_product?: bool,
  *     has_subscription?: bool,
  *     subscription_status?: string,
- *     installment_status?: string,
  *     subscription_days_until_expiry?: int|null
  * }
  */
@@ -22,4 +21,10 @@ interface UserStateProviderInterface
      * @return array<string, mixed>
      */
     public function getStateForUser(int $userId): array;
+
+    /**
+     * @return ThemeCompatibilityInterface|null
+     *     null if the theme compatibility is not available
+     */
+    public function getThemeCompatibility(): ?ThemeCompatibilityInterface;
 }

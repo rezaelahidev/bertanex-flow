@@ -11,7 +11,7 @@ namespace GrowthOrchestrator\Rule;
  * @phpstan-type ConditionGroup array<string, mixed>
  * @phpstan-type ActionRow array{type: string, template_id?: string, params?: array<string, mixed>, delay_seconds?: int}
  */
-final readonly class RuleDefinition
+final class RuleDefinition
 {
     /**
      * @param Trigger         $trigger
@@ -19,13 +19,13 @@ final readonly class RuleDefinition
      * @param list<ActionRow> $actions
      */
     public function __construct(
-        public string $id,
-        public ?string $label,
-        public bool $enabled,
-        public int $priority,
-        public ?array $trigger,
-        public array $conditions,
-        public array $actions
+        public readonly string $id,
+        public readonly ?string $label,
+        public readonly bool $enabled,
+        public readonly int $priority,
+        public readonly ?array $trigger,
+        public readonly array $conditions,
+        public readonly array $actions
     ) {
     }
 

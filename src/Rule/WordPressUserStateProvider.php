@@ -11,6 +11,19 @@ namespace GrowthOrchestrator\Rule;
  */
 final class WordPressUserStateProvider implements UserStateProviderInterface
 {
+    private ?ThemeCompatibilityInterface $themeCompatibility;
+
+    public function __construct(?ThemeCompatibilityInterface $themeCompatibility = null)
+    {
+        $this->themeCompatibility = $themeCompatibility;
+    }
+
+    /** @inheritDoc */
+    public function getThemeCompatibility(): ?ThemeCompatibilityInterface
+    {
+        return $this->themeCompatibility;
+    }
+
     /** @inheritDoc */
     public function getStateForUser(int $userId): array
     {
@@ -45,15 +58,21 @@ final class WordPressUserStateProvider implements UserStateProviderInterface
     private function baselineSpecifications(): array
     {
         return [
-            'profile_completed' => fn (int $uid): bool => $this->boolMeta($uid, 'growth_orchestrator_profile_completed'),
-            'has_product' => fn (int $uid): bool => $this->boolMeta($uid, 'growth_orchestrator_has_product'),
-            'has_subscription' => fn (int $uid): bool => $this->boolMeta($uid, 'growth_subscriptions_has_subscription'),
-            'subscription_status' => fn (int $uid): string => $this->stringMeta($uid, 'growth_subscriptions_subscription_status'),
-            'installment_status' => fn (int $uid): string => $this->stringMeta($uid, 'growth_orchestrator_installment_status'),
-            'subscription_days_until_expiry' => fn (int $uid): ?int => $this->nullableIntMeta(
-                $uid,
-                'growth_subscriptions_days_until_expiry'
-            ),
+            'profile_completed' => fn (int $uid): bool => $this->getThemeCompatibility()
+                                                    ? $this->themeCompatibility->isProfileCompleted($uid) :
+                                                    $this->boolMeta($uid, 'growth_orchestrator_profile_completed'),
+            'has_product' => fn (int $uid): bool => $this->getThemeCompatibility()
+                                                    ? $this->themeCompatibility->hasProduct($uid) :
+                                                    $this->boolMeta($uid, 'growth_orchestrator_has_product'),
+            'has_subscription' => fn (int $uid): bool => $this->getThemeCompatibility()
+                                                    ? $this->themeCompatibility->hasSubscription($uid) :
+                                                    $this->boolMeta($uid, 'growth_subscriptions_has_subscription'),
+            'subscription_status' => fn (int $uid): string => $this->getThemeCompatibility() ?
+                                                    $this->themeCompatibility->getSubscriptionStatus($uid) :
+                                                    $this->stringMeta($uid, 'growth_subscriptions_subscription_status'),
+            'subscription_days_until_expiry' => fn (int $uid): ?int => $this->getThemeCompatibility() ?
+                                                    $this->themeCompatibility->getCalculatedDaysToExpiry($uid) :
+                                                    $this->nullableIntMeta($uid, 'growth_subscriptions_days_until_expiry'),
         ];
     }
 

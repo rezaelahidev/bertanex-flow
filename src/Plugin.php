@@ -8,6 +8,7 @@ use GrowthOrchestrator\Admin\Controllers\RulesController;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
 use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
 use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
+use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
 use GrowthOrchestrator\Admin\Views\RulesPageView;
 use GrowthOrchestrator\Db\RulesDbSchema;
 use GrowthOrchestrator\Event\AutomationEvent;
@@ -27,6 +28,7 @@ use GrowthOrchestrator\Rule\RuleActionsExecutor;
 use GrowthOrchestrator\Rule\RuleEngine;
 use GrowthOrchestrator\Rule\RulesRepositoryInterface;
 use GrowthOrchestrator\Rule\ScheduledRulesCoordinator;
+use GrowthOrchestrator\Rule\ThemeCompatibilityInterface;
 use GrowthOrchestrator\Rule\UserStateProviderInterface;
 use GrowthOrchestrator\Rule\WordPressRulesScheduler;
 use GrowthOrchestrator\Rule\WordPressUserStateProvider;
@@ -168,6 +170,8 @@ final class Plugin
 
         $c->singleton(SmsSettingsModel::class, static fn () => new SmsSettingsModel());
 
+        $c->singleton(SmsTemplatesModel::class, static fn () => new SmsTemplatesModel());
+
         $c->singleton(SmsTransportResolver::class, static fn () => new SmsTransportResolver());
 
         $c->singleton(SmsTemplateRenderer::class, static fn () => new SmsTemplateRenderer());
@@ -206,7 +210,13 @@ final class Plugin
 
         $c->singleton(
             UserStateProviderInterface::class,
-            static fn () => new WordPressUserStateProvider()
+            static function (): UserStateProviderInterface {
+                $themeCompat = apply_filters('gro_theme_compatibility', null);
+
+                return new WordPressUserStateProvider(
+                    $themeCompat instanceof ThemeCompatibilityInterface ? $themeCompat : null
+                );
+            }
         );
 
         $c->singleton(
@@ -259,7 +269,8 @@ final class Plugin
                 $c->get(RulesDocumentModel::class),
                 $c->get(RulesPageView::class),
                 $c->get(RulesEditorSettingsModel::class),
-                $c->get(SmsSettingsModel::class)
+                $c->get(SmsSettingsModel::class),
+                $c->get(SmsTemplatesModel::class)
             )
         );
 

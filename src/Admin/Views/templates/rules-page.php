@@ -31,11 +31,15 @@ if ($context->showSuccessNotice) {
 }
 
 if (isset($_GET['settings-updated'])) {
-    echo '<script>document.documentElement.dataset.groOpenRulesTab = "config";</script>';
+    $openTab = isset($_GET['gro_open_tab']) ? sanitize_key((string) $_GET['gro_open_tab']) : 'config';
+    if (! in_array($openTab, ['config', 'patterns'], true)) {
+        $openTab = 'config';
+    }
+    echo '<script>document.documentElement.dataset.groOpenRulesTab = "' . esc_js($openTab) . '";</script>';
 }
 
 ?>
-<div class="wrap gro-rules-admin">
+<div class="wrap gro-rules-admin<?php echo is_rtl() ? ' gro-rules-admin--rtl' : ''; ?>">
     <header class="gro-page-header">
         <div class="gro-page-header__titles">
             <h1 class="gro-page-header__title"><?php echo esc_html__('Automation Rules', 'growth-orchestrator'); ?></h1>
@@ -77,7 +81,8 @@ if (isset($_GET['settings-updated'])) {
                     <li class="gro-overview-card">
                         <div class="gro-overview-card__main">
                             <code class="gro-overview-card__id"><?php echo esc_html($rule->id); ?></code>
-                            <span class="gro-overview-card__label"><?php echo esc_html($rule->label ?? __('Untitled', 'growth-orchestrator')); ?></span>
+                            <?php $rule_display_label = $rule->displayLabel(); ?>
+                            <span class="gro-overview-card__label"><?php echo esc_html($rule_display_label !== '' ? $rule_display_label : __('Untitled', 'growth-orchestrator')); ?></span>
                         </div>
                         <div class="gro-overview-card__meta">
                             <span class="gro-pill <?php echo $rule->enabled ? 'gro-pill--success' : 'gro-pill--muted'; ?>">
@@ -112,7 +117,7 @@ if (isset($_GET['settings-updated'])) {
             <h2 id="gro-workspace-heading" class="gro-workspace__title"><?php echo esc_html__('Rule editor', 'growth-orchestrator'); ?></h2>
             <p class="gro-workspace__hint">
                 <?php echo esc_html__(
-                    'Visual builder for common flows, raw JSON for advanced condition groups, and configuration for layout and SMS.',
+                    'Visual builder for common flows, message patterns, raw JSON, and configuration for layout and SMS delivery.',
                     'growth-orchestrator'
                 ); ?>
             </p>
@@ -121,6 +126,9 @@ if (isset($_GET['settings-updated'])) {
         <nav class="gro-tabs" role="tablist" aria-label="<?php echo esc_attr__('Rules editor mode', 'growth-orchestrator'); ?>">
             <button type="button" role="tab" class="gro-tabs__tab gro-tabs__tab--active" data-gro-tab="visual" aria-selected="true" id="gro-rules-tab-visual">
                 <span class="gro-tabs__label"><?php echo esc_html__('Visual builder', 'growth-orchestrator'); ?></span>
+            </button>
+            <button type="button" role="tab" class="gro-tabs__tab" data-gro-tab="patterns" aria-selected="false" id="gro-rules-tab-patterns">
+                <span class="gro-tabs__label"><?php echo esc_html__('Message patterns', 'growth-orchestrator'); ?></span>
             </button>
             <button type="button" role="tab" class="gro-tabs__tab" data-gro-tab="raw" aria-selected="false" id="gro-rules-tab-raw">
                 <span class="gro-tabs__label"><?php echo esc_html__('Raw JSON', 'growth-orchestrator'); ?></span>
@@ -132,6 +140,29 @@ if (isset($_GET['settings-updated'])) {
 
         <div class="gro-workspace__body">
             <div
+                id="gro-rules-panel-patterns"
+                class="gro-panel gro-panel--patterns"
+                role="tabpanel"
+                tabindex="0"
+                aria-labelledby="gro-rules-tab-patterns"
+                aria-hidden="true"
+                hidden
+            >
+                <form method="post" action="<?php echo esc_url(admin_url('options.php')); ?>" class="gro-patterns-form" autocomplete="off">
+                    <?php settings_fields($configGroup); ?>
+                    <input type="hidden" name="gro_open_rules_tab" value="patterns" />
+
+                    <div class="gro-patterns-shell">
+                        <?php \GrowthOrchestrator\Admin\Views\SettingsSectionRenderer::render($configGroup, 'gro_sms_templates_section'); ?>
+                    </div>
+
+                    <footer class="gro-patterns-form__footer">
+                        <?php submit_button(__('Save patterns', 'growth-orchestrator'), 'primary gro-patterns-form__submit', 'submit', false); ?>
+                    </footer>
+                </form>
+            </div>
+
+            <div
                 id="gro-rules-panel-config"
                 class="gro-panel gro-panel--config"
                 role="tabpanel"
@@ -142,6 +173,7 @@ if (isset($_GET['settings-updated'])) {
             >
                 <form method="post" action="<?php echo esc_url(admin_url('options.php')); ?>" class="gro-config-form" autocomplete="off">
                     <?php settings_fields($configGroup); ?>
+                    <input type="hidden" name="gro_open_rules_tab" value="config" />
 
                     <div class="gro-config-grid">
                         <div class="gro-settings-card">

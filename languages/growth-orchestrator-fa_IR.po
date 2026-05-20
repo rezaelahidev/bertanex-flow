@@ -1,4 +1,4 @@
-# Persian translation for Growth Orchestrator
+# Persian (Iran) translation for Growth Orchestrator
 # Copyright (C) 2026
 # This file is distributed under the same license as the plugin.
 msgid ""
@@ -6,9 +6,9 @@ msgstr ""
 "Project-Id-Version: Growth Orchestrator 0.1.0\n"
 "Report-Msgid-Bugs-To:\n"
 "POT-Creation-Date: 2026-05-07 12:00+0000\n"
-"PO-Revision-Date: 2026-05-07 12:00+0000\n"
+"PO-Revision-Date: 2026-05-20 12:00+0000\n"
 "Last-Translator:\n"
-"Language-Team: Persian\n"
+"Language-Team: Persian (Iran)\n"
 "Language: fa_IR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,10 +16,10 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Rules"
-msgstr "قواعد"
+msgstr "قوانین اتوماسیون"
 
 msgid "Automation Rules"
-msgstr "قواعد خودکارسازی"
+msgstr "قوانین اتوماسیون"
 
 msgid "SMS"
 msgstr "پیامک"
@@ -31,10 +31,10 @@ msgid "Growth Orchestrator — SMS"
 msgstr "هماهنگ‌ساز رشد — پیامک"
 
 msgid "Rules saved."
-msgstr "قواعد ذخیره شد."
+msgstr "قانون‌ها ذخیره شد."
 
 msgid "Save rules"
-msgstr "ذخیره قواعد"
+msgstr "ذخیره قانون‌ها"
 
 msgid "Save SMS settings"
 msgstr "ذخیره تنظیمات پیامک"
@@ -43,29 +43,29 @@ msgid "You do not have permission to access this page."
 msgstr "شما مجوز دسترسی به این صفحه را ندارید."
 
 msgid "You do not have permission to save rules."
-msgstr "شما مجوز ذخیره قواعد را ندارید."
+msgstr "شما مجوز ذخیره قانون‌ها را ندارید."
 
 #. translators: %s: parser or persistence error message
 msgid "Rules could not be saved: %s"
-msgstr "قواعد ذخیره نشدند: %s"
+msgstr "قانون‌ها ذخیره نشدند: %s"
 
 msgid "Rules template missing."
-msgstr "الگوی صفحه قواعد یافت نشد."
+msgstr "الگوی صفحه قانون یافت نشد."
 
 msgid "SMS settings template missing."
 msgstr "الگوی صفحه تنظیمات پیامک یافت نشد."
 
 msgid "Rules database table missing or could not be created."
-msgstr "جدول پایگاه‌داده قواعد وجود ندارد یا ساخته نشد."
+msgstr "جدول پایگاه‌داده قانون وجود ندارد یا ساخته نشد."
 
 msgid "Failed to persist rules to the database."
-msgstr "ذخیره قواعد در پایگاه‌داده ناموفق بود."
+msgstr "ذخیره قانون‌ها در پایگاه‌داده ناموفق بود."
 
 msgid ""
 "Rules are stored in the growth_orchestrator_rules database table. When the table is empty, "
 "this editor mirrors the legacy option/plugin JSON until first save hydrates persistence."
 msgstr ""
-"قواعد در جدول پایگاه‌داده growth_orchestrator_rules ذخیره می‌شوند. اگر جدول خالی باشد، این "
+"قانون‌ها در جدول پایگاه‌داده growth_orchestrator_rules ذخیره می‌شوند. اگر جدول خالی باشد، این "
 "ویرایشگر تا زمان اولین ذخیرهٔ موفق، مانند گزینهٔ قدیمی افزونه یا پروندهٔ JSON رفتار می‌کند."
 
 msgid "JSON error (preview only; saved value unchanged):"
@@ -75,13 +75,19 @@ msgid "Fix the JSON below and save again."
 msgstr "JSON زیر را اصلاح کنید و دوباره ذخیره کنید."
 
 msgid "Rules overview"
-msgstr "مرور قواعد"
+msgstr "مرور قانون‌ها"
+
+msgid "Rules summary"
+msgstr "خلاصه قانون‌ها"
+
+msgid "Total rules"
+msgstr "تعداد قانون‌ها"
 
 msgid "ID"
 msgstr "شناسه"
 
 msgid "Label"
-msgstr "برچسب"
+msgstr "عنوان"
 
 msgid "Enabled"
 msgstr "فعال"
@@ -89,21 +95,43 @@ msgstr "فعال"
 msgid "Priority"
 msgstr "اولویت"
 
+#. translators: %d: priority number
+msgid "Priority %d"
+msgstr "اولویت %d"
+
 msgid "No rules in this document."
-msgstr "هیچ قاعده‌ای در این سند نیست."
+msgstr "هیچ قانونی در این سند نیست."
+
+msgid "No rules in this document yet. Use the visual builder to add your first rule."
+msgstr "هنوز قانونی در این سند نیست. با سازندهٔ بصری اولین قانون را اضافه کنید."
+
+msgid "Untitled"
+msgstr "بدون عنوان"
 
 msgid "Rule editor"
-msgstr "ویرایشگر قواعد"
+msgstr "ویرایشگر قانون"
+
+msgid ""
+"Design IF / THEN automations, manage SMS delivery, and tune the visual builder from one workspace."
+msgstr ""
+"اتوماسیون‌های اگر/آنگاه را طراحی کنید، ارسال پیامک را مدیریت کنید و سازندهٔ بصری را در یک "
+"فضای کاری تنظیم کنید."
 
 msgid ""
 "Use the visual builder for common IF / THEN pairs, or edit raw JSON when you need nested "
 "condition groups (any/not), mixed triggers, or fields not exposed here."
 msgstr ""
-"برای جفت‌های متداول اگر / آنگاه از سازندهٔ بصری استفاده کنید، یا برای گروه‌های تودرتو "
+"برای جفت‌های متداول اگر/آنگاه از سازندهٔ بصری استفاده کنید، یا برای گروه‌های شرط تودرتو "
 "(همه/هیچ)، تریگر ترکیبی، یا فیلدهای پنهان، JSON خام را ویرایش کنید."
 
+msgid ""
+"Visual builder for common flows, raw JSON for advanced condition groups, and configuration for layout and SMS."
+msgstr ""
+"سازندهٔ بصری برای جریان‌های متداول، JSON خام برای گروه‌های شرط پیشرفته، و پیکربندی "
+"چیدمان و پیامک."
+
 msgid "Rules editor mode"
-msgstr "حالت ویرایشگر قواعد"
+msgstr "حالت ویرایشگر قانون"
 
 msgid "Visual builder"
 msgstr "سازنده بصری"
@@ -111,20 +139,26 @@ msgstr "سازنده بصری"
 msgid "Raw JSON"
 msgstr "JSON خام"
 
+msgid "Configuration"
+msgstr "پیکربندی"
+
 msgid "Enable JavaScript to use the visual rule builder."
-msgstr "برای استفاده از سازنده بصری قواعد، JavaScript را فعال کنید."
+msgstr "برای استفاده از سازندهٔ بصری قانون، JavaScript را فعال کنید."
 
 msgid "Rules document (JSON)"
-msgstr "سند قواعد (JSON)"
+msgstr "سند قانون (JSON)"
+
+msgid "Full document; validate before saving."
+msgstr "کل سند؛ پیش از ذخیره اعتبارسنجی کنید."
 
 msgid "JSON must be an object with a \"rules\" array."
 msgstr "JSON باید یک شیء با آرایه «rules» باشد."
 
 msgid "No rules. Add one or paste JSON in the Raw JSON tab."
-msgstr "قاعده‌ای نیست. یکی بیافزایید یا JSON را در زبانه JSON خام بچسبانید."
+msgstr "قانونی نیست. یکی بیافزایید یا JSON را در زبانه JSON خام بچسبانید."
 
 msgid "Add rule"
-msgstr "افزودن قاعده"
+msgstr "افزودن قانون"
 
 msgid "Format version"
 msgstr "نسخه قالب"
@@ -136,17 +170,26 @@ msgid ""
 "This rule uses triggers or nested conditions that the visual editor does not edit. Change it "
 "under Raw JSON; the card will reload after a successful parse."
 msgstr ""
-"این قاعده از تریگر یا شرایط تودرتویی استفاده می‌کند که ویرایشگر بصری آن‌ها را ویرایش "
-"نمی‌کند. آن را در JSON خام تغییر دهید؛ بعد از تجزیهٔ موفق، کارت دوباره بارگیری می‌شود."
+"این قانون از تریگر یا شرط‌های تودرتویی استفاده می‌کند که ویرایشگر بصری آن‌ها را ویرایش "
+"نمی‌کند. آن را در JSON خام تغییر دهید؛ پس از تجزیهٔ موفق، کارت دوباره بارگیری می‌شود."
 
 msgid "Label (optional)"
-msgstr "برچسب (اختیاری)"
+msgstr "عنوان (اختیاری)"
 
 msgid "Untitled rule"
-msgstr "قاعده بدون عنوان"
+msgstr "قانون بدون عنوان"
 
-msgid "Rule details"
-msgstr "جزئیات قاعده"
+msgid "Edit rule"
+msgstr "ویرایش قانون"
+
+msgid "Edit rule %s"
+msgstr "ویرایش قانون %s"
+
+msgid "Edit condition %s"
+msgstr "ویرایش شرط %s"
+
+msgid "Edit action %s"
+msgstr "ویرایش اقدام %s"
 
 msgid "id"
 msgstr "شناسه"
@@ -161,52 +204,70 @@ msgid "Move down"
 msgstr "جابه‌جایی به پایین"
 
 msgid "Remove rule"
-msgstr "حذف قاعده"
+msgstr "حذف قانون"
 
 msgid "Remove"
 msgstr "حذف"
 
+msgid "Close"
+msgstr "بستن"
+
+msgid "Save rule"
+msgstr "ذخیره قانون"
+
+msgid "Save all"
+msgstr "ذخیره همه"
+
+msgid "Save all rules"
+msgstr "ذخیره همه قانون‌ها"
+
+msgid "Saving…"
+msgstr "در حال ذخیره…"
+
+msgid "Status"
+msgstr "وضعیت"
+
 msgid "Expand settings for rule %s"
-msgstr "باز کردن تنظیمات قاعده %s"
+msgstr "باز کردن تنظیمات قانون %s"
 
 msgid "Collapse settings for rule %s"
-msgstr "بستن تنظیمات قاعده %s"
+msgstr "بستن تنظیمات قانون %s"
 
 msgid "Remove %s permanently from this list"
 msgstr "حذف دائمی %s از این فهرست"
 
 msgid "Configured rules"
-msgstr "قواعد پیکربندی‌شده"
+msgstr "قانون‌های پیکربندی‌شده"
 
 msgid "Disabled"
 msgstr "غیرفعال"
 
 msgid "Rule ID:"
-msgstr "شناسه قاعده:"
+msgstr "شناسه قانون:"
 
 msgid "Priority:"
 msgstr "اولویت:"
 
 msgid "Remove this rule?"
-msgstr "این قاعده حذف شود؟"
+msgstr "این قانون حذف شود؟"
 
 msgid "Remove this rule from the document?"
-msgstr "این قاعده از سند حذف شود؟"
+msgstr "این قانون از سند حذف شود؟"
 
 msgid "When to run"
 msgstr "زمان اجرا"
 
 msgid "Evaluate without event filter"
-msgstr "ارزیابی بدون فیلتر رویداد"
+msgstr "بدون فیلتر رویداد"
 
 msgid "On automation events"
-msgstr "رویدادهای خودکارسازی"
+msgstr "رویدادها"
 
 msgid "On a schedule (cron)"
-msgstr "برنامه زمان‌بندی‌شده (cron)"
+msgstr "زمان‌بندی (cron)"
 
 msgid "Additional event names (comma-separated)"
-msgstr "نام رویدادهای دیگر (جدا با ویرگول)"
+msgstr "نام رویدادهای دیگر (با ویرگول)"
 
 msgid "Cron hook"
 msgstr "قلاب cron"
@@ -215,7 +276,7 @@ msgid "Recurrence"
 msgstr "تکرار"
 
 msgid "Conditions (all must match)"
-msgstr "شرایط (باید همه برقرار باشند)"
+msgstr "شرط‌ها (همه باید برقرار باشند)"
 
 msgid "Field"
 msgstr "فیلد"
@@ -229,6 +290,12 @@ msgstr "الگو (عبارت منظم)"
 msgid "Value (JSON)"
 msgstr "مقدار (JSON)"
 
+msgid "Select a value…"
+msgstr "انتخاب مقدار…"
+
+msgid "Custom value (JSON)…"
+msgstr "مقدار سفارشی (JSON)…"
+
 msgid "Custom…"
 msgstr "سفارشی…"
 
@@ -237,6 +304,9 @@ msgstr "کلید فیلد وضعیت"
 
 msgid "Add condition"
 msgstr "افزودن شرط"
+
+msgid "Maximum number of conditions reached (%s)."
+msgstr "به حداکثر تعداد شرط (%s) رسیدید."
 
 msgid "Actions"
 msgstr "اقدام‌ها"
@@ -259,29 +329,107 @@ msgstr "حذف اقدام"
 msgid "Add action"
 msgstr "افزودن اقدام"
 
+msgid "Maximum number of actions reached (%s)."
+msgstr "به حداکثر تعداد اقدام (%s) رسیدید."
+
+msgid "Yes"
+msgstr "بله"
+
+msgid "No"
+msgstr "خیر"
+
+msgid "Has product"
+msgstr "دارای محصول"
+
+msgid "Has subscription"
+msgstr "دارای اشتراک"
+
+msgid "Subscription status"
+msgstr "وضعیت اشتراک"
+
+msgid "Days until subscription expires"
+msgstr "روز تا انقضای اشتراک"
+
+msgid "Active"
+msgstr "فعال"
+
+msgid "Expired"
+msgstr "منقضی"
+
+msgid "Cancelled"
+msgstr "لغوشده"
+
+msgid "0 days (expires today)"
+msgstr "۰ روز (امروز منقضی می‌شود)"
+
+msgid "1 day"
+msgstr "۱ روز"
+
+msgid "3 days"
+msgstr "۳ روز"
+
+msgid "7 days"
+msgstr "۷ روز"
+
+msgid "14 days"
+msgstr "۱۴ روز"
+
+msgid "30 days"
+msgstr "۳۰ روز"
+
 msgid "User registered"
-msgstr "کاربر ثبت‌نام کرد"
+msgstr "ثبت‌نام کاربر"
 
 msgid "Profile completed"
-msgstr "پروفایل تکمیل شد"
+msgstr "تکمیل پروفایل"
 
 msgid "Product created"
-msgstr "محصول ایجاد شد"
+msgstr "ایجاد محصول"
 
 msgid "Subscription purchased"
-msgstr "اشتراک خریداری شد"
+msgstr "خرید اشتراک"
 
 msgid "Subscription expired"
-msgstr "اشتراک منقضی شد"
-
-msgid "Installment due"
-msgstr "سررسید قسط"
-
-msgid "Installment overdue"
-msgstr "قسط معوق"
+msgstr "انقضای اشتراک"
 
 msgid "User login"
 msgstr "ورود کاربر"
+
+msgid "List limits and column layout"
+msgstr "محدودیت تعداد و چیدمان ستون‌ها"
+
+msgid "Limits and layout for the visual rule builder lists."
+msgstr "محدودیت و چیدمان فهرست‌های سازندهٔ بصری قانون."
+
+msgid "Max conditions per rule"
+msgstr "حداکثر شرط در هر قانون"
+
+msgid "Max actions per rule"
+msgstr "حداکثر اقدام در هر قانون"
+
+msgid "Display columns"
+msgstr "تعداد ستون‌ها"
+
+msgid "1 column"
+msgstr "۱ ستون"
+
+msgid "2 columns"
+msgstr "۲ ستون"
+
+msgid "Applies to the rules list and condition/action lists inside each rule."
+msgstr "برای فهرست قانون‌ها و فهرست شرط/اقدام در هر قانون اعمال می‌شود."
+
+msgid "SMS delivery"
+msgstr "ارسال پیامک"
+
+msgid "Provider and Melipayamak credentials"
+msgstr "ارائه‌دهنده و اعتبارنامه ملی‌پیامک"
+
+msgid "Save configuration"
+msgstr "ذخیره پیکربندی"
+
+msgid "Twilio can also be set via wp-config (GROWTH_ORCH_TWILIO_*) or the gro_twilio_sms_config filter."
+msgstr "Twilio را می‌توانید از wp-config (GROWTH_ORCH_TWILIO_*) یا فیلتر gro_twilio_sms_config نیز تنظیم کنید."
 
 msgid "SMS provider"
 msgstr "ارسال‌کننده پیامک"
@@ -295,6 +443,16 @@ msgid ""
 msgstr ""
 "کدام زیرساخت پیامک‌های صف را ارسال کند. «خودکار» در صورت پیکربندی ملی‌پیامک همان را "
 "استفاده می‌کند، سپس Twilio، وگرنه رونوشت‌گیر (بدون ارسال واقعی)."
+
+msgid ""
+"Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, "
+"otherwise the logging driver."
+msgstr ""
+"کدام زیرساخت پیامک‌های صف را ارسال کند. «خودکار» در صورت پیکربندی ملی‌پیامک همان را "
+"استفاده می‌کند، وگرنه رونوشت‌گیر (بدون ارسال واقعی)."
+
+msgid "Melipayamak uses the REST endpoint rest.payamak-panel.com (SendSMS) with sslverify enabled."
+msgstr "ملی‌پیامک از آدرس REST rest.payamak-panel.com (SendSMS) با sslverify فعال استفاده می‌کند."
 
 msgid "Melipayamak (Payamak-Panel)"
 msgstr "ملی‌پیامک (پنل پیامک)"
@@ -371,10 +529,10 @@ msgid "Is not empty"
 msgstr "خالی نیست"
 
 msgid "Is truthy"
-msgstr "مقدار درست (truthy)"
+msgstr "مقدار درست"
 
 msgid "Is falsy"
-msgstr "مقدار نادرست (falsy)"
+msgstr "مقدار نادرست"
 
 msgid "Matches regex"
 msgstr "منطبق بر عبارت منظم"
@@ -392,7 +550,7 @@ msgid "Send SMS"
 msgstr "ارسال پیامک"
 
 msgid "Send email"
-msgstr "ارسال رایانامه"
+msgstr "ارسال ایمیل"
 
 msgid "Send discount"
 msgstr "ارسال تخفیف"
@@ -428,10 +586,10 @@ msgid "Collapse action %s"
 msgstr "جمع‌شدن اقدام %s"
 
 msgid "Remove condition %s from this rule"
-msgstr "حذف شرط %s از این قاعده"
+msgstr "حذف شرط %s از این قانون"
 
 msgid "Remove action %s from this rule"
-msgstr "حذف اقدام %s از این قاعده"
+msgstr "حذف اقدام %s از این قانون"
 
 msgid ""
 "Twilio remains configurable via wp-config constants (GROWTH_ORCH_TWILIO_*) or the "

@@ -1,0 +1,413 @@
+/**
+ * Rules panel — design tokens, action buttons with icons, standardized controls.
+ * Loaded after rules-visual-editor.css (or merged via build); appended in RulesController enqueue.
+ */
+
+/* —— Standard scale (8px base) —— */
+.gro-rules-admin,
+.gro-rules-visual-inner {
+	--gro-space-xs: 4px;
+	--gro-space-sm: 8px;
+	--gro-space-md: 12px;
+	--gro-space-lg: 16px;
+	--gro-space-xl: 24px;
+	--gro-space-2xl: 32px;
+	--gro-text-xs: 11px;
+	--gro-text-sm: 12px;
+	--gro-text-base: 13px;
+	--gro-text-md: 14px;
+	--gro-text-lg: 15px;
+	--gro-text-xl: 18px;
+	--gro-line-tight: 1.25;
+	--gro-line-normal: 1.45;
+	--gro-line-relaxed: 1.55;
+	--gro-border-width: 1px;
+	--gro-radius-sm: 4px;
+	--gro-radius-md: 6px;
+	--gro-radius-lg: 8px;
+	--gro-control-h-sm: 32px;
+	--gro-control-h-md: 36px;
+	--gro-control-h-lg: 40px;
+	--gro-font-weight-medium: 500;
+	--gro-font-weight-semibold: 600;
+	--gro-font-weight-bold: 650;
+}
+
+/* Map legacy aliases */
+.gro-rules-admin,
+.gro-rules-visual-inner {
+	--gro-space-1: var(--gro-space-xs);
+	--gro-space-2: var(--gro-space-sm);
+	--gro-space-3: var(--gro-space-md);
+	--gro-space-4: var(--gro-space-lg);
+	--gro-space-5: var(--gro-space-xl);
+	--gro-r-1: var(--gro-radius-sm);
+	--gro-r-2: var(--gro-radius-md);
+	--gro-r-3: var(--gro-radius-lg);
+}
+
+/* —— Dashicon sizing inside panel —— */
+.gro-rules-visual-inner .gro-icon.dashicons,
+.gro-rules-admin .gro-icon.dashicons {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	font-size: 18px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.gro-btn--sm .gro-icon.dashicons {
+	width: 16px;
+	height: 16px;
+	font-size: 16px;
+}
+
+.gro-btn--lg .gro-icon.dashicons {
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
+}
+
+/* —— Action buttons —— */
+.gro-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--gro-space-sm);
+	min-height: var(--gro-control-h-md);
+	padding: 0 var(--gro-space-md);
+	margin: 0;
+	border: var(--gro-border-width) solid var(--gro-c-border-strong);
+	border-radius: var(--gro-radius-md);
+	background: var(--gro-c-surface);
+	color: var(--gro-c-text);
+	font-size: var(--gro-text-base);
+	font-weight: var(--gro-font-weight-semibold);
+	line-height: var(--gro-line-tight);
+	white-space: nowrap;
+	box-shadow: var(--gro-shadow-sm);
+	transition:
+		background-color 0.12s ease,
+		border-color 0.12s ease,
+		color 0.12s ease,
+		box-shadow 0.12s ease;
+}
+
+.gro-btn__label {
+	line-height: var(--gro-line-tight);
+}
+
+.gro-btn--sm {
+	min-height: var(--gro-control-h-sm);
+	padding: 0 var(--gro-space-sm);
+	font-size: var(--gro-text-sm);
+	border-radius: var(--gro-radius-sm);
+}
+
+.gro-btn--lg {
+	min-height: var(--gro-control-h-lg);
+	padding: 0 var(--gro-space-lg);
+	font-size: var(--gro-text-md);
+}
+
+.gro-btn:hover {
+	border-color: var(--gro-c-border-strong);
+	background: var(--gro-c-surface-elevated);
+	color: var(--gro-c-text);
+}
+
+.gro-btn:focus-visible {
+	outline: 2px solid var(--gro-c-focus);
+	outline-offset: 2px;
+	box-shadow: 0 0 0 3px var(--gro-c-focus-ring);
+}
+
+.gro-btn--primary,
+.gro-btn.button-primary {
+	border-color: var(--gro-c-accent);
+	background: var(--gro-c-accent);
+	color: #fff;
+	display: flex;
+	align-items: center;
+}
+
+.gro-btn--primary:hover,
+.gro-btn.button-primary:hover {
+	border-color: #1d4ed8;
+	background: #1d4ed8;
+	color: #fff;
+}
+
+.gro-btn--ghost {
+	border-color: transparent;
+	background: transparent;
+	box-shadow: none;
+	color: var(--gro-c-text-secondary);
+}
+
+.gro-btn--ghost:hover {
+	border-color: var(--gro-c-border);
+	background: var(--gro-c-surface);
+	color: var(--gro-c-text);
+}
+
+.gro-btn--danger,
+.gro-btn.button-link-delete {
+	border-color: #fecaca;
+	background: var(--gro-c-danger-soft);
+	color: var(--gro-c-danger) !important;
+	box-shadow: none;
+}
+
+.gro-btn--danger:hover,
+.gro-btn.button-link-delete:hover {
+	border-color: var(--gro-c-danger);
+	background: #fee2e2;
+	color: #991b1b !important;
+}
+
+.gro-btn--icon-only {
+	min-width: var(--gro-control-h-md);
+	padding: 0;
+}
+
+.gro-btn--icon-only.gro-btn--sm {
+	min-width: var(--gro-control-h-sm);
+}
+
+.gro-btn--icon-only .gro-btn__label {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* —— Section titles —— */
+.gro-section-title {
+	display: flex;
+	align-items: center;
+	gap: var(--gro-space-sm);
+	margin: 0 0 var(--gro-space-md);
+	font-size: var(--gro-text-sm);
+	font-weight: var(--gro-font-weight-bold);
+	line-height: var(--gro-line-tight);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--gro-c-text-secondary);
+}
+
+.gro-section-title .gro-icon.dashicons {
+	color: var(--gro-c-muted);
+}
+
+.gro-rule-row__delete.gro-btn .gro-icon.dashicons, .gro-item-card__delete.gro-btn .gro-icon.dashicons{
+	top: 5px;
+	position: relative;
+}
+
+/* —— Toolbar —— */
+.gro-rules-visual__toolbar {
+	gap: var(--gro-space-lg);
+	padding: var(--gro-space-md) var(--gro-space-lg);
+}
+
+.gro-rules-visual__version label {
+	font-size: var(--gro-text-sm);
+}
+
+.gro-rules-visual__version input {
+	min-height: var(--gro-control-h-sm);
+	padding: var(--gro-space-xs) var(--gro-space-sm);
+	font-size: var(--gro-text-base);
+}
+
+/* —— Rule / item rows —— */
+.gro-rule-row {
+	min-height: 72px;
+	border-width: var(--gro-border-width);
+	border-radius: var(--gro-radius-lg);
+}
+
+.gro-rule-row__open {
+	padding: var(--gro-space-md) var(--gro-space-lg);
+	gap: var(--gro-space-md);
+}
+
+.gro-rule-row__label {
+	font-size: var(--gro-text-xs);
+	font-weight: var(--gro-font-weight-semibold);
+	letter-spacing: 0.05em;
+}
+
+.gro-rule-row__cell strong,
+.gro-rule-row__cell code {
+	font-size: var(--gro-text-base);
+}
+
+.gro-rule-row__delete.gro-btn {
+	align-self: stretch;
+	min-height: auto;
+	border-radius: 0;
+	border-block: none;
+	border-inline-end: none;
+}
+
+.gro-item-card {
+	min-height: 48px;
+	border-width: var(--gro-border-width);
+	border-radius: var(--gro-radius-md);
+}
+
+.gro-item-card__open {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gro-space-sm);
+	padding: var(--gro-space-sm) var(--gro-space-md);
+	font-size: var(--gro-text-base);
+}
+
+.gro-item-card__edit-hint,
+.gro-rule-row__edit-hint {
+	display: inline-flex;
+	align-items: center;
+	margin-inline-start: auto;
+	color: var(--gro-c-muted);
+	opacity: 0.65;
+	transition: opacity 0.12s ease, color 0.12s ease;
+}
+
+.gro-rule-row__open:hover .gro-rule-row__edit-hint,
+.gro-item-card__open:hover .gro-item-card__edit-hint {
+	opacity: 1;
+	color: var(--gro-c-accent);
+}
+
+.gro-rule-row__open {
+	grid-template-columns: minmax(6rem, 1.6fr) minmax(4rem, 0.7fr) minmax(5rem, 1fr) auto;
+}
+
+.gro-item-card__delete.gro-btn {
+	border-radius: 0;
+	border-block: none;
+	border-inline-end: none;
+}
+
+/* —— Modal chrome —— */
+.gro-modal__header {
+	padding: var(--gro-space-md) var(--gro-space-lg);
+}
+
+.gro-modal__title {
+	font-size: var(--gro-text-lg);
+	font-weight: var(--gro-font-weight-bold);
+	line-height: var(--gro-line-tight);
+}
+
+.gro-modal__close.gro-btn {
+	min-width: var(--gro-control-h-sm);
+	min-height: var(--gro-control-h-sm);
+	padding: 0;
+	font-size: var(--gro-text-xl);
+	line-height: 1;
+}
+
+.gro-modal__body {
+	padding: var(--gro-space-lg);
+}
+
+.gro-modal__footer {
+	gap: var(--gro-space-sm);
+	padding: var(--gro-space-md) var(--gro-space-lg);
+}
+
+.gro-modal__footer .gro-btn {
+	min-width: 6.5rem;
+	display: flex;
+	align-items: center;
+}
+
+/* —— Rule modal header —— */
+.gro-rule-modal__head {
+	gap: var(--gro-space-md);
+	margin-bottom: var(--gro-space-lg);
+	padding-bottom: var(--gro-space-lg);
+}
+
+.gro-rule-modal__heading {
+	font-size: var(--gro-text-xs);
+}
+
+.gro-rule-modal__label-input {
+	min-height: var(--gro-control-h-md);
+	font-size: var(--gro-text-md);
+}
+
+.gro-rule-card__actions-row {
+	gap: var(--gro-space-sm);
+}
+
+.gro-rule-card__actions-row .gro-btn {
+	margin: 0;
+	display: flex;
+	align-items: center;
+}
+
+/* —— Form controls in panel —— */
+.gro-rules-visual-inner input[type="text"],
+.gro-rules-visual-inner input[type="number"],
+.gro-rules-visual-inner input[type="password"],
+.gro-rules-visual-inner select,
+.gro-rules-visual-inner textarea {
+	border-width: var(--gro-border-width);
+	border-radius: var(--gro-radius-sm);
+	font-size: var(--gro-text-base);
+	line-height: var(--gro-line-normal);
+}
+
+.gro-rules-visual-inner input[type="text"],
+.gro-rules-visual-inner input[type="number"],
+.gro-rules-visual-inner select {
+	min-height: var(--gro-control-h-md);
+}
+
+.gro-nested-list-add-button.gro-btn {
+	margin-top: var(--gro-space-sm);
+}
+
+.gro-list-limit-hint {
+	font-size: var(--gro-text-sm);
+	line-height: var(--gro-line-normal);
+}
+
+.gro-rule-section {
+	margin-bottom: var(--gro-space-xl);
+}
+
+.gro-rule-section:last-child {
+	margin-bottom: 0;
+}
+
+/* —— Banners —— */
+.gro-banner {
+	padding: var(--gro-space-md) var(--gro-space-lg);
+	border-radius: var(--gro-radius-md);
+	font-size: var(--gro-text-base);
+	line-height: var(--gro-line-normal);
+}
+
+/* —— Status badges —— */
+.gro-rule-card__status-badge {
+	padding: 2px var(--gro-space-sm);
+	font-size: var(--gro-text-xs);
+	font-weight: var(--gro-font-weight-bold);
+	line-height: var(--gro-line-tight);
+}

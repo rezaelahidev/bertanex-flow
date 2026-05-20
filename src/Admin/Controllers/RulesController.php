@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Admin\Controllers;
 
+use GrowthOrchestrator\Admin\Models\RulesAdminConfig;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
+use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
+use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
 use GrowthOrchestrator\Admin\ViewModels\RulesPageContext;
 use GrowthOrchestrator\Admin\Views\RulesPageView;
 use GrowthOrchestrator\Event\EventType;
+use GrowthOrchestrator\I18n;
 use GrowthOrchestrator\Loader\HooksLoader;
 use GrowthOrchestrator\Rule\BuiltinConditionOperators;
 
@@ -22,15 +26,54 @@ final class RulesController
 
     public function __construct(
         private readonly RulesDocumentModel $model,
-        private readonly RulesPageView $view
+        private readonly RulesPageView $view,
+        private readonly RulesEditorSettingsModel $editorSettings,
+        private readonly SmsSettingsModel $smsSettings
     ) {
     }
 
     public function register(HooksLoader $hooks): void
     {
         $hooks->add_action($this, 'onAdminMenu', 'admin_menu', 9, 0);
+        $hooks->add_action($this, 'registerEditorSettings', 'admin_init', 5, 0);
+        $hooks->add_action($this, 'redirectLegacySmsMenu', 'admin_init', 2, 0);
         $hooks->add_action($this, 'onAdminInit', 'admin_init', 1, 0);
         $hooks->add_action($this, 'enqueueAssets', 'admin_enqueue_scripts', 10, 1);
+        $hooks->add_action($this, 'onAjaxSaveRules', 'wp_ajax_gro_rules_save', 0, 0);
+    }
+
+    public function registerEditorSettings(): void
+    {
+        if (! is_admin()) {
+            return;
+        }
+
+        $this->editorSettings->registerSettings();
+        $this->smsSettings->registerSettings();
+    }
+
+    /** SMS submenu merged into Rules → Configuration; keep legacy URL working. */
+    public function redirectLegacySmsMenu(): void
+    {
+        if (! is_admin()) {
+            return;
+        }
+
+        $page = isset($_GET['page']) ? (string) $_GET['page'] : '';
+        if ($page !== SmsSettingsModel::LEGACY_PAGE_SLUG) {
+            return;
+        }
+
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    'page'              => self::PAGE_SLUG,
+                    'settings-updated' => '1',
+                ],
+                admin_url('admin.php')
+            )
+        );
+        exit;
     }
 
     public function onAdminInit(): void
@@ -95,6 +138,32 @@ final class RulesController
         exit;
     }
 
+    public function onAjaxSaveRules(): void
+    {
+        if (! current_user_can('manage_options')) {
+            wp_send_json_error(
+                ['message' => esc_html__('You do not have permission to save rules.', 'growth-orchestrator')],
+                403
+            );
+        }
+
+        check_ajax_referer('gro_rules_save', 'nonce');
+
+        $raw = isset($_POST['gro_rules_json']) ? wp_unslash((string) $_POST['gro_rules_json']) : '';
+
+        try {
+            $this->model->saveValidatedDocument($raw);
+        } catch (\Throwable $e) {
+            wp_send_json_error(['message' => $e->getMessage()], 400);
+        }
+
+        delete_transient(self::DRAFT_TRANSIENT_PREFIX . get_current_user_id());
+
+        wp_send_json_success([
+            'message' => __('Rules saved.', 'growth-orchestrator'),
+        ]);
+    }
+
     public function enqueueAssets(string $hook_suffix): void
     {
         if ($hook_suffix !== 'toplevel_page_' . self::PAGE_SLUG) {
@@ -105,7 +174,11 @@ final class RulesController
             return;
         }
 
+        I18n::loadTextdomain();
+
         $base = GROWTH_ORCH_PLUGIN_URL . 'assets/admin/';
+
+        wp_enqueue_style('dashicons');
 
         $cssVer = self::assetFileVersion('assets/admin/rules-visual-editor.css');
         wp_enqueue_style(
@@ -113,6 +186,13 @@ final class RulesController
             $base . 'rules-visual-editor.css',
             [],
             $cssVer
+        );
+
+        wp_enqueue_style(
+            'gro-rules-panel-polish',
+            $base . 'rules-panel-polish.css',
+            ['gro-rules-visual-editor'],
+            self::assetFileVersion('assets/admin/rules-panel-polish.css')
         );
 
         if (is_rtl()) {
@@ -156,7 +236,7 @@ final class RulesController
         $recurrences = ['hourly', 'twicedaily', 'daily', 'weekly'];
 
         /** @phpstan-ignore-next-line */
-        $suggestedFields = apply_filters(
+        $suggestedFieldSlugs = apply_filters(
             'gro_rules_editor_suggested_condition_fields',
             [
                 'profile_completed',
@@ -167,10 +247,16 @@ final class RulesController
             ]
         );
 
+        $suggestedFields = self::conditionFieldsForSlugs($suggestedFieldSlugs);
+
         wp_localize_script(
             'gro-rules-visual-editor',
             'groRulesEditor',
             [
+                'saveAjaxUrl'      => admin_url('admin-ajax.php'),
+                'saveAction'       => 'gro_rules_save',
+                'saveNonce'        => wp_create_nonce('gro_rules_save'),
+                'panelConfig'      => RulesEditorSettingsModel::panelConfigForScript(),
                 'defaultVersion'   => '1.0.0',
                 'recurrences'      => $recurrences,
                 'events'           => $events,
@@ -189,7 +275,7 @@ final class RulesController
                     'advancedDesc'     => __('This rule uses triggers or nested conditions that the visual editor does not edit. Change it under Raw JSON; the card will reload after a successful parse.', 'growth-orchestrator'),
                     'placeholderLabel' => __('Label (optional)', 'growth-orchestrator'),
                     'untitledRuleSummary' => __('Untitled rule', 'growth-orchestrator'),
-                    'ruleDetailsHeading'   => __('Rule details', 'growth-orchestrator'),
+                    'ruleDetailsHeading'   => __('Edit rule', 'growth-orchestrator'),
                     'enabledLabel'     => __('Enabled', 'growth-orchestrator'),
                     'priorityLabel'    => __('Priority', 'growth-orchestrator'),
                     'ruleIdShort'      => __('id', 'growth-orchestrator'),
@@ -198,12 +284,18 @@ final class RulesController
                     'down'             => __('Move down', 'growth-orchestrator'),
                     'removeRule'       => __('Remove rule', 'growth-orchestrator'),
                     'removeRuleShort'  => __('Remove', 'growth-orchestrator'),
-                    'accordionExpand'   => __('Expand settings for rule %s', 'growth-orchestrator'),
-                    'accordionCollapse' => __('Collapse settings for rule %s', 'growth-orchestrator'),
-                    'accordionExpandCondition' => __('Expand condition %s', 'growth-orchestrator'),
-                    'accordionCollapseCondition' => __('Collapse condition %s', 'growth-orchestrator'),
-                    'accordionExpandAction' => __('Expand action %s', 'growth-orchestrator'),
-                    'accordionCollapseAction' => __('Collapse action %s', 'growth-orchestrator'),
+                    'openRuleModal'     => __('Edit rule %s', 'growth-orchestrator'),
+                    'openConditionModal' => __('Edit condition %s', 'growth-orchestrator'),
+                    'openActionModal'   => __('Edit action %s', 'growth-orchestrator'),
+                    'modalClose'        => __('Close', 'growth-orchestrator'),
+                    'saveRule'          => __('Save rule', 'growth-orchestrator'),
+                    'saveAll'           => __('Save all', 'growth-orchestrator'),
+                    'saving'            => __('Saving…', 'growth-orchestrator'),
+                    'saveSuccess'       => __('Rules saved.', 'growth-orchestrator'),
+                    'saveFailed'        => __('Rules could not be saved: %s', 'growth-orchestrator'),
+                    'statusLabel'       => __('Status', 'growth-orchestrator'),
+                    'labelCol'          => __('Label', 'growth-orchestrator'),
+                    'idCol'             => __('ID', 'growth-orchestrator'),
                     'removeConditionAria' => __('Remove condition %s from this rule', 'growth-orchestrator'),
                     'removeActionAria' => __('Remove action %s from this rule', 'growth-orchestrator'),
                     'removeRuleCollapsedAria' => __('Remove %s permanently from this list', 'growth-orchestrator'),
@@ -238,9 +330,160 @@ final class RulesController
                     'addAction'        => __('Add action', 'growth-orchestrator'),
                     'regexPatternPlaceholder' => __('/^...$/', 'growth-orchestrator'),
                     'valueJsonPlaceholder' => __('Examples: true, false, 3, "text", []', 'growth-orchestrator'),
+                    'valueSelectPlaceholder' => __('Select a value…', 'growth-orchestrator'),
+                    'customValue'          => __('Custom value (JSON)…', 'growth-orchestrator'),
+                    'conditionsLimitReached' => __('Maximum number of conditions reached (%s).', 'growth-orchestrator'),
+                    'actionsLimitReached'    => __('Maximum number of actions reached (%s).', 'growth-orchestrator'),
                 ],
             ]
         );
+    }
+
+    /**
+     * @param list<string|array{name?: string, label?: string, valueType?: string, values?: list<array{value?: mixed, label?: string}>}> $items
+     * @return list<array{name: string, label: string, valueType?: string, values?: list<array{value: bool|int|float|string, label: string}>}>
+     */
+    private static function conditionFieldsForSlugs(array $items): array
+    {
+        $baseline = self::baselineConditionFieldDefinitions();
+        $out      = [];
+
+        foreach ($items as $item) {
+            if (is_string($item) && $item !== '') {
+                $out[] = $baseline[$item] ?? [
+                    'name'  => $item,
+                    'label' => self::conditionFieldSlugLabel($item),
+                ];
+                continue;
+            }
+            if (! is_array($item)) {
+                continue;
+            }
+            $name = isset($item['name']) ? (string) $item['name'] : '';
+            if ($name === '') {
+                continue;
+            }
+            $merged = $baseline[$name] ?? [
+                'name'  => $name,
+                'label' => self::conditionFieldSlugLabel($name),
+            ];
+            if (isset($item['label']) && (string) $item['label'] !== '') {
+                $merged['label'] = (string) $item['label'];
+            }
+            if (isset($item['valueType']) && is_string($item['valueType']) && $item['valueType'] !== '') {
+                $merged['valueType'] = $item['valueType'];
+            }
+            if (isset($item['values']) && is_array($item['values']) && $item['values'] !== []) {
+                $merged['values'] = self::normalizeConditionValueChoices($item['values']);
+            }
+            $out[] = $merged;
+        }
+
+        return $out;
+    }
+
+    /**
+     * @return array<string, array{name: string, label: string, valueType?: string, values?: list<array{value: bool|int|float|string, label: string}>}>
+     */
+    private static function baselineConditionFieldDefinitions(): array
+    {
+        $yes = __('Yes', 'growth-orchestrator');
+        $no  = __('No', 'growth-orchestrator');
+
+        $defs = [
+            'profile_completed' => [
+                'name'      => 'profile_completed',
+                'label'     => self::conditionFieldSlugLabel('profile_completed'),
+                'valueType' => 'boolean',
+                'values'    => [
+                    ['value' => true, 'label' => $yes],
+                    ['value' => false, 'label' => $no],
+                ],
+            ],
+            'has_product' => [
+                'name'      => 'has_product',
+                'label'     => self::conditionFieldSlugLabel('has_product'),
+                'valueType' => 'boolean',
+                'values'    => [
+                    ['value' => true, 'label' => $yes],
+                    ['value' => false, 'label' => $no],
+                ],
+            ],
+            'has_subscription' => [
+                'name'      => 'has_subscription',
+                'label'     => self::conditionFieldSlugLabel('has_subscription'),
+                'valueType' => 'boolean',
+                'values'    => [
+                    ['value' => true, 'label' => $yes],
+                    ['value' => false, 'label' => $no],
+                ],
+            ],
+            'subscription_status' => [
+                'name'      => 'subscription_status',
+                'label'     => self::conditionFieldSlugLabel('subscription_status'),
+                'valueType' => 'string',
+                'values'    => [
+                    ['value' => 'active', 'label' => __('Active', 'growth-orchestrator')],
+                    ['value' => 'expired', 'label' => __('Expired', 'growth-orchestrator')],
+                    ['value' => 'cancelled', 'label' => __('Cancelled', 'growth-orchestrator')],
+                ],
+            ],
+            'subscription_days_until_expiry' => [
+                'name'      => 'subscription_days_until_expiry',
+                'label'     => self::conditionFieldSlugLabel('subscription_days_until_expiry'),
+                'valueType' => 'integer',
+                'values'    => [
+                    ['value' => 0, 'label' => __('0 days (expires today)', 'growth-orchestrator')],
+                    ['value' => 1, 'label' => __('1 day', 'growth-orchestrator')],
+                    ['value' => 3, 'label' => __('3 days', 'growth-orchestrator')],
+                    ['value' => 7, 'label' => __('7 days', 'growth-orchestrator')],
+                    ['value' => 14, 'label' => __('14 days', 'growth-orchestrator')],
+                    ['value' => 30, 'label' => __('30 days', 'growth-orchestrator')],
+                ],
+            ],
+        ];
+
+        /**
+         * @param array<string, array{name: string, label: string, valueType?: string, values?: list<array{value: bool|int|float|string, label: string}>}> $definitions
+         */
+        return apply_filters('gro_rules_editor_condition_field_definitions', $defs);
+    }
+
+    /**
+     * @param list<array{value?: mixed, label?: string}> $choices
+     * @return list<array{value: bool|int|float|string, label: string}>
+     */
+    private static function normalizeConditionValueChoices(array $choices): array
+    {
+        $out = [];
+        foreach ($choices as $choice) {
+            if (! is_array($choice) || ! isset($choice['value'], $choice['label'])) {
+                continue;
+            }
+            $value = $choice['value'];
+            if (! is_bool($value) && ! is_int($value) && ! is_float($value) && ! is_string($value)) {
+                continue;
+            }
+            $label = trim((string) $choice['label']);
+            if ($label === '') {
+                continue;
+            }
+            $out[] = ['value' => $value, 'label' => $label];
+        }
+
+        return $out;
+    }
+
+    private static function conditionFieldSlugLabel(string $slug): string
+    {
+        return match ($slug) {
+            'profile_completed'              => __('Profile completed', 'growth-orchestrator'),
+            'has_product'                    => __('Has product', 'growth-orchestrator'),
+            'has_subscription'               => __('Has subscription', 'growth-orchestrator'),
+            'subscription_status'            => __('Subscription status', 'growth-orchestrator'),
+            'subscription_days_until_expiry' => __('Days until subscription expires', 'growth-orchestrator'),
+            default                          => $slug,
+        };
     }
 
     /**
@@ -348,14 +591,14 @@ final class RulesController
             EventType::ProductCreated        => __('Product created', 'growth-orchestrator'),
             EventType::SubscriptionPurchased => __('Subscription purchased', 'growth-orchestrator'),
             EventType::SubscriptionExpired   => __('Subscription expired', 'growth-orchestrator'),
-            EventType::InstallmentDue        => __('Installment due', 'growth-orchestrator'),
-            EventType::InstallmentOverdue    => __('Installment overdue', 'growth-orchestrator'),
             EventType::Login                 => __('User login', 'growth-orchestrator'),
         };
     }
 
     public function onAdminMenu(): void
     {
+        I18n::loadTextdomain();
+
         add_menu_page(
             __('Automation Rules', 'growth-orchestrator'),
             __('Rules', 'growth-orchestrator'),
@@ -369,6 +612,8 @@ final class RulesController
 
     public function render(): void
     {
+        I18n::loadTextdomain();
+
         if (! current_user_can('manage_options')) {
             wp_die(esc_html__('You do not have permission to access this page.', 'growth-orchestrator'));
         }

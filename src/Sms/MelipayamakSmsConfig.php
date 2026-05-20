@@ -43,7 +43,7 @@ final class MelipayamakSmsConfig
             defined('GROWTH_ORCH_MELIPAYAMAK_FROM') ? (string) GROWTH_ORCH_MELIPAYAMAK_FROM : ''
         );
 
-        if ($user === '' || $pass === '' || $from === '') {
+        if ($user === '' || $pass === '') {
             return null;
         }
 

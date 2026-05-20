@@ -599,3 +599,163 @@ msgstr ""
 "Twilio همچنان از طریق ثابت‌های wp-config (GROWTH_ORCH_TWILIO_*) یا فیلتر "
 "gro_twilio_sms_config هنگام انتخاب آن ارائه‌دهنده قابل تنظیم است. ملی‌پیامک از آدرس REST "
 "rest.payamak-panel.com (SendSMS) با sslverify فعال استفاده می‌کند."
+
+msgid "Welcome SMS after user registration"
+msgstr "پیامک خوش‌آمدگویی پس از ثبت‌نام کاربر"
+
+msgid "Send SMS when profile is incomplete"
+msgstr "ارسال پیامک وقتی پروفایل ناقص است"
+
+msgid "Send discount when user has product but no subscription"
+msgstr "ارسال تخفیف وقتی کاربر محصول دارد اما اشتراک ندارد"
+
+msgid "Reminder when subscription expires in 3 days"
+msgstr "یادآوری وقتی اشتراک تا ۳ روز دیگر منقضی می‌شود"
+
+#. SMS template bodies — keep {name}, {site_name}, {site_url} placeholders unchanged.
+msgid "Welcome {name}! Your account at {site_name} is ready: {site_url}"
+msgstr "{name} عزیز، به {site_name} خوش آمدید! حساب شما آماده است: {site_url}"
+
+msgid "Hi {name}, please complete your profile at {site_url}. — {site_name}"
+msgstr "{name} عزیز، لطفاً پروفایل خود را در {site_url} تکمیل کنید. — {site_name}"
+
+msgid "Hi {name}, your subscription renews soon. — {site_name}"
+msgstr "{name} عزیز، اشتراک شما به‌زودی تمدید می‌شود. — {site_name}"
+
+msgid "Hi {name}, you have a special offer: {site_name}"
+msgstr "{name} عزیز، پیشنهاد ویژه‌ای برای شما داریم: {site_name}"
+
+msgid "SMS templates"
+msgstr "الگوهای پیامک"
+
+msgid "Message text for each template_id in your rules"
+msgstr "متن پیام برای هر شناسه الگو در قوانین شما"
+
+msgid "Message text sent for each template_id used in rules. Leave a body empty to use the built-in default. Keep placeholders such as {name} unchanged."
+msgstr "متن پیام ارسالی برای هر شناسه الگویی که در قوانین استفاده شده است. برای الگوهای پیش‌فرض، خالی گذاشتن متن یعنی استفاده از پیام پیش‌فرض. جای‌نگهدارهایی مثل {name} را تغییر ندهید."
+
+msgid "Available variables:"
+msgstr "متغیرهای در دسترس:"
+
+msgid "Template ID"
+msgstr "شناسه الگو"
+
+msgid "Description"
+msgstr "توضیح"
+
+msgid "Message"
+msgstr "پیام"
+
+msgid "Add template"
+msgstr "افزودن الگو"
+
+msgid "my_template_id"
+msgstr "شناسه_الگوی_من"
+
+msgid "Short description"
+msgstr "توضیح کوتاه"
+
+msgid "Leave empty to use the default message for built-in templates."
+msgstr "برای الگوهای پیش‌فرض خالی بگذارید تا پیام پیش‌فرض استفاده شود."
+
+msgid "Welcome SMS (registration)"
+msgstr "پیامک خوش‌آمد (ثبت‌نام)"
+
+msgid "Complete profile reminder"
+msgstr "یادآوری تکمیل پروفایل"
+
+msgid "Subscription expiring soon"
+msgstr "یادآوری نزدیک بودن انقضای اشتراک"
+
+msgid "Offer for product owner without subscription"
+msgstr "پیشنهاد برای صاحب محصول بدون اشتراک"
+
+msgid "SMS template"
+msgstr "الگوی پیامک"
+
+msgid "Custom template ID…"
+msgstr "شناسه الگوی سفارشی…"
+
+msgid "Preview:"
+msgstr "پیش‌نمایش:"
+
+msgid "Edit message text under Configuration → SMS templates."
+msgstr "ویرایش متن پیام در پیکربندی ← الگوهای پیامک."
+
+msgid "Message patterns"
+msgstr "الگوهای پیام"
+
+msgid "SMS message patterns"
+msgstr "الگوهای پیامک"
+
+msgid "Text sent for each template_id in your rules"
+msgstr "متن ارسالی برای هر شناسه الگو در قوانین شما"
+
+msgid "Save patterns"
+msgstr "ذخیره الگوها"
+
+msgid "Override message"
+msgstr "پیام سفارشی"
+
+msgid "Current value"
+msgstr "مقدار فعلی"
+
+msgid "Default"
+msgstr "پیش‌فرض"
+
+msgid "Custom"
+msgstr "سفارشی"
+
+msgid "Edit message text under Message patterns."
+msgstr "ویرایش متن پیام در زبانه الگوهای پیام."
+
+msgid "Visual builder for common flows, message patterns, raw JSON, and configuration for layout and SMS delivery."
+msgstr "سازنده بصری برای جریان‌های متداول، الگوهای پیام، JSON خام، و پیکربندی چیدمان و ارسال پیامک."
+
+msgid "Persian texts sent to customers via Melipayamak. Each pattern matches a template_id in your automation rules."
+msgstr "متن‌های فارسی ارسالی به مشتریان از طریق ملی‌پیامک. هر الگو با شناسه template_id در قوانین اتوماسیون شما جفت می‌شود."
+
+msgid "Write messages in Persian. Keep placeholders like {name} and {site_name} exactly as shown — they are replaced when the SMS is sent."
+msgstr "پیام‌ها را به فارسی بنویسید. جای‌نگهدارهایی مثل {name} و {site_name} را دقیقاً همان‌طور که نمایش داده شده نگه دارید — هنگام ارسال پیامک جایگزین می‌شوند."
+
+msgid "Placeholders"
+msgstr "جای‌نگهدارها"
+
+msgid "Click to copy"
+msgstr "برای کپی کلیک کنید"
+
+msgid "Copied"
+msgstr "کپی شد"
+
+msgid "Add pattern"
+msgstr "افزودن الگو"
+
+msgid "pattern_id"
+msgstr "شناسه_الگو"
+
+msgid "Short title for this pattern"
+msgstr "عنوان کوتاه برای این الگو"
+
+msgid "Remove pattern"
+msgstr "حذف الگو"
+
+msgid "Remove this pattern?"
+msgstr "این الگو حذف شود؟"
+
+msgid "Your message (override)"
+msgstr "پیام شما (سفارشی)"
+
+msgid "Leave empty to use the built-in Persian default for this pattern."
+msgstr "برای استفاده از متن پیش‌فرض فارسی این الگو خالی بگذارید."
+
+msgid "Empty field = default text"
+msgstr "فیلد خالی = متن پیش‌فرض"
+
+msgid "%1$d / %2$d characters"
+msgstr "%1$d / %2$d کاراکتر"
+
+msgid "Current value (sent to user)"
+msgstr "مقدار فعلی (ارسال به کاربر)"
+
+msgid "Not set"
+msgstr "تنظیم نشده"

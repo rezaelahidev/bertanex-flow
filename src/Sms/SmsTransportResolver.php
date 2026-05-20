@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Sms;
 
+use GrowthOrchestrator\Support\FeatureFlags;
+
 /**
  * Resolves the active SMS transport from options on each call so Growth Orchestrator → SMS admin changes apply immediately.
  */
@@ -23,31 +25,37 @@ final class SmsTransportResolver
             return $filtered;
         }
 
-        $provider    = (string) get_option(self::OPTION_PROVIDER, 'auto');
+        $provider = self::normalizeProvider((string) get_option(self::OPTION_PROVIDER, 'auto'));
         $melipayamak = new MelipayamakSmsConfig();
-        $twilio      = new TwilioSmsConfig();
-
-        $meliOk   = $melipayamak->isConfigured();
-        $twilioOk = $twilio->isConfigured();
+        $meliOk      = $melipayamak->isConfigured();
+        $twilioOk    = FeatureFlags::twilioEnabled() && (new TwilioSmsConfig())->isConfigured();
 
         return match ($provider) {
             'melipayamak' => $meliOk
                 ? new MelipayamakSmsTransport($melipayamak)
                 : new LoggingSmsTransport(),
             'twilio' => $twilioOk
-                ? new TwilioSmsTransport($twilio)
+                ? new TwilioSmsTransport(new TwilioSmsConfig())
                 : new LoggingSmsTransport(),
             'logging' => new LoggingSmsTransport(),
-            'auto' => $meliOk
-                ? new MelipayamakSmsTransport($melipayamak)
-                : ($twilioOk
-                    ? new TwilioSmsTransport($twilio)
-                    : new LoggingSmsTransport()),
             default => $meliOk
                 ? new MelipayamakSmsTransport($melipayamak)
                 : ($twilioOk
-                    ? new TwilioSmsTransport($twilio)
+                    ? new TwilioSmsTransport(new TwilioSmsConfig())
                     : new LoggingSmsTransport()),
         };
+    }
+
+    private static function normalizeProvider(string $provider): string
+    {
+        if ($provider === 'twilio' && ! FeatureFlags::twilioEnabled()) {
+            return 'auto';
+        }
+
+        $allowed = FeatureFlags::twilioEnabled()
+            ? ['auto', 'melipayamak', 'twilio', 'logging']
+            : ['auto', 'melipayamak', 'logging'];
+
+        return in_array($provider, $allowed, true) ? $provider : 'auto';
     }
 }

@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Admin\Models;
 
-use GrowthOrchestrator\Admin\Controllers\RulesController;
 use GrowthOrchestrator\Sms\MelipayamakSmsConfig;
+use GrowthOrchestrator\Support\FeatureFlags;
 
 /**
  * Registers SMS provider options (Settings API) and field renderers.
  */
 final class SmsSettingsModel
 {
-    public const SETTINGS_GROUP = 'growth_orchestrator_sms';
+    public const SETTINGS_GROUP = RulesAdminConfig::SETTINGS_GROUP;
 
     public const OPTION_PROVIDER = 'growth_orchestrator_sms_transport_provider';
 
@@ -25,8 +25,13 @@ final class SmsSettingsModel
                 'type'              => 'string',
                 'default'           => 'auto',
                 'sanitize_callback' => static function ($value): string {
-                    $allowed = ['auto', 'melipayamak', 'twilio', 'logging'];
-                    $v       = is_string($value) ? $value : '';
+                    $v = is_string($value) ? $value : '';
+                    if ($v === 'twilio' && ! FeatureFlags::twilioEnabled()) {
+                        return 'auto';
+                    }
+                    $allowed = FeatureFlags::twilioEnabled()
+                        ? ['auto', 'melipayamak', 'twilio', 'logging']
+                        : ['auto', 'melipayamak', 'logging'];
 
                     return in_array($v, $allowed, true) ? $v : 'auto';
                 },
@@ -65,14 +70,18 @@ final class SmsSettingsModel
 
         add_settings_section(
             'gro_sms_provider_section',
-            __('SMS provider', 'growth-orchestrator'),
+            '',
             static function (): void {
-                echo '<p class="description">' .
-                    esc_html__(
-                        'Choose which transport delivers queued SMS. “Automatic” uses Melipayamak when configured, then Twilio, otherwise the logging (no-op) driver.',
+                $lede = FeatureFlags::twilioEnabled()
+                    ? __(
+                        'Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, then Twilio, otherwise the logging driver.',
                         'growth-orchestrator'
-                    ) .
-                    '</p>';
+                    )
+                    : __(
+                        'Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, otherwise the logging driver.',
+                        'growth-orchestrator'
+                    );
+                echo '<p class="gro-settings-card__lede">' . esc_html($lede) . '</p>';
             },
             self::SETTINGS_GROUP
         );
@@ -88,11 +97,11 @@ final class SmsSettingsModel
 
         add_settings_section(
             'gro_sms_melipayamak_section',
-            __('Melipayamak (Payamak-Panel)', 'growth-orchestrator'),
+            '',
             static function (): void {
-                echo '<p class="description">' .
+                echo '<p class="gro-settings-card__lede">' .
                     esc_html__(
-                        'Credentials for rest.payamak-panel.com SendSMS. You can also set GROWTH_ORCH_MELIPAYAMAK_* constants in wp-config.php. Leave password empty to keep the saved value.',
+                        'Credentials for rest.payamak-panel.com SendSMS. Use wp-config constants or leave password empty to keep the saved value.',
                         'growth-orchestrator'
                     ) .
                     '</p>';
@@ -141,13 +150,18 @@ final class SmsSettingsModel
     public function renderProviderField(): void
     {
         $current = (string) get_option(self::OPTION_PROVIDER, 'auto');
-        $id      = self::OPTION_PROVIDER;
+        if ($current === 'twilio' && ! FeatureFlags::twilioEnabled()) {
+            $current = 'auto';
+        }
+        $id = self::OPTION_PROVIDER;
 
         ?>
         <select name="<?php echo esc_attr(self::OPTION_PROVIDER); ?>" id="<?php echo esc_attr($id); ?>">
             <option value="auto" <?php selected($current, 'auto'); ?>><?php esc_html_e('Automatic', 'growth-orchestrator'); ?></option>
             <option value="melipayamak" <?php selected($current, 'melipayamak'); ?>><?php esc_html_e('Melipayamak', 'growth-orchestrator'); ?></option>
-            <option value="twilio" <?php selected($current, 'twilio'); ?>><?php esc_html_e('Twilio', 'growth-orchestrator'); ?></option>
+            <?php if (FeatureFlags::twilioEnabled()) : ?>
+                <option value="twilio" <?php selected($current, 'twilio'); ?>><?php esc_html_e('Twilio', 'growth-orchestrator'); ?></option>
+            <?php endif; ?>
             <option value="logging" <?php selected($current, 'logging'); ?>><?php esc_html_e('Logging only (development)', 'growth-orchestrator'); ?></option>
         </select>
         <?php
@@ -195,12 +209,6 @@ final class SmsSettingsModel
         <?php
     }
 
-    /** @return array{page_parent: string, page_slug: string} */
-    public static function menuLocation(): array
-    {
-        return [
-            'page_parent' => RulesController::PAGE_SLUG,
-            'page_slug'   => 'growth-orchestrator-sms',
-        ];
-    }
+    /** Former submenu slug; redirects to Rules → Config. */
+    public const LEGACY_PAGE_SLUG = 'growth-orchestrator-sms';
 }

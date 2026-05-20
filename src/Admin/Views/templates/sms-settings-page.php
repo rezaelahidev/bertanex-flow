@@ -22,11 +22,18 @@ defined('ABSPATH') || exit;
 
     <p class="description">
         <?php
-        esc_html_e(
-            'Twilio remains configurable via wp-config constants (GROWTH_ORCH_TWILIO_*) or the gro_twilio_sms_config filter when that provider is selected. ' .
-            'Melipayamak uses the REST endpoint rest.payamak-panel.com (SendSMS) with sslverify enabled.',
-            'growth-orchestrator'
-        );
+        if (\GrowthOrchestrator\Support\FeatureFlags::twilioEnabled()) {
+            esc_html_e(
+                'Twilio remains configurable via wp-config constants (GROWTH_ORCH_TWILIO_*) or the gro_twilio_sms_config filter when that provider is selected. ' .
+                'Melipayamak uses the REST endpoint rest.payamak-panel.com (SendSMS) with sslverify enabled.',
+                'growth-orchestrator'
+            );
+        } else {
+            esc_html_e(
+                'Melipayamak uses the REST endpoint rest.payamak-panel.com (SendSMS) with sslverify enabled.',
+                'growth-orchestrator'
+            );
+        }
         ?>
     </p>
 </div>

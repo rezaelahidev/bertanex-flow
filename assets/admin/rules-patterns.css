@@ -2,9 +2,7 @@
  * Message patterns tab — modern card UI (RTL / Persian-friendly).
  */
 
-.gro-rules-admin--rtl {
-	--gro-font-fa: Tahoma, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-}
+/* --gro-font-fa set on .gro-rules-admin--rtl in rules-visual-editor.css */
 
 .gro-panel--patterns {
 	margin: 0;
@@ -83,7 +81,6 @@
 .gro-rules-admin--rtl .gro-patterns-hero__title,
 .gro-rules-admin--rtl .gro-patterns-hero__lede,
 .gro-rules-admin--rtl .gro-patterns-tip {
-	font-family: var(--gro-font-fa);
 	line-height: 1.75;
 }
 
@@ -261,10 +258,6 @@
 	background: var(--gro-c-surface);
 }
 
-.gro-rules-admin--rtl .gro-pattern-card__label-input {
-	font-family: var(--gro-font-fa);
-}
-
 .gro-pattern-card__meta {
 	display: flex;
 	align-items: center;
@@ -287,7 +280,6 @@
 	text-transform: none;
 	font-size: 12px;
 	letter-spacing: 0;
-	font-family: var(--gro-font-fa);
 }
 
 .gro-pattern-card__status--default {
@@ -357,11 +349,6 @@
 	color: var(--gro-c-text-secondary);
 }
 
-.gro-rules-admin--rtl .gro-pattern-card__field-label,
-.gro-rules-admin--rtl .gro-pattern-card__hint {
-	font-family: var(--gro-font-fa);
-}
-
 .gro-pattern-card__textarea {
 	display: block;
 	width: 100%;
@@ -380,7 +367,6 @@
 
 .gro-rules-admin--rtl .gro-pattern-card__textarea,
 .gro-rules-admin--rtl .gro-pattern-card__preview {
-	font-family: var(--gro-font-fa);
 	font-size: 15px;
 	line-height: 1.85;
 }

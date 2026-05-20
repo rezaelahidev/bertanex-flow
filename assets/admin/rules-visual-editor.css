@@ -34,6 +34,47 @@
 	--gro-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
+/* —— RTL / Persian (omdbox Yekan Bakh FaNum when enqueued) —— */
+.gro-rules-admin--rtl,
+.rtl .gro-rules-admin {
+	--gro-font-fa: 'Yekan Bakh FaNum', Tahoma, serif;
+	font-family: var(--gro-font-fa);
+	font-size: 14px;
+	line-height: 1.75;
+	letter-spacing: -0.02em;
+}
+
+.gro-rules-admin--rtl .gro-rules-visual-inner,
+.gro-rules-admin--rtl .gro-config-form,
+.gro-rules-admin--rtl .gro-patterns-form,
+.gro-rules-admin--rtl .gro-editor-form,
+.rtl .gro-rules-admin .gro-rules-visual-inner,
+.rtl .gro-rules-admin .gro-config-form,
+.rtl .gro-rules-admin .gro-patterns-form,
+.rtl .gro-rules-admin .gro-editor-form {
+	font-family: inherit;
+}
+
+.gro-rules-admin--rtl .button,
+.gro-rules-admin--rtl .gro-btn,
+.rtl .gro-rules-admin .button,
+.rtl .gro-rules-admin .gro-btn {
+	font-family: inherit;
+}
+
+.gro-rules-admin--rtl code,
+.gro-rules-admin--rtl .gro-pattern-card__id-badge code,
+.gro-rules-admin--rtl .gro-overview-card__id,
+.gro-rules-admin--rtl .gro-rules-json-textarea,
+.gro-rules-admin--rtl input[type="text"].code,
+.rtl .gro-rules-admin code,
+.rtl .gro-rules-admin .gro-overview-card__id,
+.rtl .gro-rules-admin .gro-rules-json-textarea {
+	font-family: var(--gro-font-mono);
+	direction: ltr;
+	unicode-bidi: isolate;
+}
+
 /* —— Page shell —— */
 .gro-rules-admin {
 	max-width: 1320px;

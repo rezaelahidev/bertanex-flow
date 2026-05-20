@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Admin\Controllers;
 
+use GrowthOrchestrator\Admin\OmdboxAdminFonts;
 use GrowthOrchestrator\Admin\Models\RulesAdminConfig;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
 use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
@@ -233,11 +234,18 @@ final class RulesController
         );
 
         if (is_rtl()) {
+            OmdboxAdminFonts::enqueue('gro-rules-visual-editor');
+
             wp_enqueue_style(
                 'gro-rules-visual-editor-rtl',
                 $base . 'rules-visual-editor-rtl.css',
                 ['gro-rules-visual-editor'],
                 self::assetFileVersion('assets/admin/rules-visual-editor-rtl.css')
+            );
+
+            wp_add_inline_style(
+                'gro-rules-visual-editor',
+                '.gro-rules-admin--rtl,.rtl .gro-rules-admin{--gro-font-fa:' . OmdboxAdminFonts::fontFamily() . ';}'
             );
         }
 

@@ -1,0 +1,11 @@
+{
+  "name": "growth-orchestrator",
+  "private": true,
+  "description": "Growth Orchestrator WordPress plugin — production build orchestration",
+  "scripts": {
+    "build": "npm run build --prefix admin-rules-ui",
+    "build:production": "bash scripts/build-production.sh",
+    "dev": "npm run dev --prefix admin-rules-ui",
+    "translations": "bash languages/compile-translations.sh"
+  }
+}

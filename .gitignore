@@ -6,3 +6,6 @@
 !.env.example
 
 admin-rules-ui/node_modules/
+
+# Local build tooling only (assets/vendor are committed for deploy)
+node_modules/

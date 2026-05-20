@@ -1,0 +1,18 @@
+# Exclude from release ZIPs (wp dist-archive / rsync --exclude-from)
+.git
+.gitignore
+.github
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+
+admin-rules-ui/node_modules
+admin-rules-ui/package-lock.json
+
+scripts/build-production.sh
+BUILD.md
+.distignore
+
+patch

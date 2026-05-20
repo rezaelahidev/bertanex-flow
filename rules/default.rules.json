@@ -80,12 +80,6 @@
       "label": "Reminder when subscription expires in 3 days",
       "enabled": true,
       "priority": 30,
-      "trigger": {
-        "schedule": {
-          "hook": "uba_engine_daily_subscription_check",
-          "recurrence": "daily"
-        }
-      },
       "conditions": {
         "all": [
           {

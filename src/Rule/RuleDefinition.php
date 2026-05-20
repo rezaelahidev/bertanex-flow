@@ -30,6 +30,14 @@ final class RuleDefinition
     }
 
     /**
+     * Admin-facing label (translated for bundled default rules).
+     */
+    public function displayLabel(): string
+    {
+        return RuleLabelTranslator::display($this->id, $this->label);
+    }
+
+    /**
      * @param array<string, mixed> $row
      */
     public static function fromArray(array $row): self

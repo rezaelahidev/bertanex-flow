@@ -10,6 +10,7 @@ use GrowthOrchestrator\Rule\DatabaseRulesSync;
 use GrowthOrchestrator\Rule\JsonRulesParser;
 use GrowthOrchestrator\Rule\OptionRulesRepository;
 use GrowthOrchestrator\Rule\RuleDefinition;
+use GrowthOrchestrator\Rule\RuleLabelTranslator;
 
 /**
  * Model: rules document I/O for the admin editor (DB primary, legacy option/file fallback).
@@ -29,17 +30,19 @@ final class RulesDocumentModel
 
         if ($this->database->hasPersistedRules()) {
             /** @phpstan-ignore-next-line */
-            return apply_filters(
+            $json = apply_filters(
                 'gro_rules_editor_document_json',
                 $this->database->exportPrettyDocumentJson(),
                 'database'
             );
+        } else {
+            $legacy = $this->optionFallback->getEditableDocumentJson();
+
+            /** @phpstan-ignore-next-line */
+            $json = apply_filters('gro_rules_editor_document_json', $legacy, 'legacy-option-or-file');
         }
 
-        $legacy = $this->optionFallback->getEditableDocumentJson();
-
-        /** @phpstan-ignore-next-line */
-        return apply_filters('gro_rules_editor_document_json', $legacy, 'legacy-option-or-file');
+        return RuleLabelTranslator::localizeDocumentJson($json);
     }
 
     /**
@@ -74,6 +77,8 @@ final class RulesDocumentModel
         if (! RulesDbSchema::tableReady()) {
             throw new \RuntimeException(__('Rules database table missing or could not be created.', 'growth-orchestrator'));
         }
+
+        $documentJson = RuleLabelTranslator::canonicalizeDocumentJson($documentJson);
 
         /** @phpstan-ignore-next-line */
         $definitions = $this->parser->parse($documentJson);

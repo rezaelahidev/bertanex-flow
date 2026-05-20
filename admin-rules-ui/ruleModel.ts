@@ -1,4 +1,14 @@
+export interface RulesPanelConfig {
+  maxConditions?: number;
+  maxActions?: number;
+  displayColumns?: number;
+}
+
 export interface GroRulesEditorConfig {
+  saveAjaxUrl?: string;
+  saveAction?: string;
+  saveNonce?: string;
+  panelConfig?: RulesPanelConfig;
   defaultVersion?: string;
   recurrences?: string[];
   events?: { value: string; label: string }[];
@@ -8,9 +18,36 @@ export interface GroRulesEditorConfig {
   actionTypes?: string[];
   actionTypeLabels?: Record<string, string>;
   recurrenceLabels?: Record<string, string>;
-  suggestedFields?: string[];
+  /** Suggested condition field keys with human-readable labels (from PHP). */
+  suggestedFields?: SuggestedConditionField[] | string[];
   strings?: Record<string, string>;
 }
+
+export interface ConditionValueChoice {
+  /** JSON-serializable value stored in rule `value`. */
+  value: boolean | number | string;
+  label: string;
+}
+
+export interface SuggestedConditionField {
+  name: string;
+  label: string;
+  valueType?: 'boolean' | 'string' | 'integer' | 'number';
+  values?: ConditionValueChoice[];
+}
+
+/** Operators where predefined single-value choices apply (arrays/regex use custom input). */
+const PRESET_VALUE_OPS: Record<string, true> = {
+  eq: true,
+  neq: true,
+  gt: true,
+  gte: true,
+  lt: true,
+  lte: true,
+  starts_with: true,
+  ends_with: true,
+  contains: true,
+};
 
 export type TriggerMode = 'none' | 'events' | 'schedule';
 
@@ -74,6 +111,129 @@ export function stringT(cfg: GroRulesEditorConfig, key: string, fallback: string
 export function slugLabel(map: Record<string, string> | undefined, slug: string): string {
   const v = map?.[slug];
   return v !== undefined && v !== '' ? v : slug;
+}
+
+function normalizeValueChoice(raw: unknown): ConditionValueChoice | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const row = raw as Record<string, unknown>;
+  if (!Object.prototype.hasOwnProperty.call(row, 'value') || !Object.prototype.hasOwnProperty.call(row, 'label')) {
+    return null;
+  }
+  const v = row.value;
+  if (typeof v !== 'boolean' && typeof v !== 'number' && typeof v !== 'string') return null;
+  const label = String(row.label ?? '').trim();
+  if (label === '') return null;
+  return { value: v, label };
+}
+
+/** Normalize PHP/filter payloads: string slugs or `{ name, label, values? }` objects. */
+export function normalizeSuggestedConditionFields(
+  raw: GroRulesEditorConfig['suggestedFields'],
+): SuggestedConditionField[] {
+  if (!raw?.length) return [];
+  return raw
+    .map((item) => {
+      if (typeof item === 'string') {
+        return { name: item, label: item };
+      }
+      const name = String(item.name ?? '').trim();
+      const label = String(item.label ?? name).trim();
+      const valueType =
+        item.valueType === 'boolean' ||
+        item.valueType === 'string' ||
+        item.valueType === 'integer' ||
+        item.valueType === 'number'
+          ? item.valueType
+          : undefined;
+      const values = Array.isArray(item.values)
+        ? item.values.map(normalizeValueChoice).filter((c): c is ConditionValueChoice => c !== null)
+        : undefined;
+      return {
+        name,
+        label: label || name,
+        valueType,
+        values: values?.length ? values : undefined,
+      };
+    })
+    .filter((item) => item.name !== '');
+}
+
+export function findConditionField(
+  fields: readonly SuggestedConditionField[],
+  name: string,
+): SuggestedConditionField | undefined {
+  const key = name.trim();
+  if (key === '') return undefined;
+  return fields.find((f) => f.name === key);
+}
+
+export function valueJsonForChoice(choice: ConditionValueChoice): string {
+  return JSON.stringify(choice.value);
+}
+
+export function parseValueJson(valueJson: string): unknown {
+  const raw = String(valueJson ?? '').trim();
+  if (raw === '') return undefined;
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    return undefined;
+  }
+}
+
+export function valueJsonMatchesChoice(valueJson: string, choice: ConditionValueChoice): boolean {
+  const parsed = parseValueJson(valueJson);
+  if (parsed === undefined) return false;
+  try {
+    return JSON.stringify(parsed) === JSON.stringify(choice.value);
+  } catch {
+    return false;
+  }
+}
+
+export function findMatchingValueChoice(
+  field: SuggestedConditionField | undefined,
+  valueJson: string,
+): ConditionValueChoice | undefined {
+  if (!field?.values?.length) return undefined;
+  return field.values.find((c) => valueJsonMatchesChoice(valueJson, c));
+}
+
+export function defaultValueJsonForField(field: SuggestedConditionField | undefined): string {
+  const first = field?.values?.[0];
+  return first ? valueJsonForChoice(first) : '';
+}
+
+export function operatorSupportsPresetValues(op: string): boolean {
+  return Boolean(PRESET_VALUE_OPS[op]);
+}
+
+export function fieldHasPresetValues(
+  field: SuggestedConditionField | undefined,
+  op: string,
+): boolean {
+  return Boolean(field?.values?.length && operatorSupportsPresetValues(op));
+}
+
+/** Human-readable label for a stored condition value when choices are defined. */
+export function conditionValueLabel(
+  fields: readonly SuggestedConditionField[],
+  fieldName: string,
+  valueJson: string,
+): string {
+  const field = findConditionField(fields, fieldName);
+  const match = findMatchingValueChoice(field, valueJson);
+  if (match) return match.label;
+  const raw = String(valueJson ?? '').trim();
+  return raw === '' ? '' : raw;
+}
+
+/** Display label for a stored condition field name. */
+export function conditionFieldLabel(fields: readonly SuggestedConditionField[], name: string): string {
+  const key = name.trim();
+  if (key === '') return '';
+  const found = fields.find((f) => f.name === key);
+  return found?.label ?? key;
 }
 
 export function parseDocumentJson(text: string, errMsg: string): RulesDocument {

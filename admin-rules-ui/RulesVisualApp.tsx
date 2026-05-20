@@ -54,7 +54,7 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     uiRulesRef.current = uiRules;
   }, [version, uiRules]);
 
-  const activeTabRef = useRef<'visual' | 'raw' | 'config' | null>(null);
+  const activeTabRef = useRef<'visual' | 'raw' | 'config' | 'patterns' | null>(null);
   const displayColumns = cfg.panelConfig?.displayColumns ?? 1;
   const didNormalizeTextareaRef = useRef(false);
   const didInitBaselineRef = useRef(false);
@@ -76,21 +76,27 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     setParseError(null);
   }, [cfg, getTextarea]);
 
-  const syncPanelsForTab = useCallback((tab: 'visual' | 'raw' | 'config'): void => {
+  const syncPanelsForTab = useCallback((tab: 'visual' | 'raw' | 'config' | 'patterns'): void => {
     const tabV = document.querySelector<HTMLElement>('[data-gro-tab="visual"]');
+    const tabP = document.querySelector<HTMLElement>('[data-gro-tab="patterns"]');
     const tabR = document.querySelector<HTMLElement>('[data-gro-tab="raw"]');
     const tabC = document.querySelector<HTMLElement>('[data-gro-tab="config"]');
     const tabActiveClass = 'gro-tabs__tab--active';
     const panelVisual = document.getElementById('gro-rules-panel-visual');
+    const panelPatterns = document.getElementById('gro-rules-panel-patterns');
     const panelRaw = document.getElementById('gro-rules-panel-raw');
     const panelConfig = document.getElementById('gro-rules-panel-config');
     const editorForm = document.getElementById('gro-rules-editor-form');
     const isVisual = tab === 'visual';
+    const isPatterns = tab === 'patterns';
     const isRaw = tab === 'raw';
     const isConfig = tab === 'config';
+    const hideEditor = isConfig || isPatterns;
 
     tabV?.classList.toggle(tabActiveClass, isVisual);
     tabV?.setAttribute('aria-selected', isVisual ? 'true' : 'false');
+    tabP?.classList.toggle(tabActiveClass, isPatterns);
+    tabP?.setAttribute('aria-selected', isPatterns ? 'true' : 'false');
     tabR?.classList.toggle(tabActiveClass, isRaw);
     tabR?.setAttribute('aria-selected', isRaw ? 'true' : 'false');
     tabC?.classList.toggle(tabActiveClass, isConfig);
@@ -99,6 +105,11 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     if (panelVisual) {
       panelVisual.hidden = !isVisual;
       panelVisual.setAttribute('aria-hidden', isVisual ? 'false' : 'true');
+    }
+    if (panelPatterns) {
+      panelPatterns.hidden = !isPatterns;
+      panelPatterns.toggleAttribute('hidden', !isPatterns);
+      panelPatterns.setAttribute('aria-hidden', isPatterns ? 'false' : 'true');
     }
     if (panelRaw) {
       panelRaw.hidden = !isRaw;
@@ -111,18 +122,18 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
       panelConfig.setAttribute('aria-hidden', isConfig ? 'false' : 'true');
     }
     if (editorForm) {
-      editorForm.hidden = isConfig;
-      editorForm.toggleAttribute('hidden', isConfig);
+      editorForm.hidden = hideEditor;
+      editorForm.toggleAttribute('hidden', hideEditor);
     }
   }, []);
 
   const revealTab = useCallback(
-    (next: 'visual' | 'raw' | 'config'): void => {
+    (next: 'visual' | 'raw' | 'config' | 'patterns'): void => {
       const prev = activeTabRef.current;
       activeTabRef.current = next;
 
-      if (next === 'config') {
-        syncPanelsForTab('config');
+      if (next === 'config' || next === 'patterns') {
+        syncPanelsForTab(next);
         return;
       }
 
@@ -177,10 +188,10 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     const btn = document.getElementById('gro-rules-save-all') as HTMLButtonElement | null;
     if (!btn) return;
     const tab = activeTabRef.current;
-    const onConfig = tab === 'config';
+    const hideSaveAll = tab === 'config' || tab === 'patterns';
     const onRaw = tab === 'raw';
-    btn.hidden = onConfig;
-    btn.toggleAttribute('hidden', onConfig);
+    btn.hidden = hideSaveAll;
+    btn.toggleAttribute('hidden', hideSaveAll);
     btn.disabled = onRaw ? false : !dirty || isSaving;
     btn.textContent = isSaving && !onRaw ? t(cfg, 'saving', 'Saving…') : t(cfg, 'saveAll', 'Save all');
   }, [cfg, dirty, isSaving]);
@@ -196,11 +207,15 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     const onRawClick = (): void => {
       revealTabRef.current('raw');
     };
+    const onPatternsClick = (): void => {
+      revealTabRef.current('patterns');
+    };
     const onConfigClick = (): void => {
       revealTabRef.current('config');
     };
 
     document.querySelector<HTMLButtonElement>('[data-gro-tab="visual"]')?.addEventListener('click', onVisualClick);
+    document.querySelector<HTMLButtonElement>('[data-gro-tab="patterns"]')?.addEventListener('click', onPatternsClick);
     document.querySelector<HTMLButtonElement>('[data-gro-tab="raw"]')?.addEventListener('click', onRawClick);
     document.querySelector<HTMLButtonElement>('[data-gro-tab="config"]')?.addEventListener('click', onConfigClick);
 
@@ -236,9 +251,9 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     activeTabRef.current = null;
 
     const openTab = document.documentElement.dataset.groOpenRulesTab;
-    if (openTab === 'config') {
+    if (openTab === 'config' || openTab === 'patterns') {
       delete document.documentElement.dataset.groOpenRulesTab;
-      revealTabRef.current('config');
+      revealTabRef.current(openTab);
     } else if (init.startsOnRawTab) {
       setParseError(null);
       revealTabRef.current('raw');
@@ -262,6 +277,7 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
 
     return () => {
       document.querySelector<HTMLButtonElement>('[data-gro-tab="visual"]')?.removeEventListener('click', onVisualClick);
+      document.querySelector<HTMLButtonElement>('[data-gro-tab="patterns"]')?.removeEventListener('click', onPatternsClick);
       document.querySelector<HTMLButtonElement>('[data-gro-tab="raw"]')?.removeEventListener('click', onRawClick);
       document.querySelector<HTMLButtonElement>('[data-gro-tab="config"]')?.removeEventListener('click', onConfigClick);
       ta?.removeEventListener('input', onRawInput);

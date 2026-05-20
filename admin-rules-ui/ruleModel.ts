@@ -4,11 +4,19 @@ export interface RulesPanelConfig {
   displayColumns?: number;
 }
 
+export interface SmsTemplateChoice {
+  id: string;
+  label: string;
+  body: string;
+}
+
 export interface GroRulesEditorConfig {
   saveAjaxUrl?: string;
   saveAction?: string;
   saveNonce?: string;
   panelConfig?: RulesPanelConfig;
+  /** SMS templates from Configuration tab (id, label, resolved body). */
+  smsTemplates?: SmsTemplateChoice[];
   defaultVersion?: string;
   recurrences?: string[];
   events?: { value: string; label: string }[];

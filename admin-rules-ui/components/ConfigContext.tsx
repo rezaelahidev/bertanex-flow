@@ -3,6 +3,7 @@ import {
   stringT,
   type GroRulesEditorConfig,
   type RulesPanelConfig,
+  type SmsTemplateChoice,
 } from '../ruleModel';
 import { createContext, useContext } from 'react';
 
@@ -28,8 +29,26 @@ export function normalizeConfig(raw: GroRulesEditorConfig | undefined): GroRules
     actionTypeLabels: raw?.actionTypeLabels ?? {},
     recurrenceLabels: raw?.recurrenceLabels ?? {},
     suggestedFields: normalizeSuggestedConditionFields(raw?.suggestedFields),
+    smsTemplates: normalizeSmsTemplates(raw?.smsTemplates),
     events: raw?.events ?? [],
   };
+}
+
+function normalizeSmsTemplates(raw: GroRulesEditorConfig['smsTemplates']): SmsTemplateChoice[] {
+  if (!Array.isArray(raw)) return [];
+  const out: SmsTemplateChoice[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const row = item as Record<string, unknown>;
+    const id = typeof row.id === 'string' ? row.id.trim() : '';
+    if (id === '') continue;
+    out.push({
+      id,
+      label: typeof row.label === 'string' && row.label.trim() !== '' ? row.label.trim() : id,
+      body: typeof row.body === 'string' ? row.body : '',
+    });
+  }
+  return out;
 }
 
 export function t(cfg: GroRulesEditorConfig, key: string, fallback: string): string {

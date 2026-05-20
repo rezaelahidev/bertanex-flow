@@ -8,12 +8,14 @@ use GrowthOrchestrator\Admin\Models\RulesAdminConfig;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
 use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
 use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
+use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
 use GrowthOrchestrator\Admin\ViewModels\RulesPageContext;
 use GrowthOrchestrator\Admin\Views\RulesPageView;
 use GrowthOrchestrator\Event\EventType;
 use GrowthOrchestrator\I18n;
 use GrowthOrchestrator\Loader\HooksLoader;
 use GrowthOrchestrator\Rule\BuiltinConditionOperators;
+use GrowthOrchestrator\Rule\RuleLabelTranslator;
 
 /**
  * Controller: wires WordPress hooks, delegates persistence to {@see RulesDocumentModel}, renders via {@see RulesPageView}.
@@ -28,7 +30,8 @@ final class RulesController
         private readonly RulesDocumentModel $model,
         private readonly RulesPageView $view,
         private readonly RulesEditorSettingsModel $editorSettings,
-        private readonly SmsSettingsModel $smsSettings
+        private readonly SmsSettingsModel $smsSettings,
+        private readonly SmsTemplatesModel $smsTemplates
     ) {
     }
 
@@ -50,6 +53,33 @@ final class RulesController
 
         $this->editorSettings->registerSettings();
         $this->smsSettings->registerSettings();
+        $this->smsTemplates->registerSettings();
+
+        add_filter('wp_redirect', [$this, 'preserveRulesTabOnSettingsSave'], 10, 2);
+    }
+
+    /**
+     * After options.php save, reopen the tab the user submitted from (config vs patterns).
+     */
+    public function preserveRulesTabOnSettingsSave(string $location, int $status): string
+    {
+        unset($status);
+
+        if (! is_admin() || ! isset($_POST['option_page'])) {
+            return $location;
+        }
+
+        if ((string) $_POST['option_page'] !== RulesAdminConfig::SETTINGS_GROUP) {
+            return $location;
+        }
+
+        $tab = isset($_POST['gro_open_rules_tab']) ? sanitize_key(wp_unslash((string) $_POST['gro_open_rules_tab'])) : '';
+
+        if (in_array($tab, ['config', 'patterns'], true)) {
+            return add_query_arg('gro_open_tab', $tab, $location);
+        }
+
+        return $location;
     }
 
     /** SMS submenu merged into Rules → Configuration; keep legacy URL working. */
@@ -195,6 +225,13 @@ final class RulesController
             self::assetFileVersion('assets/admin/rules-panel-polish.css')
         );
 
+        wp_enqueue_style(
+            'gro-rules-patterns',
+            $base . 'rules-patterns.css',
+            ['gro-rules-visual-editor', 'gro-rules-panel-polish'],
+            self::assetFileVersion('assets/admin/rules-patterns.css')
+        );
+
         if (is_rtl()) {
             wp_enqueue_style(
                 'gro-rules-visual-editor-rtl',
@@ -209,6 +246,14 @@ final class RulesController
             $base . 'rules-visual-editor.bundle.js',
             [],
             self::assetFileVersion('assets/admin/rules-visual-editor.bundle.js'),
+            true
+        );
+
+        wp_enqueue_script(
+            'gro-sms-templates-settings',
+            $base . 'sms-templates-settings.js',
+            [],
+            self::assetFileVersion('assets/admin/sms-templates-settings.js'),
             true
         );
 
@@ -266,6 +311,7 @@ final class RulesController
                 'actionTypeLabels' => self::actionTypeLabelsForSlugs($actionTypes),
                 'recurrenceLabels' => self::recurrenceLabelsForSlugs($recurrences),
                 'suggestedFields'  => $suggestedFields,
+                'smsTemplates'     => SmsTemplatesModel::forEditor(),
                 'strings'          => [
                     'errInvalidRoot'   => __('JSON must be an object with a "rules" array.', 'growth-orchestrator'),
                     'noRules'          => __('No rules. Add one or paste JSON in the Raw JSON tab.', 'growth-orchestrator'),
@@ -334,6 +380,10 @@ final class RulesController
                     'customValue'          => __('Custom value (JSON)…', 'growth-orchestrator'),
                     'conditionsLimitReached' => __('Maximum number of conditions reached (%s).', 'growth-orchestrator'),
                     'actionsLimitReached'    => __('Maximum number of actions reached (%s).', 'growth-orchestrator'),
+                    'templateSelect'         => __('SMS template', 'growth-orchestrator'),
+                    'templateCustom'         => __('Custom template ID…', 'growth-orchestrator'),
+                    'templatePreview'        => __('Preview:', 'growth-orchestrator'),
+                    'templateConfigHint'     => __('Edit message text under Message patterns.', 'growth-orchestrator'),
                 ],
             ]
         );
@@ -620,7 +670,7 @@ final class RulesController
 
         $draft = get_transient(self::DRAFT_TRANSIENT_PREFIX . get_current_user_id());
         $textareaValue = (is_string($draft) && $draft !== '')
-            ? $draft
+            ? RuleLabelTranslator::localizeDocumentJson($draft)
             : $this->model->getEditorJson();
 
         $parsed = $this->model->parseForDisplay($textareaValue);

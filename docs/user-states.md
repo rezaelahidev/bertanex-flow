@@ -2,4 +2,3 @@
 - has_product: true/false
 - has_subscription: true/false
 - subscription_status: active/expired
-- installment_status: ok/overdue

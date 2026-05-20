@@ -14,7 +14,5 @@ enum EventType: string
     case ProductCreated          = 'PRODUCT_CREATED';
     case SubscriptionPurchased   = 'SUBSCRIPTION_PURCHASED';
     case SubscriptionExpired     = 'SUBSCRIPTION_EXPIRED';
-    case InstallmentDue          = 'INSTALLMENT_DUE';
-    case InstallmentOverdue      = 'INSTALLMENT_OVERDUE';
     case Login                   = 'LOGIN';
 }

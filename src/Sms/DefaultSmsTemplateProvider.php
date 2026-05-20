@@ -4,31 +4,17 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Sms;
 
+use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
+
 /**
- * Templates from {@see 'gro_sms_templates'} merged with safe defaults.
+ * SMS bodies from admin-configured templates ({@see SmsTemplatesModel}) plus {@see 'gro_sms_templates'} filter.
  */
 final class DefaultSmsTemplateProvider implements SmsTemplateProviderInterface
 {
     public function get(string $templateId): ?string
     {
-        $templates = array_merge(
-            $this->defaults(),
-            (array) apply_filters('gro_sms_templates', [])
-        );
+        $templates = SmsTemplatesModel::resolvedBodies();
 
         return $templates[$templateId] ?? null;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function defaults(): array
-    {
-        return [
-            'welcome_registered'         => 'Welcome {name}! Your account at {site_name} is ready: {site_url}',
-            'complete_profile'         => 'Hi {name}, please complete your profile at {site_url}. — {site_name}',
-            'subscription_expiring_3d' => 'Hi {name}, your subscription renews soon. — {site_name}',
-            'product_owner_no_sub'     => 'Hi {name}, you have a special offer: {site_name}',
-        ];
     }
 }

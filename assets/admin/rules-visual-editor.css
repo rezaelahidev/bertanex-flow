@@ -311,11 +311,14 @@
 	border-color: var(--gro-c-border);
 }
 
-.gro-tabs__tab--active {
+.gro-tabs__tab--active,
+.gro-tabs__tab.gro-tabs__tab--active {
 	color: var(--gro-c-accent);
 	background: var(--gro-c-surface);
 	border-color: var(--gro-c-accent-border);
-	box-shadow: var(--gro-shadow-sm);
+	box-shadow:
+		var(--gro-shadow-sm),
+		inset 0 -2px 0 var(--gro-c-accent);
 }
 
 .gro-tabs__tab:focus-visible {
@@ -377,6 +380,25 @@
 
 .gro-settings-card--sms {
 	border-inline-start: 3px solid var(--gro-c-accent);
+}
+
+.gro-settings-card--sms-templates {
+	border-inline-start: 3px solid #0d9488;
+}
+
+.gro-settings-card--wide {
+	grid-column: 1 / -1;
+}
+
+/* Message patterns tab: rules-patterns.css */
+
+.gro-action-template-preview {
+	margin-top: var(--gro-space-2);
+	max-width: 42rem;
+}
+
+.gro-action-template-preview__label {
+	font-weight: 600;
 }
 
 .gro-settings-card__header {

@@ -20,3 +20,7 @@
 	transform: scaleX(-1) rotate(45deg);
 	margin-top: 0;
 }
+
+.rtl .gro-patterns-form__footer {
+	flex-direction: row-reverse;
+}

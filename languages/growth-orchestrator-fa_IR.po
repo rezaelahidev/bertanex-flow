@@ -71,8 +71,8 @@ msgstr ""
 msgid "JSON error (preview only; saved value unchanged):"
 msgstr "خطای JSON (فقط پیش‌نمایش؛ مقدار ذخیره‌شده بدون تغییر است):"
 
-msgid "Fix the JSON below and save again."
-msgstr "JSON زیر را اصلاح کنید و دوباره ذخیره کنید."
+msgid "Use Reset to defaults on the Configuration tab, or restore valid rules another way."
+msgstr "در زبانه پیکربندی «بازگردانی به پیش‌فرض» را بزنید، یا قوانین معتبر را به روش دیگری بازیابی کنید."
 
 msgid "Rules overview"
 msgstr "مرور قانون‌ها"
@@ -112,9 +112,9 @@ msgid "Rule editor"
 msgstr "ویرایشگر قانون"
 
 msgid ""
-"Design IF / THEN automations, manage SMS delivery, and tune the visual builder from one workspace."
+"Design IF / THEN automations, manage SMS delivery, and tune automations from one workspace."
 msgstr ""
-"اتوماسیون‌های اگر/آنگاه را طراحی کنید، ارسال پیامک را مدیریت کنید و سازندهٔ بصری را در یک "
+"اتوماسیون‌های اگر/آنگاه را طراحی کنید، ارسال پیامک را مدیریت کنید و اتوماسیون‌ها را در یک "
 "فضای کاری تنظیم کنید."
 
 msgid ""
@@ -133,17 +133,14 @@ msgstr ""
 msgid "Rules editor mode"
 msgstr "حالت ویرایشگر قانون"
 
-msgid "Visual builder"
-msgstr "سازنده بصری"
-
-msgid "Raw JSON"
-msgstr "JSON خام"
+msgid "Automations"
+msgstr "اتوماسیون‌ها"
 
 msgid "Configuration"
 msgstr "پیکربندی"
 
-msgid "Enable JavaScript to use the visual rule builder."
-msgstr "برای استفاده از سازندهٔ بصری قانون، JavaScript را فعال کنید."
+msgid "Enable JavaScript to use the automations editor."
+msgstr "برای استفاده از ویرایشگر اتوماسیون‌ها، JavaScript را فعال کنید."
 
 msgid "Rules document (JSON)"
 msgstr "سند قانون (JSON)"
@@ -154,8 +151,8 @@ msgstr "کل سند؛ پیش از ذخیره اعتبارسنجی کنید."
 msgid "JSON must be an object with a \"rules\" array."
 msgstr "JSON باید یک شیء با آرایه «rules» باشد."
 
-msgid "No rules. Add one or paste JSON in the Raw JSON tab."
-msgstr "قانونی نیست. یکی بیافزایید یا JSON را در زبانه JSON خام بچسبانید."
+msgid "No rules yet. Add your first automation."
+msgstr "هنوز قانونی نیست. اولین اتوماسیون را اضافه کنید."
 
 msgid "Add rule"
 msgstr "افزودن قانون"
@@ -167,11 +164,10 @@ msgid "Advanced"
 msgstr "پیشرفته"
 
 msgid ""
-"This rule uses triggers or nested conditions that the visual editor does not edit. Change it "
-"under Raw JSON; the card will reload after a successful parse."
+"This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored."
 msgstr ""
-"این قانون از تریگر یا شرط‌های تودرتویی استفاده می‌کند که ویرایشگر بصری آن‌ها را ویرایش "
-"نمی‌کند. آن را در JSON خام تغییر دهید؛ پس از تجزیهٔ موفق، کارت دوباره بارگیری می‌شود."
+"این قانون از تریگر یا شرط‌های تودرتویی استفاده می‌کند که این ویرایشگر نمی‌تواند تغییر دهد. "
+"فقط خواندنی است و همان‌طور که ذخیره شده اجرا می‌شود."
 
 msgid "Label (optional)"
 msgstr "عنوان (اختیاری)"
@@ -530,6 +526,18 @@ msgstr "۱۴ روز"
 msgid "30 days"
 msgstr "۳۰ روز"
 
+msgid "User type"
+msgstr "نوع کاربر"
+
+msgid "Supplier"
+msgstr "عمده‌فروش"
+
+msgid "Buyer"
+msgstr "خریدار"
+
+msgid "Value"
+msgstr "مقدار"
+
 msgid "User registered"
 msgstr "ثبت‌نام کاربر"
 
@@ -547,6 +555,30 @@ msgstr "انقضای اشتراک"
 
 msgid "User login"
 msgstr "ورود کاربر"
+
+msgid "Subscription renewed"
+msgstr "تمدید اشتراک"
+
+msgid "Subscription cancelled"
+msgstr "لغو اشتراک"
+
+msgid "Listing credit used"
+msgstr "استفاده از اعتبار ثبت آگهی"
+
+msgid "Ladder credit used"
+msgstr "استفاده از اعتبار نردبان"
+
+msgid "Renewal reminder sent"
+msgstr "ارسال یادآوری تمدید"
+
+msgid "Renewal invoice created"
+msgstr "ایجاد فاکتور تمدید"
+
+msgid "Woo order benefits pending"
+msgstr "مزایای سفارش ووکامرس در انتظار"
+
+msgid "Legacy Woo grant applied"
+msgstr "اعمال اعطای قدیمی ووکامرس"
 
 msgid "List limits and column layout"
 msgstr "محدودیت تعداد و چیدمان ستون‌ها"
@@ -587,8 +619,8 @@ msgstr "بازگردانی به پیش‌فرض"
 msgid "Remove all saved customizations and restore the plugin’s original state."
 msgstr "همهٔ سفارشی‌سازی‌های ذخیره‌شده حذف و وضعیت اولیهٔ افزونه بازگردانده می‌شود."
 
-msgid "This will reset automation rules, SMS message patterns, visual builder limits, column layout, and Melipayamak settings stored in this panel. Credentials defined in wp-config or filters are not changed."
-msgstr "قوانین اتوماسیون، الگوهای پیامک، محدودیت‌های سازندهٔ بصری، چیدمان ستون‌ها و تنظیمات ملی‌پیامک ذخیره‌شده در این پنل بازنشانی می‌شوند. اعتبارنامه‌های تعریف‌شده در wp-config یا فیلترها تغییر نمی‌کنند."
+msgid "This will reset automation rules, SMS message patterns, automation list limits, column layout, and Melipayamak settings stored in this panel. Credentials defined in wp-config or filters are not changed."
+msgstr "قوانین اتوماسیون، الگوهای پیامک، محدودیت‌های فهرست اتوماسیون، چیدمان ستون‌ها و تنظیمات ملی‌پیامک ذخیره‌شده در این پنل بازنشانی می‌شوند. اعتبارنامه‌های تعریف‌شده در wp-config یا فیلترها تغییر نمی‌کنند."
 
 msgid "Reset all to defaults"
 msgstr "بازنشانی همه به پیش‌فرض"
@@ -892,8 +924,8 @@ msgstr "سفارشی"
 msgid "Edit message text under Message patterns."
 msgstr "ویرایش متن پیام در زبانه الگوهای پیام."
 
-msgid "Visual builder for common flows, message patterns, raw JSON, and configuration for layout and SMS delivery."
-msgstr "سازنده بصری برای جریان‌های متداول، الگوهای پیام، JSON خام، و پیکربندی چیدمان و ارسال پیامک."
+msgid "Build automations, edit message patterns, and configure layout and SMS delivery."
+msgstr "اتوماسیون بسازید، الگوهای پیام را ویرایش کنید، و چیدمان و ارسال پیامک را پیکربندی کنید."
 
 msgid "Persian texts sent to customers via Melipayamak. Each pattern matches a template_id in your automation rules."
 msgstr "متن‌های فارسی ارسالی به مشتریان از طریق ملی‌پیامک. هر الگو با شناسه template_id در قوانین اتوماسیون شما جفت می‌شود."

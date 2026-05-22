@@ -320,6 +320,11 @@ final class RulesController
                 'recurrenceLabels' => self::recurrenceLabelsForSlugs($recurrences),
                 'suggestedFields'  => $suggestedFields,
                 'smsTemplates'     => SmsTemplatesModel::forEditor(),
+                'useJalaliCalendar' => is_rtl() && str_starts_with(
+                    function_exists('determine_locale') ? determine_locale() : (string) get_locale(),
+                    'fa'
+                ),
+                'jalaliMonthNames' => self::jalaliMonthNamesForEditor(),
                 'strings'          => [
                     'errInvalidRoot'   => __('JSON must be an object with a "rules" array.', 'growth-orchestrator'),
                     'noRules'          => __('No rules. Add one or paste JSON in the Raw JSON tab.', 'growth-orchestrator'),
@@ -379,6 +384,40 @@ final class RulesController
                     'actionType'       => __('Type', 'growth-orchestrator'),
                     'templateId'       => __('template_id', 'growth-orchestrator'),
                     'delaySeconds'     => __('delay_seconds', 'growth-orchestrator'),
+                    'delayLabel'       => __('Delay', 'growth-orchestrator'),
+                    'delayRunImmediately' => __('Run immediately when the rule matches', 'growth-orchestrator'),
+                    'delayModeImmediateHint' => __('When the rule matches', 'growth-orchestrator'),
+                    'delayModeSchedule'    => __('Schedule', 'growth-orchestrator'),
+                    'delayModeScheduleHint' => __('Pick date and time after now', 'growth-orchestrator'),
+                    'delayTimeNoneShort'   => __('No extra time', 'growth-orchestrator'),
+                    'delayDateLegend'  => __('Date', 'growth-orchestrator'),
+                    'delayDateToday'   => __('Today', 'growth-orchestrator'),
+                    'delayDateInDays'  => __('In', 'growth-orchestrator'),
+                    'delayDateDaysLabel' => __('days', 'growth-orchestrator'),
+                    'delayDateOn'      => __('On', 'growth-orchestrator'),
+                    'delayTimeLegend'  => __('Time', 'growth-orchestrator'),
+                    'delayTimeNone'    => __('Same time (date offset only)', 'growth-orchestrator'),
+                    'delayTimeSeconds' => __('seconds', 'growth-orchestrator'),
+                    'delayTimeMinutes' => __('minutes', 'growth-orchestrator'),
+                    'delayTimeHours'   => __('hours', 'growth-orchestrator'),
+                    'delayTimeAt'      => __('At', 'growth-orchestrator'),
+                    'delayPreviewLabel' => __('Preview:', 'growth-orchestrator'),
+                    'delayImmediate'   => __('Immediately when the rule matches', 'growth-orchestrator'),
+                    'delayImmediateShort' => __('Immediate', 'growth-orchestrator'),
+                    'delayPreviewAt'   => __('Scheduled at %1$s %2$s (about %3$s from now)', 'growth-orchestrator'),
+                    'delayPreviewSeconds' => __('About %s seconds after the rule matches', 'growth-orchestrator'),
+                    'delayPreviewRelative' => __('About %s after the rule matches', 'growth-orchestrator'),
+                    'delayOneDay'      => __('1 day', 'growth-orchestrator'),
+                    'delayDays'        => __('%s days', 'growth-orchestrator'),
+                    'delayOneHour'     => __('1 hour', 'growth-orchestrator'),
+                    'delayHours'       => __('%s hours', 'growth-orchestrator'),
+                    'delayOneMinute'   => __('1 minute', 'growth-orchestrator'),
+                    'delayMinutes'     => __('%s minutes', 'growth-orchestrator'),
+                    'delayOneSecond'   => __('1 second', 'growth-orchestrator'),
+                    'delaySecondsUnit' => __('%s seconds', 'growth-orchestrator'),
+                    'jalaliDay'        => __('Day', 'growth-orchestrator'),
+                    'jalaliMonth'      => __('Month', 'growth-orchestrator'),
+                    'jalaliYear'       => __('Year', 'growth-orchestrator'),
                     'paramsJson'       => __('params (JSON object)', 'growth-orchestrator'),
                     'removeAction'     => __('Remove action', 'growth-orchestrator'),
                     'addAction'        => __('Add action', 'growth-orchestrator'),
@@ -617,6 +656,29 @@ final class RulesController
      * @param list<string> $slugs
      * @return array<string, string>
      */
+    /**
+     * Jalali month names for the rules editor date picker (Persian admin).
+     *
+     * @return list<string>
+     */
+    private static function jalaliMonthNamesForEditor(): array
+    {
+        return [
+            'فروردین',
+            'اردیبهشت',
+            'خرداد',
+            'تیر',
+            'مرداد',
+            'شهریور',
+            'مهر',
+            'آبان',
+            'آذر',
+            'دی',
+            'بهمن',
+            'اسفند',
+        ];
+    }
+
     private static function recurrenceLabelsForSlugs(array $slugs): array
     {
         $out = [];

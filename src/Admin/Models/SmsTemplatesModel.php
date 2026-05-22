@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Admin\Models;
 
+use GrowthOrchestrator\Consumer\ConsumerDefaultsResolver;
+use GrowthOrchestrator\Consumer\ConsumerRegistry;
+
 /**
  * User-editable SMS template bodies (Settings API + runtime resolution).
  *
@@ -115,7 +118,7 @@ final class SmsTemplatesModel
     }
 
     /**
-     * Built-in template catalog (sourced from rules/default-sms-patterns.json).
+     * Built-in template catalog from integrated consumers.
      *
      * @return list<array{id: string, label: string, defaultBody: string, builtin: true}>
      */
@@ -127,34 +130,14 @@ final class SmsTemplatesModel
             return $catalog;
         }
 
-        $catalog = [];
-        $path    = defined('GROWTH_ORCH_PLUGIN_DIR')
-            ? GROWTH_ORCH_PLUGIN_DIR . 'rules/default-sms-patterns.json'
-            : '';
+        if (class_exists(ConsumerRegistry::class)) {
+            $resolver = new ConsumerDefaultsResolver(ConsumerRegistry::instance());
+            $catalog  = $resolver->mergedSmsPatternCatalog();
 
-        if ($path !== '' && is_readable($path)) {
-            $raw = file_get_contents($path);
-            if ($raw !== false) {
-                $decoded = json_decode($raw, true);
-                if (is_array($decoded)) {
-                    foreach ($decoded as $row) {
-                        if (! is_array($row)) {
-                            continue;
-                        }
-                        $id = sanitize_key((string) ($row['id'] ?? ''));
-                        if ($id === '') {
-                            continue;
-                        }
-                        $catalog[] = [
-                            'id'          => $id,
-                            'label'       => (string) ($row['label'] ?? $id),
-                            'defaultBody' => (string) ($row['defaultBody'] ?? ''),
-                            'builtin'     => true,
-                        ];
-                    }
-                }
-            }
+            return $catalog;
         }
+
+        $catalog = [];
 
         return $catalog;
     }

@@ -13,6 +13,7 @@ use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
 use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
 use GrowthOrchestrator\Admin\ViewModels\RulesPageContext;
 use GrowthOrchestrator\Admin\Views\RulesPageView;
+use GrowthOrchestrator\Consumer\ConsumerRegistry;
 use GrowthOrchestrator\Event\EventType;
 use GrowthOrchestrator\I18n;
 use GrowthOrchestrator\Loader\HooksLoader;
@@ -305,13 +306,15 @@ final class RulesController
             true
         );
 
-        $events = [];
+        $events = ConsumerRegistry::instance()->eventChoices();
 
-        foreach (EventType::cases() as $case) {
-            $events[] = [
-                'value' => $case->value,
-                'label' => self::eventTypeLabel($case),
-            ];
+        if ($events === []) {
+            foreach (EventType::cases() as $case) {
+                $events[] = [
+                    'value' => $case->value,
+                    'label' => $case->value,
+                ];
+            }
         }
 
         /** @phpstan-ignore-next-line */
@@ -329,16 +332,7 @@ final class RulesController
         $recurrences = ['hourly', 'twicedaily', 'daily', 'weekly'];
 
         /** @phpstan-ignore-next-line */
-        $suggestedFieldSlugs = apply_filters(
-            'gro_rules_editor_suggested_condition_fields',
-            [
-                'profile_completed',
-                'has_product',
-                'has_subscription',
-                'subscription_status',
-                'subscription_days_until_expiry',
-            ]
-        );
+        $suggestedFieldSlugs = ConsumerRegistry::instance()->suggestedConditionFields();
 
         $suggestedFields = self::conditionFieldsForSlugs($suggestedFieldSlugs);
 
@@ -538,66 +532,7 @@ final class RulesController
      */
     private static function baselineConditionFieldDefinitions(): array
     {
-        $yes = __('Yes', 'growth-orchestrator');
-        $no  = __('No', 'growth-orchestrator');
-
-        $defs = [
-            'profile_completed' => [
-                'name'      => 'profile_completed',
-                'label'     => self::conditionFieldSlugLabel('profile_completed'),
-                'valueType' => 'boolean',
-                'values'    => [
-                    ['value' => true, 'label' => $yes],
-                    ['value' => false, 'label' => $no],
-                ],
-            ],
-            'has_product' => [
-                'name'      => 'has_product',
-                'label'     => self::conditionFieldSlugLabel('has_product'),
-                'valueType' => 'boolean',
-                'values'    => [
-                    ['value' => true, 'label' => $yes],
-                    ['value' => false, 'label' => $no],
-                ],
-            ],
-            'has_subscription' => [
-                'name'      => 'has_subscription',
-                'label'     => self::conditionFieldSlugLabel('has_subscription'),
-                'valueType' => 'boolean',
-                'values'    => [
-                    ['value' => true, 'label' => $yes],
-                    ['value' => false, 'label' => $no],
-                ],
-            ],
-            'subscription_status' => [
-                'name'      => 'subscription_status',
-                'label'     => self::conditionFieldSlugLabel('subscription_status'),
-                'valueType' => 'string',
-                'values'    => [
-                    ['value' => 'active', 'label' => __('Active', 'growth-orchestrator')],
-                    ['value' => 'expired', 'label' => __('Expired', 'growth-orchestrator')],
-                    ['value' => 'cancelled', 'label' => __('Cancelled', 'growth-orchestrator')],
-                ],
-            ],
-            'subscription_days_until_expiry' => [
-                'name'      => 'subscription_days_until_expiry',
-                'label'     => self::conditionFieldSlugLabel('subscription_days_until_expiry'),
-                'valueType' => 'integer',
-                'values'    => [
-                    ['value' => 0, 'label' => __('0 days (expires today)', 'growth-orchestrator')],
-                    ['value' => 1, 'label' => __('1 day', 'growth-orchestrator')],
-                    ['value' => 3, 'label' => __('3 days', 'growth-orchestrator')],
-                    ['value' => 7, 'label' => __('7 days', 'growth-orchestrator')],
-                    ['value' => 14, 'label' => __('14 days', 'growth-orchestrator')],
-                    ['value' => 30, 'label' => __('30 days', 'growth-orchestrator')],
-                ],
-            ],
-        ];
-
-        /**
-         * @param array<string, array{name: string, label: string, valueType?: string, values?: list<array{value: bool|int|float|string, label: string}>}> $definitions
-         */
-        return apply_filters('gro_rules_editor_condition_field_definitions', $defs);
+        return ConsumerRegistry::instance()->conditionFieldDefinitions();
     }
 
     /**
@@ -627,14 +562,7 @@ final class RulesController
 
     private static function conditionFieldSlugLabel(string $slug): string
     {
-        return match ($slug) {
-            'profile_completed'              => __('Profile completed', 'growth-orchestrator'),
-            'has_product'                    => __('Has product', 'growth-orchestrator'),
-            'has_subscription'               => __('Has subscription', 'growth-orchestrator'),
-            'subscription_status'            => __('Subscription status', 'growth-orchestrator'),
-            'subscription_days_until_expiry' => __('Days until subscription expires', 'growth-orchestrator'),
-            default                          => $slug,
-        };
+        return $slug;
     }
 
     /**
@@ -754,26 +682,6 @@ final class RulesController
             'daily' => __('Daily', 'growth-orchestrator'),
             'weekly' => __('Weekly', 'growth-orchestrator'),
             default => $slug,
-        };
-    }
-
-    private static function eventTypeLabel(EventType $type): string
-    {
-        return match ($type) {
-            EventType::UserRegistered                   => __('User registered', 'growth-orchestrator'),
-            EventType::ProfileCompleted                 => __('Profile completed', 'growth-orchestrator'),
-            EventType::ProductCreated                   => __('Product created', 'growth-orchestrator'),
-            EventType::SubscriptionPurchased            => __('Subscription purchased', 'growth-orchestrator'),
-            EventType::SubscriptionRenewed              => __('Subscription renewed', 'growth-orchestrator'),
-            EventType::SubscriptionCancelled            => __('Subscription cancelled', 'growth-orchestrator'),
-            EventType::SubscriptionExpired                => __('Subscription expired', 'growth-orchestrator'),
-            EventType::SubscriptionListingCreditUsed      => __('Listing credit used', 'growth-orchestrator'),
-            EventType::SubscriptionLadderCreditUsed       => __('Ladder credit used', 'growth-orchestrator'),
-            EventType::SubscriptionRenewalReminderSent  => __('Renewal reminder sent', 'growth-orchestrator'),
-            EventType::SubscriptionRenewalInvoiceCreated => __('Renewal invoice created', 'growth-orchestrator'),
-            EventType::SubscriptionWooOrderBenefitsPending => __('Woo order benefits pending', 'growth-orchestrator'),
-            EventType::SubscriptionLegacyWooGrantApplied => __('Legacy Woo grant applied', 'growth-orchestrator'),
-            EventType::Login                            => __('User login', 'growth-orchestrator'),
         };
     }
 

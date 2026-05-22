@@ -13,6 +13,7 @@ export type GroIconName =
   | 'condition'
   | 'action'
   | 'trigger'
+  | 'clock'
   | 'settings';
 
 const DASHICON_CLASS: Record<GroIconName, string> = {
@@ -27,6 +28,7 @@ const DASHICON_CLASS: Record<GroIconName, string> = {
   condition: 'dashicons-filter',
   action: 'dashicons-controls-play',
   trigger: 'dashicons-calendar-alt',
+  clock: 'dashicons-clock',
   settings: 'dashicons-admin-generic',
 };
 

@@ -1,3 +1,4 @@
+import { defaultDelaySchedule } from '../delaySchedule';
 import type { EditableRule } from '../ruleModel';
 import { ActionItem } from './ActionItem';
 import { GroButton } from './GroButton';
@@ -38,7 +39,10 @@ export function ActionsBlock({ ruleIndex, editable: e, onChange }: ActionsBlockP
           onClick={() =>
             onChange({
               ...e,
-              actions: [...e.actions, { type: at[0], template_id: '', delay_seconds: 0, paramsJson: '{}' }],
+              actions: [
+                ...e.actions,
+                { type: at[0], template_id: '', delay_seconds: 0, delaySchedule: defaultDelaySchedule(), paramsJson: '{}' },
+              ],
             })
           }
         >

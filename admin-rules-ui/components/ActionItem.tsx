@@ -1,4 +1,6 @@
+import { defaultDelaySchedule, formatDelaySummary } from '../delaySchedule';
 import { slugLabel, type ActionRowUi, type EditableRule, type SmsTemplateChoice } from '../ruleModel';
+import { ActionDelayField } from './ActionDelayField';
 import { GroButton } from './GroButton';
 import { GroIcon } from './GroIcon';
 import { Modal } from './Modal';
@@ -63,7 +65,7 @@ export function ActionItem({ ruleIndex, idx, row: a, editable: e, onChange }: Ac
 
   const typeLabel = slugLabel(cfg.actionTypeLabels, at.includes(a.type) ? a.type : at[0]);
   const templateShown = templateLabel(smsTemplates, a.template_id);
-  const delayShown = `${String(a.delay_seconds)}s`;
+  const delayShown = formatDelaySummary(a.delaySchedule ?? defaultDelaySchedule(), a.delay_seconds, cfg);
   const numHuman = idx + 1;
   const openAria = openActionModalAria(cfg, numHuman, `${typeLabel} · ${templateShown}`);
   const removeAria = removeActionItemAria(cfg, numHuman, typeLabel);
@@ -159,7 +161,7 @@ export function ActionItem({ ruleIndex, idx, row: a, editable: e, onChange }: Ac
 
   const renderForm = (row: ActionRowUi, onRowChange: (next: ActionRowUi) => void): React.ReactElement => (
     <div className="gro-action-row gro-action-row--nested">
-      <div className="gro-action-row__grid">
+      <div className="gro-action-row__grid gro-action-row__grid--main">
         <p className="gro-action-field gro-action-field--type">
           <label>
             <strong>{t(cfg, 'actionType', 'Type')}</strong>
@@ -173,19 +175,15 @@ export function ActionItem({ ruleIndex, idx, row: a, editable: e, onChange }: Ac
           </label>
         </p>
         {renderTemplateField(row, onRowChange)}
-        <p className="gro-action-field gro-action-field--delay">
-          <label>
-            <strong>{t(cfg, 'delaySeconds', 'delay_seconds')}</strong>
-            <input
-              type="number"
-              min={0}
-              step={1}
-              inputMode="numeric"
-              value={row.delay_seconds}
-              onChange={(ev) => onRowChange({ ...row, delay_seconds: parseInt(ev.target.value, 10) || 0 })}
-            />
-          </label>
-        </p>
+      </div>
+      <div className="gro-action-field gro-action-field--delay gro-action-field--delay-schedule">
+        <strong className="gro-action-field__legend">{t(cfg, 'delayLabel', 'Delay')}</strong>
+        <ActionDelayField
+          schedule={row.delaySchedule ?? defaultDelaySchedule()}
+          onChange={(schedule, delaySeconds) =>
+            onRowChange({ ...row, delaySchedule: schedule, delay_seconds: delaySeconds })
+          }
+        />
       </div>
       <p className="gro-action-row__params">
         <label>
@@ -221,7 +219,7 @@ export function ActionItem({ ruleIndex, idx, row: a, editable: e, onChange }: Ac
             <span className="gro-item-card__sep" aria-hidden>
               {' · '}
             </span>
-            <span className="gro-item-card__meta-key">{t(cfg, 'delaySeconds', 'delay_seconds')}</span>{' '}
+            <span className="gro-item-card__meta-key">{t(cfg, 'delayLabel', 'Delay')}</span>{' '}
             <strong>{delayShown}</strong>
           </span>
           <span className="gro-item-card__edit-hint" aria-hidden>
@@ -239,7 +237,9 @@ export function ActionItem({ ruleIndex, idx, row: a, editable: e, onChange }: Ac
             const next = e.actions.filter((_, i) => i !== idx);
             onChange({
               ...e,
-              actions: next.length ? next : [{ type: at[0], template_id: '', delay_seconds: 0, paramsJson: '{}' }],
+              actions: next.length
+                ? next
+                : [{ type: at[0], template_id: '', delay_seconds: 0, delaySchedule: defaultDelaySchedule(), paramsJson: '{}' }],
             });
           }}
         />

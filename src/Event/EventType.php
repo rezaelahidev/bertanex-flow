@@ -9,10 +9,18 @@ namespace GrowthOrchestrator\Event;
  */
 enum EventType: string
 {
+    case Login                            = 'LOGIN';
     case UserRegistered          = 'USER_REGISTERED';
-    case ProfileCompleted        = 'PROFILE_COMPLETED';
     case ProductCreated          = 'PRODUCT_CREATED';
-    case SubscriptionPurchased   = 'SUBSCRIPTION_PURCHASED';
-    case SubscriptionExpired     = 'SUBSCRIPTION_EXPIRED';
-    case Login                   = 'LOGIN';
+    case ProfileCompleted        = 'PROFILE_COMPLETED';
+    case SubscriptionRenewed              = 'SUBSCRIPTION_RENEWED';
+    case SubscriptionExpired              = 'SUBSCRIPTION_EXPIRED';
+    case SubscriptionPurchased            = 'SUBSCRIPTION_PURCHASED';
+    case SubscriptionCancelled            = 'SUBSCRIPTION_CANCELLED';
+    case SubscriptionLadderCreditUsed     = 'SUBSCRIPTION_LADDER_CREDIT_USED';
+    case SubscriptionListingCreditUsed    = 'SUBSCRIPTION_LISTING_CREDIT_USED';
+    case SubscriptionRenewalReminderSent  = 'SUBSCRIPTION_RENEWAL_REMINDER_SENT';
+    case SubscriptionRenewalInvoiceCreated = 'SUBSCRIPTION_RENEWAL_INVOICE_CREATED';
+    case SubscriptionLegacyWooGrantApplied = 'SUBSCRIPTION_LEGACY_WOO_GRANT_APPLIED';
+    case SubscriptionWooOrderBenefitsPending = 'SUBSCRIPTION_WOO_ORDER_BENEFITS_PENDING';
 }

@@ -2,3 +2,4 @@
 - has_product: true/false
 - has_subscription: true/false
 - subscription_status: active/expired
+- user_type: site-specific (OMDBOX theme registers supplier/buyer via gro_rules_editor_condition_field_definitions)

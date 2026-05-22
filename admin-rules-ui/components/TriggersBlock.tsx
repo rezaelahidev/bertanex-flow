@@ -1,4 +1,5 @@
 import { slugLabel, type EditableTrigger } from '../ruleModel';
+import { GroButton } from './GroButton';
 import { GroIcon } from './GroIcon';
 import { t, useCfg } from './ConfigContext';
 import React, { useMemo } from 'react';
@@ -15,6 +16,30 @@ export function TriggersBlock({ ruleIndex, editable: te, onChange }: TriggersBlo
   const eventOpts = cfg.events ?? [];
 
   const extras = useMemo(() => te.events.filter((x) => !eventOpts.some((eo) => eo.value === x)), [te.events, eventOpts]);
+  const knownEventValues = useMemo(() => eventOpts.map((eo) => eo.value), [eventOpts]);
+  const selectedKnownCount = useMemo(
+    () => te.events.filter((value) => knownEventValues.includes(value)).length,
+    [te.events, knownEventValues],
+  );
+
+  const toggleEvent = (value: string, checked: boolean): void => {
+    let next = te.events.slice();
+    if (checked && !next.includes(value)) next.push(value);
+    if (!checked) next = next.filter((x) => x !== value);
+    onChange({ ...te, events: next });
+  };
+
+  const selectAllEvents = (): void => {
+    const merged = [...te.events];
+    knownEventValues.forEach((value) => {
+      if (!merged.includes(value)) merged.push(value);
+    });
+    onChange({ ...te, events: merged });
+  };
+
+  const clearKnownEvents = (): void => {
+    onChange({ ...te, events: te.events.filter((value) => !knownEventValues.includes(value)) });
+  };
 
   const syncCustomExtras = (customLine: string): void => {
     const known = eventOpts.map((eo) => eo.value);
@@ -67,22 +92,85 @@ export function TriggersBlock({ ruleIndex, editable: te, onChange }: TriggersBlo
       </div>
       {te.mode === 'events' ? (
         <>
-          <div className="gro-events-grid">
-            {eventOpts.map((ev) => (
-              <label key={ev.value}>
-                <input
-                  type="checkbox"
-                  checked={te.events.includes(ev.value)}
-                  onChange={(e) => {
-                    let next = te.events.slice();
-                    if (e.target.checked && !next.includes(ev.value)) next.push(ev.value);
-                    if (!e.target.checked) next = next.filter((x) => x !== ev.value);
-                    onChange({ ...te, events: next });
-                  }}
-                />{' '}
-                {ev.label || ev.value}
-              </label>
-            ))}
+          <div className="gro-events-picker">
+            {eventOpts.length > 0 ? (
+              <div className="gro-events-picker__toolbar">
+                <p className="gro-events-picker__summary">
+                  <span className="gro-events-picker__count">
+                    {t(cfg, 'eventsSelectedCount', '%1$s of %2$s events selected')
+                      .replace('%1$s', String(selectedKnownCount))
+                      .replace('%2$s', String(eventOpts.length))}
+                  </span>
+                  {selectedKnownCount > 0 ? (
+                    <span className="gro-events-picker__hint">
+                      {t(cfg, 'eventsSelectedHint', 'Rule runs when any selected event fires.')}
+                    </span>
+                  ) : (
+                    <span className="gro-events-picker__hint gro-events-picker__hint--warn">
+                      {t(cfg, 'eventsNoneSelectedHint', 'Select at least one event or add custom names below.')}
+                    </span>
+                  )}
+                </p>
+                <div className="gro-events-picker__actions">
+                  <GroButton
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={selectedKnownCount === eventOpts.length}
+                    onClick={selectAllEvents}
+                  >
+                    {t(cfg, 'selectAllEvents', 'Select all')}
+                  </GroButton>
+                  <GroButton
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={selectedKnownCount === 0}
+                    onClick={clearKnownEvents}
+                  >
+                    {t(cfg, 'clearEvents', 'Clear')}
+                  </GroButton>
+                </div>
+              </div>
+            ) : null}
+            {eventOpts.length > 0 ? (
+              <div
+                className="gro-events-grid"
+                role="group"
+                aria-label={t(cfg, 'eventsGridLabel', 'Automation events')}
+              >
+                {eventOpts.map((ev) => {
+                  const selected = te.events.includes(ev.value);
+                  const label = ev.label || ev.value;
+                  const showSlug = Boolean(ev.label && ev.label !== ev.value);
+
+                  return (
+                    <label
+                      key={ev.value}
+                      className={`gro-event-chip${selected ? ' gro-event-chip--selected' : ''}`}
+                    >
+                      <input
+                        type="checkbox"
+                        className="gro-event-chip__input"
+                        checked={selected}
+                        onChange={(e) => toggleEvent(ev.value, e.target.checked)}
+                      />
+                      <span className="gro-event-chip__indicator" aria-hidden="true">
+                        <span className="gro-event-chip__check" />
+                      </span>
+                      <span className="gro-event-chip__body">
+                        <span className="gro-event-chip__label">{label}</span>
+                        {showSlug ? <span className="gro-event-chip__slug">{ev.value}</span> : null}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="gro-empty-state gro-events-picker__empty">
+                {t(cfg, 'eventsCatalogEmpty', 'No automation events are registered yet. Add custom event names below.')}
+              </p>
+            )}
           </div>
           <p>
             <label>

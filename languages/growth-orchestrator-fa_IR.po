@@ -320,6 +320,102 @@ msgstr "شناسه الگو"
 msgid "delay_seconds"
 msgstr "تأخیر (ثانیه)"
 
+msgid "Delay"
+msgstr "تأخیر"
+
+msgid "Run immediately when the rule matches"
+msgstr "بلافاصله پس از تطابق قانون اجرا شود"
+
+msgid "When the rule matches"
+msgstr "هنگام تطابق قانون"
+
+msgid "Schedule"
+msgstr "زمان‌بندی"
+
+msgid "Pick date and time after now"
+msgstr "انتخاب تاریخ و زمان بعد از الان"
+
+msgid "No extra time"
+msgstr "بدون زمان اضافه"
+
+msgid "Day"
+msgstr "روز"
+
+msgid "Month"
+msgstr "ماه"
+
+msgid "Year"
+msgstr "سال"
+
+msgid "Date"
+msgstr "تاریخ"
+
+msgid "Today"
+msgstr "امروز"
+
+msgid "In"
+msgstr "تا"
+
+msgid "days"
+msgstr "روز"
+
+msgid "On"
+msgstr "در"
+
+msgid "Time"
+msgstr "زمان"
+
+msgid "Same time (date offset only)"
+msgstr "همان زمان (فقط جابه‌جایی تاریخ)"
+
+msgid "seconds"
+msgstr "ثانیه"
+
+msgid "minutes"
+msgstr "دقیقه"
+
+msgid "hours"
+msgstr "ساعت"
+
+msgid "At"
+msgstr "در ساعت"
+
+msgid "Immediately when the rule matches"
+msgstr "بلافاصله پس از تطابق قانون"
+
+msgid "Immediate"
+msgstr "فوری"
+
+msgid "Scheduled at %1$s %2$s (about %3$s from now)"
+msgstr "زمان‌بندی در %1$s %2$s (حدود %3$s از الان)"
+
+msgid "About %s seconds after the rule matches"
+msgstr "حدود %s ثانیه پس از تطابق قانون"
+
+msgid "About %s after the rule matches"
+msgstr "حدود %s پس از تطابق قانون"
+
+msgid "%s days"
+msgstr "%s روز"
+
+msgid "1 hour"
+msgstr "۱ ساعت"
+
+msgid "%s hours"
+msgstr "%s ساعت"
+
+msgid "1 minute"
+msgstr "۱ دقیقه"
+
+msgid "%s minutes"
+msgstr "%s دقیقه"
+
+msgid "1 second"
+msgstr "۱ ثانیه"
+
+msgid "%s seconds"
+msgstr "%s ثانیه"
+
 msgid "params (JSON object)"
 msgstr "پارامترها (شیء JSON)"
 

@@ -21,7 +21,7 @@
       "actions": [
         {
           "type": "send_sms",
-          "template_id": "complete_profile",
+          "template_id": "complete_profile_day1_evening",
           "params": {}
         }
       ]
@@ -51,7 +51,7 @@
       "actions": [
         {
           "type": "send_discount",
-          "template_id": "product_owner_no_sub",
+          "template_id": "encourage_more_products",
           "params": {}
         }
       ]
@@ -89,7 +89,7 @@
       "actions": [
         {
           "type": "send_sms",
-          "template_id": "subscription_expiring_3d",
+          "template_id": "subscription_2_days_before",
           "params": {}
         }
       ]

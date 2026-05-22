@@ -1632,6 +1632,22 @@
 	align-items: start;
 }
 
+.gro-action-row__grid--main {
+	grid-template-columns: minmax(11rem, 1fr) minmax(14rem, 2.25fr);
+}
+
+.gro-action-field--delay-schedule {
+	margin-bottom: var(--gro-space-3);
+}
+
+.gro-action-field--delay-schedule .gro-action-field__legend {
+	display: block;
+	font-weight: 600;
+	font-size: 13px;
+	margin: 0 0 var(--gro-space-1);
+	color: var(--gro-c-text);
+}
+
 @media (max-width: 782px) {
 	.gro-action-row__grid {
 		grid-template-columns: 1fr;
@@ -1650,7 +1666,7 @@
 	flex-direction: column;
 	gap: var(--gro-space-1);
 	margin: 0;
-	align-items: stretch;
+	align-items: center;
 	cursor: inherit;
 	line-height: 1.4;
 	min-height: 0;

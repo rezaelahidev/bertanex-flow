@@ -53,8 +53,6 @@ if (is_readable(GROWTH_ORCH_PLUGIN_DIR . 'vendor/autoload.php')) {
     Autoloader::register(GROWTH_ORCH_PLUGIN_DIR . 'src', __NAMESPACE__ . '\\');
 }
 
-require_once GROWTH_ORCH_PLUGIN_DIR . 'omdbox-theme-compat.php';
-
 $growth_orch_action_scheduler = GROWTH_ORCH_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
 if (is_readable($growth_orch_action_scheduler)) {
     require_once $growth_orch_action_scheduler;

@@ -4,48 +4,47 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator;
 
-use GrowthOrchestrator\Admin\Controllers\RulesController;
-use GrowthOrchestrator\Admin\PluginDefaultsReset;
-use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
-use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
-use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
-use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
-use GrowthOrchestrator\Admin\Views\RulesPageView;
+use GrowthOrchestrator\Rule\RuleEngine;
+use GrowthOrchestrator\Sms\SmsJobQueue;
 use GrowthOrchestrator\Db\RulesDbSchema;
+use GrowthOrchestrator\Loader\HooksLoader;
+use GrowthOrchestrator\Sms\SmsRateLimiter;
+use GrowthOrchestrator\Sms\SmsPhoneResolver;
 use GrowthOrchestrator\Event\AutomationEvent;
 use GrowthOrchestrator\Event\EventDispatcher;
-use GrowthOrchestrator\Event\WordPressEventBridge;
-use GrowthOrchestrator\Loader\HooksLoader;
-use GrowthOrchestrator\Logging\AutomationAuditLogger;
-use GrowthOrchestrator\Rule\ConditionEvaluator;
-use GrowthOrchestrator\Rule\ConditionOperatorRegistry;
-use GrowthOrchestrator\Rule\DatabaseRulesRepository;
-use GrowthOrchestrator\Rule\DelayedActionRunner;
-use GrowthOrchestrator\Rule\DelegatingRulesRepository;
-use GrowthOrchestrator\Rule\DelayedActionScheduler;
-use GrowthOrchestrator\Rule\JsonFileRulesRepository;
-use GrowthOrchestrator\Rule\OptionRulesRepository;
-use GrowthOrchestrator\Rule\RuleActionsExecutor;
-use GrowthOrchestrator\Rule\RuleEngine;
-use GrowthOrchestrator\Rule\RulesRepositoryInterface;
-use GrowthOrchestrator\Rule\ScheduledRulesCoordinator;
-use GrowthOrchestrator\Rule\ThemeCompatibilityInterface;
-use GrowthOrchestrator\Rule\UserStateProviderInterface;
-use GrowthOrchestrator\Rule\WordPressRulesScheduler;
-use GrowthOrchestrator\Rule\WordPressUserStateProvider;
-use GrowthOrchestrator\Services\ActionDispatcher;
-use GrowthOrchestrator\Services\AutomationServiceIds;
-use GrowthOrchestrator\Services\AutomationServices;
-use GrowthOrchestrator\Sms\DefaultSmsTemplateProvider;
-use GrowthOrchestrator\Sms\QueuedTemplateSmsService;
 use GrowthOrchestrator\Sms\SmsDeliveryWorker;
-use GrowthOrchestrator\Sms\SmsJobQueue;
-use GrowthOrchestrator\Sms\SmsPhoneResolver;
-use GrowthOrchestrator\Sms\SmsRateLimiter;
+use GrowthOrchestrator\Rule\ConditionEvaluator;
 use GrowthOrchestrator\Sms\SmsServiceInterface;
-use GrowthOrchestrator\Sms\SmsTemplateProviderInterface;
 use GrowthOrchestrator\Sms\SmsTemplateRenderer;
+use GrowthOrchestrator\Rule\DelayedActionRunner;
+use GrowthOrchestrator\Rule\RuleActionsExecutor;
 use GrowthOrchestrator\Sms\SmsTransportResolver;
+use GrowthOrchestrator\Admin\PluginDefaultsReset;
+use GrowthOrchestrator\Admin\Views\RulesPageView;
+use GrowthOrchestrator\Services\ActionDispatcher;
+use GrowthOrchestrator\Event\WordPressEventBridge;
+use GrowthOrchestrator\Rule\OptionRulesRepository;
+use GrowthOrchestrator\Rule\DelayedActionScheduler;
+use GrowthOrchestrator\Services\AutomationServices;
+use GrowthOrchestrator\Rule\DatabaseRulesRepository;
+use GrowthOrchestrator\Rule\FilterUserStateProvider;
+use GrowthOrchestrator\Rule\JsonFileRulesRepository;
+use GrowthOrchestrator\Rule\WordPressRulesScheduler;
+use GrowthOrchestrator\Sms\QueuedTemplateSmsService;
+use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
+use GrowthOrchestrator\Logging\AutomationAuditLogger;
+use GrowthOrchestrator\Rule\RulesRepositoryInterface;
+use GrowthOrchestrator\Services\AutomationServiceIds;
+use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
+use GrowthOrchestrator\Rule\ConditionOperatorRegistry;
+use GrowthOrchestrator\Rule\DelegatingRulesRepository;
+use GrowthOrchestrator\Rule\ScheduledRulesCoordinator;
+use GrowthOrchestrator\Sms\DefaultSmsTemplateProvider;
+use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
+use GrowthOrchestrator\Rule\UserStateProviderInterface;
+use GrowthOrchestrator\Sms\SmsTemplateProviderInterface;
+use GrowthOrchestrator\Admin\Controllers\RulesController;
+use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
 
 final class Plugin
 {
@@ -211,13 +210,7 @@ final class Plugin
 
         $c->singleton(
             UserStateProviderInterface::class,
-            static function (): UserStateProviderInterface {
-                $themeCompat = apply_filters('gro_theme_compatibility', null);
-
-                return new WordPressUserStateProvider(
-                    $themeCompat instanceof ThemeCompatibilityInterface ? $themeCompat : null
-                );
-            }
+            static fn (): UserStateProviderInterface => new FilterUserStateProvider()
         );
 
         $c->singleton(

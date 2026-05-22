@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Rule;
 
+use GrowthOrchestrator\Consumer\ConsumerRegistry;
+
 /**
  * Translates default rule labels for the admin UI while keeping English msgids in persisted JSON/DB.
  *
- * English labels in {@see GROWTH_ORCH_PLUGIN_DIR}/rules/default.rules.json are the gettext msgids.
+ * Canonical English labels come from integrated consumer default rules JSON.
+ * Translations use each consumer's {@see ConsumerDefinition::$textDomain}.
  */
 final class RuleLabelTranslator
 {
-    /** @var array<string, string>|null rule id => English label */
-    private static ?array $defaultEnglishById = null;
-
     /**
      * Localized label for admin display (overview, visual builder).
      */
@@ -22,16 +22,7 @@ final class RuleLabelTranslator
         $english = self::defaultEnglishForId($ruleId);
 
         if ($english !== null) {
-            /** @phpstan-ignore-next-line */
-            $translated = (string) apply_filters(
-                'gro_rule_label',
-                __( $english, 'growth-orchestrator' ),
-                $ruleId,
-                $storedLabel,
-                $english
-            );
-
-            return $translated;
+            return ConsumerRegistry::instance()->translateRuleLabel($ruleId, $english, $storedLabel);
         }
 
         if ($storedLabel !== null && $storedLabel !== '') {
@@ -57,7 +48,7 @@ final class RuleLabelTranslator
             return $english;
         }
 
-        $translated = __( $english, 'growth-orchestrator' );
+        $translated = ConsumerRegistry::instance()->translateRuleLabel($ruleId, $english, $label);
 
         if ($label === $english || $label === $translated) {
             return $english;
@@ -86,9 +77,9 @@ final class RuleLabelTranslator
                 continue;
             }
 
-            $id           = (string) $rule['id'];
-            $stored       = isset($rule['label']) ? (string) $rule['label'] : null;
-            $display      = self::display($id, $stored);
+            $id      = (string) $rule['id'];
+            $stored  = isset($rule['label']) ? (string) $rule['label'] : null;
+            $display = self::display($id, $stored);
             $data['rules'][$index]['label'] = $display;
         }
 
@@ -115,8 +106,8 @@ final class RuleLabelTranslator
                 continue;
             }
 
-            $id    = (string) $rule['id'];
-            $label = isset($rule['label']) ? (string) $rule['label'] : null;
+            $id        = (string) $rule['id'];
+            $label     = isset($rule['label']) ? (string) $rule['label'] : null;
             $canonical = self::canonicalize($id, $label);
 
             if ($canonical === null || $canonical === '') {
@@ -134,53 +125,7 @@ final class RuleLabelTranslator
      */
     public static function defaultEnglishCatalog(): array
     {
-        if (self::$defaultEnglishById !== null) {
-            return self::$defaultEnglishById;
-        }
-
-        self::$defaultEnglishById = [];
-
-        if (! defined('GROWTH_ORCH_PLUGIN_DIR')) {
-            return self::$defaultEnglishById;
-        }
-
-        $path = GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json';
-
-        if (! is_readable($path)) {
-            return self::$defaultEnglishById;
-        }
-
-        $raw = file_get_contents($path);
-
-        if ($raw === false || $raw === '') {
-            return self::$defaultEnglishById;
-        }
-
-        try {
-            /** @var mixed $decoded */
-            $decoded = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
-            return self::$defaultEnglishById;
-        }
-
-        if (! is_array($decoded) || ! isset($decoded['rules']) || ! is_array($decoded['rules'])) {
-            return self::$defaultEnglishById;
-        }
-
-        foreach ($decoded['rules'] as $rule) {
-            if (! is_array($rule)) {
-                continue;
-            }
-
-            $id    = isset($rule['id']) ? (string) $rule['id'] : '';
-            $label = isset($rule['label']) ? (string) $rule['label'] : '';
-
-            if ($id !== '' && $label !== '') {
-                self::$defaultEnglishById[$id] = $label;
-            }
-        }
-
-        return self::$defaultEnglishById;
+        return ConsumerRegistry::instance()->defaultRuleLabelsCatalog();
     }
 
     private static function defaultEnglishForId(string $ruleId): ?string

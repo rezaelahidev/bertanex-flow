@@ -8,17 +8,18 @@ use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
 use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
 use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
 use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
+use GrowthOrchestrator\Consumer\ConsumerDefaultsResolver;
 use GrowthOrchestrator\Rule\OptionRulesRepository;
 use GrowthOrchestrator\Sms\MelipayamakSmsConfig;
 
 /**
- * Restores plugin admin customizations to shipped defaults (rules file, empty options).
+ * Restores plugin admin customizations to consumer-shipped defaults (empty stored overrides).
  */
 final class PluginDefaultsReset
 {
     public function __construct(
         private readonly RulesDocumentModel $rulesDocument,
-        private readonly string $defaultRulesJsonPath
+        private readonly ConsumerDefaultsResolver $consumerDefaults
     ) {
     }
 
@@ -46,16 +47,10 @@ final class PluginDefaultsReset
 
     private function resetRulesDocument(): void
     {
-        if (! is_readable($this->defaultRulesJsonPath)) {
+        $json = $this->consumerDefaults->mergedRulesDocumentJson();
+        if (trim($json) === '') {
             throw new \RuntimeException(
-                __('Default rules file is missing or not readable.', 'growth-orchestrator')
-            );
-        }
-
-        $json = file_get_contents($this->defaultRulesJsonPath);
-        if ($json === false || trim($json) === '') {
-            throw new \RuntimeException(
-                __('Default rules file is empty.', 'growth-orchestrator')
+                __('No default rules are registered by integrated consumers.', 'growth-orchestrator')
             );
         }
 

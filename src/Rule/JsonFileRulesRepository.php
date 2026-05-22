@@ -38,13 +38,27 @@ final class JsonFileRulesRepository implements RulesRepositoryInterface
     {
         $path = $this->getResolvedPath();
 
-        if (! is_readable($path)) {
-            return '';
+        if (is_readable($path)) {
+            $json = file_get_contents($path);
+            if ($json !== false && trim($json) !== '') {
+                $decoded = json_decode($json, true);
+                if (is_array($decoded) && isset($decoded['rules']) && is_array($decoded['rules']) && $decoded['rules'] !== []) {
+                    return $json;
+                }
+            }
         }
 
-        $json = file_get_contents($path);
+        if (class_exists(\GrowthOrchestrator\Consumer\ConsumerRegistry::class)) {
+            $resolver = new \GrowthOrchestrator\Consumer\ConsumerDefaultsResolver(
+                \GrowthOrchestrator\Consumer\ConsumerRegistry::instance()
+            );
+            $merged = $resolver->mergedRulesDocumentJson();
+            if (trim($merged) !== '') {
+                return $merged;
+            }
+        }
 
-        return $json === false ? '' : $json;
+        return '';
     }
 
     public function getRules(): array

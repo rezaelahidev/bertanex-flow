@@ -115,50 +115,48 @@ final class SmsTemplatesModel
     }
 
     /**
-     * Built-in template catalog (ids referenced by default rules).
+     * Built-in template catalog (sourced from rules/default-sms-patterns.json).
      *
      * @return list<array{id: string, label: string, defaultBody: string, builtin: true}>
      */
     public static function catalog(): array
     {
-        return [
-            [
-                'id'          => 'welcome_registered',
-                'label'       => __('Welcome SMS (registration)', 'growth-orchestrator'),
-                'defaultBody' => __(
-                    'Welcome {name}! Your account at {site_name} is ready: {site_url}',
-                    'growth-orchestrator'
-                ),
-                'builtin'     => true,
-            ],
-            [
-                'id'          => 'complete_profile',
-                'label'       => __('Complete profile reminder', 'growth-orchestrator'),
-                'defaultBody' => __(
-                    'Hi {name}, please complete your profile at {site_url}. — {site_name}',
-                    'growth-orchestrator'
-                ),
-                'builtin'     => true,
-            ],
-            [
-                'id'          => 'subscription_expiring_3d',
-                'label'       => __('Subscription expiring soon', 'growth-orchestrator'),
-                'defaultBody' => __(
-                    'Hi {name}, your subscription renews soon. — {site_name}',
-                    'growth-orchestrator'
-                ),
-                'builtin'     => true,
-            ],
-            [
-                'id'          => 'product_owner_no_sub',
-                'label'       => __('Offer for product owner without subscription', 'growth-orchestrator'),
-                'defaultBody' => __(
-                    'Hi {name}, you have a special offer: {site_name}',
-                    'growth-orchestrator'
-                ),
-                'builtin'     => true,
-            ],
-        ];
+        static $catalog = null;
+
+        if ($catalog !== null) {
+            return $catalog;
+        }
+
+        $catalog = [];
+        $path    = defined('GROWTH_ORCH_PLUGIN_DIR')
+            ? GROWTH_ORCH_PLUGIN_DIR . 'rules/default-sms-patterns.json'
+            : '';
+
+        if ($path !== '' && is_readable($path)) {
+            $raw = file_get_contents($path);
+            if ($raw !== false) {
+                $decoded = json_decode($raw, true);
+                if (is_array($decoded)) {
+                    foreach ($decoded as $row) {
+                        if (! is_array($row)) {
+                            continue;
+                        }
+                        $id = sanitize_key((string) ($row['id'] ?? ''));
+                        if ($id === '') {
+                            continue;
+                        }
+                        $catalog[] = [
+                            'id'          => $id,
+                            'label'       => (string) ($row['label'] ?? $id),
+                            'defaultBody' => (string) ($row['defaultBody'] ?? ''),
+                            'builtin'     => true,
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $catalog;
     }
 
     /**

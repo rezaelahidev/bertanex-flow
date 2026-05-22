@@ -13,7 +13,7 @@ use GrowthOrchestrator\Sms\Exception\SmsTransportException;
  */
 final class MelipayamakSmsTransport implements SmsTransportInterface
 {
-    private const DEFAULT_ENDPOINT = 'https://rest.payamak-panel.com/api/SendSMS/BaseServiceNumber';
+    private const DEFAULT_ENDPOINT = 'https://rest.payamak-panel.com/api/SendSMS/SendSMS';
 
     /** Client / business error codes — same retry intent as {@see MelipayamakSmsTransport::errorCodeRetrySuggested}. */
     private const KNOWN_NON_RETRY_CODES = [
@@ -65,7 +65,7 @@ final class MelipayamakSmsTransport implements SmsTransportInterface
             'to'       => $to,
             'from'     => $creds['from'],
             'text'     => $body,
-            'bodyId' => 418445,
+            // 'bodyId' => 418445,
         ];
 
         $fields = apply_filters('gro_melipayamak_send_fields', $fields, $meta);

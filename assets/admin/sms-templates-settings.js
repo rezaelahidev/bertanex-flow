@@ -55,6 +55,46 @@
 		counter.classList.toggle('gro-pattern-card__chars--warn', len > max * 0.9);
 	}
 
+	function truncateSnippet(text, maxLen) {
+		if (!text || text === '—') {
+			return '—';
+		}
+		if (text.length <= maxLen) {
+			return text;
+		}
+		return text.slice(0, maxLen) + '…';
+	}
+
+	function updateAccordionSummary(row) {
+		const titleEl = row.querySelector('[data-gro-pattern-accordion-title]');
+		const snippetEl = row.querySelector('[data-gro-pattern-snippet]');
+		const labelInput = row.querySelector('[data-gro-pattern-label-input]');
+		const idInput = row.querySelector('[data-gro-pattern-id-input]');
+		const idCode = row.querySelector('.gro-pattern-accordion__id');
+		const currentEl = row.querySelector('[data-gro-sms-current]');
+
+		if (titleEl && labelInput) {
+			const label = labelInput.value.trim();
+			const id = idInput ? idInput.value.trim() : idCode ? idCode.textContent.trim() : '';
+			titleEl.textContent = label !== '' ? label : id !== '' ? id : titleEl.getAttribute('data-gro-fallback-title') || '…';
+		}
+
+		if (snippetEl && currentEl) {
+			snippetEl.textContent = truncateSnippet(currentEl.textContent.trim(), 72);
+		}
+	}
+
+	function setAccordionOpen(row, open) {
+		const trigger = row.querySelector('[data-gro-pattern-accordion-toggle]');
+		const panel = row.querySelector('.gro-pattern-accordion__panel');
+		if (!trigger || !panel) {
+			return;
+		}
+		row.classList.toggle('is-open', open);
+		trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+		panel.hidden = !open;
+	}
+
 	function updateRowCurrent(row) {
 		const textarea = row.querySelector('[data-gro-pattern-textarea], textarea');
 		const currentEl = row.querySelector('[data-gro-sms-current]');
@@ -69,6 +109,7 @@
 		currentEl.textContent = effective;
 		updateStatus(row, override, defaultBody, effective);
 		updateCharCount(row);
+		updateAccordionSummary(row);
 	}
 
 	function reindexRows(list) {
@@ -123,6 +164,23 @@
 		});
 	}
 
+	function bindAccordion(root) {
+		root.addEventListener('click', function (ev) {
+			const toggle = ev.target.closest('[data-gro-pattern-accordion-toggle]');
+			if (toggle) {
+				const row = toggle.closest('[data-gro-pattern-accordion]');
+				if (row) {
+					setAccordionOpen(row, !row.classList.contains('is-open'));
+				}
+				return;
+			}
+
+			if (ev.target.closest('[data-gro-sms-templates-remove]')) {
+				ev.stopPropagation();
+			}
+		});
+	}
+
 	function bindEditor(root) {
 		const list = root.querySelector('[data-gro-sms-templates-rows]');
 		const tpl = document.getElementById('gro-sms-template-row-blank');
@@ -131,13 +189,31 @@
 		}
 
 		bindCopyVars(root);
+		bindAccordion(root);
 
-		list.querySelectorAll('[data-gro-sms-templates-row]').forEach(updateRowCurrent);
+		list.querySelectorAll('[data-gro-sms-templates-row]').forEach(function (row) {
+			const titleEl = row.querySelector('[data-gro-pattern-accordion-title]');
+			if (titleEl && !titleEl.getAttribute('data-gro-fallback-title')) {
+				titleEl.setAttribute('data-gro-fallback-title', titleEl.textContent);
+			}
+			updateRowCurrent(row);
+		});
 
 		root.addEventListener('input', function (ev) {
 			const row = ev.target.closest('[data-gro-sms-templates-row]');
-			if (row && ev.target.matches('textarea, [data-gro-pattern-textarea]')) {
+			if (!row) {
+				return;
+			}
+			if (ev.target.matches('textarea, [data-gro-pattern-textarea]')) {
 				updateRowCurrent(row);
+			}
+			if (ev.target.matches('[data-gro-pattern-label-input], [data-gro-pattern-id-input]')) {
+				updateAccordionSummary(row);
+				const idInput = row.querySelector('[data-gro-pattern-id-input]');
+				const idCode = row.querySelector('.gro-pattern-accordion__id');
+				if (idInput && idCode) {
+					idCode.textContent = idInput.value.trim();
+				}
 			}
 		});
 
@@ -150,6 +226,7 @@
 			if (row) {
 				list.appendChild(row);
 				updateRowCurrent(row);
+				setAccordionOpen(row, true);
 				row.querySelector('textarea, [data-gro-pattern-textarea]')?.focus();
 			}
 		});

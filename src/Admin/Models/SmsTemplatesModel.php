@@ -325,43 +325,41 @@ final class SmsTemplatesModel
             ? __('Custom', 'growth-orchestrator')
             : ($usesDefault ? __('Default', 'growth-orchestrator') : __('Not set', 'growth-orchestrator'));
         $charCount   = function_exists('mb_strlen') ? mb_strlen($body, 'UTF-8') : strlen($body);
+        $isOpen      = is_int($index) && $index === 0;
+        $panelId     = 'gro-pattern-panel-' . (is_string($index) ? 'new' : sanitize_key($id !== '' ? $id : 'row-' . (string) $index));
+        $displayTitle = $label !== '' ? $label : ($id !== '' ? $id : __('New pattern', 'growth-orchestrator'));
+        $snippet     = $currentValue !== '' ? $currentValue : '—';
+        if (function_exists('mb_strlen') && mb_strlen($snippet, 'UTF-8') > 72) {
+            $snippet = mb_substr($snippet, 0, 72, 'UTF-8') . '…';
+        } elseif (strlen($snippet) > 72) {
+            $snippet = substr($snippet, 0, 72) . '…';
+        }
         ?>
         <li
-            class="gro-pattern-card<?php echo $builtin ? ' gro-pattern-card--builtin' : ''; ?>"
+            class="gro-pattern-card gro-pattern-accordion<?php echo $builtin ? ' gro-pattern-card--builtin' : ''; ?><?php echo $isOpen ? ' is-open' : ''; ?>"
             data-gro-sms-templates-row
+            data-gro-pattern-accordion
             data-gro-sms-default-body="<?php echo esc_attr($defaultBody); ?>"
             role="listitem"
         >
-            <header class="gro-pattern-card__head">
-                <div class="gro-pattern-card__identity">
-                    <?php if ($builtin) : ?>
-                        <span class="gro-pattern-card__id-badge" dir="ltr" lang="en">
-                            <code><?php echo esc_html($id); ?></code>
-                        </span>
-                        <input type="hidden" name="<?php echo esc_attr($name . '[id]'); ?>" value="<?php echo esc_attr($id); ?>" />
-                    <?php else : ?>
-                        <input
-                            type="text"
-                            class="gro-pattern-card__id-input"
-                            name="<?php echo esc_attr($name . '[id]'); ?>"
-                            value="<?php echo esc_attr($id); ?>"
-                            placeholder="<?php echo esc_attr__('pattern_id', 'growth-orchestrator'); ?>"
-                            pattern="[a-z][a-z0-9_]*"
-                            dir="ltr"
-                            lang="en"
-                            spellcheck="false"
-                            required
-                        />
-                    <?php endif; ?>
-                    <input
-                        type="text"
-                        class="gro-pattern-card__label-input"
-                        name="<?php echo esc_attr($name . '[label]'); ?>"
-                        value="<?php echo esc_attr($label); ?>"
-                        placeholder="<?php echo esc_attr__('Short title for this pattern', 'growth-orchestrator'); ?>"
-                        dir="auto"
-                    />
-                </div>
+            <div class="gro-pattern-accordion__bar">
+                <button
+                    type="button"
+                    class="gro-pattern-accordion__trigger"
+                    data-gro-pattern-accordion-toggle
+                    aria-expanded="<?php echo $isOpen ? 'true' : 'false'; ?>"
+                    aria-controls="<?php echo esc_attr($panelId); ?>"
+                    id="<?php echo esc_attr($panelId . '-trigger'); ?>"
+                >
+                    <span class="gro-pattern-accordion__chevron dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
+                    <span class="gro-pattern-accordion__summary">
+                        <span class="gro-pattern-accordion__title" data-gro-pattern-accordion-title><?php echo esc_html($displayTitle); ?></span>
+                        <?php if ($id !== '') : ?>
+                            <code class="gro-pattern-accordion__id" dir="ltr" lang="en"><?php echo esc_html($id); ?></code>
+                        <?php endif; ?>
+                        <span class="gro-pattern-accordion__snippet" data-gro-pattern-snippet dir="auto"><?php echo esc_html($snippet); ?></span>
+                    </span>
+                </button>
                 <div class="gro-pattern-card__meta">
                     <span class="gro-pattern-card__status <?php echo esc_attr($statusClass); ?>" data-gro-pattern-status>
                         <?php echo esc_html($statusLabel); ?>
@@ -378,7 +376,51 @@ final class SmsTemplatesModel
                         </button>
                     <?php endif; ?>
                 </div>
-            </header>
+            </div>
+            <div
+                id="<?php echo esc_attr($panelId); ?>"
+                class="gro-pattern-accordion__panel"
+                role="region"
+                aria-labelledby="<?php echo esc_attr($panelId . '-trigger'); ?>"
+                <?php echo $isOpen ? '' : ' hidden'; ?>
+            >
+                <div class="gro-pattern-card__identity">
+                    <?php if ($builtin) : ?>
+                        <span class="gro-pattern-card__id-badge" dir="ltr" lang="en">
+                            <code><?php echo esc_html($id); ?></code>
+                        </span>
+                        <input type="hidden" name="<?php echo esc_attr($name . '[id]'); ?>" value="<?php echo esc_attr($id); ?>" />
+                    <?php else : ?>
+                        <label class="gro-pattern-card__inline-label">
+                            <span><?php esc_html_e('Pattern ID', 'growth-orchestrator'); ?></span>
+                            <input
+                                type="text"
+                                class="gro-pattern-card__id-input"
+                                name="<?php echo esc_attr($name . '[id]'); ?>"
+                                value="<?php echo esc_attr($id); ?>"
+                                placeholder="<?php echo esc_attr__('pattern_id', 'growth-orchestrator'); ?>"
+                                pattern="[a-z][a-z0-9_]*"
+                                dir="ltr"
+                                lang="en"
+                                spellcheck="false"
+                                required
+                                data-gro-pattern-id-input
+                            />
+                        </label>
+                    <?php endif; ?>
+                    <label class="gro-pattern-card__inline-label gro-pattern-card__inline-label--grow">
+                        <span><?php esc_html_e('Title', 'growth-orchestrator'); ?></span>
+                        <input
+                            type="text"
+                            class="gro-pattern-card__label-input"
+                            name="<?php echo esc_attr($name . '[label]'); ?>"
+                            value="<?php echo esc_attr($label); ?>"
+                            placeholder="<?php echo esc_attr__('Short title for this pattern', 'growth-orchestrator'); ?>"
+                            dir="auto"
+                            data-gro-pattern-label-input
+                        />
+                    </label>
+                </div>
             <div class="gro-pattern-card__grid">
                 <div class="gro-pattern-card__col gro-pattern-card__col--edit">
                     <label class="gro-pattern-card__field-label">
@@ -417,6 +459,7 @@ final class SmsTemplatesModel
                     </label>
                     <div class="gro-pattern-card__preview" data-gro-sms-current aria-live="polite" dir="auto"><?php echo esc_html($currentValue !== '' ? $currentValue : '—'); ?></div>
                 </div>
+            </div>
             </div>
         </li>
         <?php

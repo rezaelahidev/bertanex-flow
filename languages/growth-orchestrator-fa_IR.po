@@ -196,6 +196,28 @@ msgstr "زمان‌بندی (cron)"
 msgid "Additional event names (comma-separated)"
 msgstr "نام رویدادهای دیگر (با ویرگول)"
 
+#. translators: %1$s: selected count, %2$s: total count
+msgid "%1$s of %2$s events selected"
+msgstr "%1$s از %2$s رویداد انتخاب شده"
+
+msgid "Rule runs when any selected event fires."
+msgstr "قانون هنگام رخ دادن هر رویداد انتخاب‌شده اجرا می‌شود."
+
+msgid "Select at least one event or add custom names below."
+msgstr "حداقل یک رویداد انتخاب کنید یا نام‌های سفارشی را در پایین وارد کنید."
+
+msgid "Select all"
+msgstr "انتخاب همه"
+
+msgid "Clear"
+msgstr "پاک کردن"
+
+msgid "Automation events"
+msgstr "رویدادهای اتوماسیون"
+
+msgid "No automation events are registered yet. Add custom event names below."
+msgstr "هنوز رویداد اتوماسیونی ثبت نشده است. نام رویدادهای سفارشی را در پایین وارد کنید."
+
 msgid "Cron hook"
 msgstr "قلاب cron"
 

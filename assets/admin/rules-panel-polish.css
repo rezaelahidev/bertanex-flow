@@ -624,6 +624,30 @@
 	color: var(--gro-c-text);
 }
 
+.gro-action-delay__detail-label--stack {
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--gro-space-xs);
+}
+
+.gro-action-delay__detail--clock {
+	margin-top: var(--gro-space-xs);
+}
+
+.gro-action-delay__hint {
+	margin: var(--gro-space-xs) 0 0;
+	font-size: var(--gro-text-sm);
+	line-height: var(--gro-line-normal);
+	color: var(--gro-c-text-secondary);
+}
+
+.gro-action-delay__panel-note {
+	margin: 0 0 var(--gro-space-sm);
+	font-size: var(--gro-text-sm);
+	line-height: var(--gro-line-normal);
+	color: var(--gro-c-muted);
+}
+
 .gro-action-delay__stepper {
 	width: 4.25rem;
 	min-height: var(--gro-control-h-sm);

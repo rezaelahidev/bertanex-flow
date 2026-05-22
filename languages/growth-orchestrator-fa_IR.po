@@ -21,20 +21,11 @@ msgstr "قوانین اتوماسیون"
 msgid "Automation Rules"
 msgstr "قوانین اتوماسیون"
 
-msgid "SMS"
-msgstr "پیامک"
-
-msgid "SMS settings"
-msgstr "تنظیمات پیامک"
-
 msgid "Growth Orchestrator — SMS"
 msgstr "هماهنگ‌ساز رشد — پیامک"
 
 msgid "Rules saved."
 msgstr "قانون‌ها ذخیره شد."
-
-msgid "Save rules"
-msgstr "ذخیره قانون‌ها"
 
 msgid "Save SMS settings"
 msgstr "ذخیره تنظیمات پیامک"
@@ -61,21 +52,11 @@ msgstr "جدول پایگاه‌داده قانون وجود ندارد یا س�
 msgid "Failed to persist rules to the database."
 msgstr "ذخیره قانون‌ها در پایگاه‌داده ناموفق بود."
 
-msgid ""
-"Rules are stored in the growth_orchestrator_rules database table. When the table is empty, "
-"this editor mirrors the legacy option/plugin JSON until first save hydrates persistence."
-msgstr ""
-"قانون‌ها در جدول پایگاه‌داده growth_orchestrator_rules ذخیره می‌شوند. اگر جدول خالی باشد، این "
-"ویرایشگر تا زمان اولین ذخیرهٔ موفق، مانند گزینهٔ قدیمی افزونه یا پروندهٔ JSON رفتار می‌کند."
-
 msgid "JSON error (preview only; saved value unchanged):"
 msgstr "خطای JSON (فقط پیش‌نمایش؛ مقدار ذخیره‌شده بدون تغییر است):"
 
 msgid "Use Reset to defaults on the Configuration tab, or restore valid rules another way."
 msgstr "در زبانه پیکربندی «بازگردانی به پیش‌فرض» را بزنید، یا قوانین معتبر را به روش دیگری بازیابی کنید."
-
-msgid "Rules overview"
-msgstr "مرور قانون‌ها"
 
 msgid "Rules summary"
 msgstr "خلاصه قانون‌ها"
@@ -95,40 +76,8 @@ msgstr "فعال"
 msgid "Priority"
 msgstr "اولویت"
 
-#. translators: %d: priority number
-msgid "Priority %d"
-msgstr "اولویت %d"
-
-msgid "No rules in this document."
-msgstr "هیچ قانونی در این سند نیست."
-
-msgid "No rules in this document yet. Use the visual builder to add your first rule."
-msgstr "هنوز قانونی در این سند نیست. با سازندهٔ بصری اولین قانون را اضافه کنید."
-
-msgid "Untitled"
-msgstr "بدون عنوان"
-
 msgid "Rule editor"
 msgstr "ویرایشگر قانون"
-
-msgid ""
-"Design IF / THEN automations, manage SMS delivery, and tune automations from one workspace."
-msgstr ""
-"اتوماسیون‌های اگر/آنگاه را طراحی کنید، ارسال پیامک را مدیریت کنید و اتوماسیون‌ها را در یک "
-"فضای کاری تنظیم کنید."
-
-msgid ""
-"Use the visual builder for common IF / THEN pairs, or edit raw JSON when you need nested "
-"condition groups (any/not), mixed triggers, or fields not exposed here."
-msgstr ""
-"برای جفت‌های متداول اگر/آنگاه از سازندهٔ بصری استفاده کنید، یا برای گروه‌های شرط تودرتو "
-"(همه/هیچ)، تریگر ترکیبی، یا فیلدهای پنهان، JSON خام را ویرایش کنید."
-
-msgid ""
-"Visual builder for common flows, raw JSON for advanced condition groups, and configuration for layout and SMS."
-msgstr ""
-"سازندهٔ بصری برای جریان‌های متداول، JSON خام برای گروه‌های شرط پیشرفته، و پیکربندی "
-"چیدمان و پیامک."
 
 msgid "Rules editor mode"
 msgstr "حالت ویرایشگر قانون"
@@ -141,12 +90,6 @@ msgstr "پیکربندی"
 
 msgid "Enable JavaScript to use the automations editor."
 msgstr "برای استفاده از ویرایشگر اتوماسیون‌ها، JavaScript را فعال کنید."
-
-msgid "Rules document (JSON)"
-msgstr "سند قانون (JSON)"
-
-msgid "Full document; validate before saving."
-msgstr "کل سند؛ پیش از ذخیره اعتبارسنجی کنید."
 
 msgid "JSON must be an object with a \"rules\" array."
 msgstr "JSON باید یک شیء با آرایه «rules» باشد."
@@ -162,12 +105,6 @@ msgstr "نسخه قالب"
 
 msgid "Advanced"
 msgstr "پیشرفته"
-
-msgid ""
-"This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored."
-msgstr ""
-"این قانون از تریگر یا شرط‌های تودرتویی استفاده می‌کند که این ویرایشگر نمی‌تواند تغییر دهد. "
-"فقط خواندنی است و همان‌طور که ذخیره شده اجرا می‌شود."
 
 msgid "Label (optional)"
 msgstr "عنوان (اختیاری)"
@@ -222,12 +159,6 @@ msgstr "در حال ذخیره…"
 
 msgid "Status"
 msgstr "وضعیت"
-
-msgid "Expand settings for rule %s"
-msgstr "باز کردن تنظیمات قانون %s"
-
-msgid "Collapse settings for rule %s"
-msgstr "بستن تنظیمات قانون %s"
 
 msgid "Remove %s permanently from this list"
 msgstr "حذف دائمی %s از این فهرست"
@@ -331,9 +262,6 @@ msgstr "زمان‌بندی"
 msgid "Pick date and time after now"
 msgstr "انتخاب تاریخ و زمان بعد از الان"
 
-msgid "No extra time"
-msgstr "بدون زمان اضافه"
-
 msgid "No extra delay"
 msgstr "بدون تأخیر اضافه"
 
@@ -366,21 +294,6 @@ msgstr "در %1$s %2$s"
 
 msgid "On the same day at %1$s %2$s"
 msgstr "همان روز ساعت %1$s %2$s"
-
-msgid "In %1$s at %2$s on %3$s (about %4$s from now)"
-msgstr "تا %1$s دیگر ساعت %2$s در %3$s (حدود %4$s از الان)"
-
-msgid "In %1$s (about %2$s from now)"
-msgstr "تا %1$s دیگر (حدود %2$s از الان)"
-
-msgid "On %1$s at %2$s (about %3$s from now)"
-msgstr "در %1$s ساعت %2$s (حدود %3$s از الان)"
-
-msgid "On %1$s (about %2$s from now)"
-msgstr "در %1$s (حدود %2$s از الان)"
-
-msgid "Today at %1$s (about %2$s from now), on %3$s"
-msgstr "امروز ساعت %1$s (حدود %2$s از الان)، در %3$s"
 
 msgid "(plus %s more)"
 msgstr "(به‌علاوه %s)"
@@ -481,104 +394,11 @@ msgstr "افزودن اقدام"
 msgid "Maximum number of actions reached (%s)."
 msgstr "به حداکثر تعداد اقدام (%s) رسیدید."
 
-msgid "Yes"
-msgstr "بله"
-
-msgid "No"
-msgstr "خیر"
-
-msgid "Has product"
-msgstr "دارای محصول"
-
-msgid "Has subscription"
-msgstr "دارای اشتراک"
-
-msgid "Subscription status"
-msgstr "وضعیت اشتراک"
-
-msgid "Days until subscription expires"
-msgstr "روز تا انقضای اشتراک"
-
-msgid "Active"
-msgstr "فعال"
-
-msgid "Expired"
-msgstr "منقضی"
-
-msgid "Cancelled"
-msgstr "لغوشده"
-
-msgid "0 days (expires today)"
-msgstr "۰ روز (امروز منقضی می‌شود)"
-
 msgid "1 day"
 msgstr "۱ روز"
 
-msgid "3 days"
-msgstr "۳ روز"
-
-msgid "7 days"
-msgstr "۷ روز"
-
-msgid "14 days"
-msgstr "۱۴ روز"
-
-msgid "30 days"
-msgstr "۳۰ روز"
-
-msgid "User type"
-msgstr "نوع کاربر"
-
-msgid "Supplier"
-msgstr "عمده‌فروش"
-
-msgid "Buyer"
-msgstr "خریدار"
-
 msgid "Value"
 msgstr "مقدار"
-
-msgid "User registered"
-msgstr "ثبت‌نام کاربر"
-
-msgid "Profile completed"
-msgstr "تکمیل پروفایل"
-
-msgid "Product created"
-msgstr "ایجاد محصول"
-
-msgid "Subscription purchased"
-msgstr "خرید اشتراک"
-
-msgid "Subscription expired"
-msgstr "انقضای اشتراک"
-
-msgid "User login"
-msgstr "ورود کاربر"
-
-msgid "Subscription renewed"
-msgstr "تمدید اشتراک"
-
-msgid "Subscription cancelled"
-msgstr "لغو اشتراک"
-
-msgid "Listing credit used"
-msgstr "استفاده از اعتبار ثبت آگهی"
-
-msgid "Ladder credit used"
-msgstr "استفاده از اعتبار نردبان"
-
-msgid "Renewal reminder sent"
-msgstr "ارسال یادآوری تمدید"
-
-msgid "Renewal invoice created"
-msgstr "ایجاد فاکتور تمدید"
-
-msgid "Woo order benefits pending"
-msgstr "مزایای سفارش ووکامرس در انتظار"
-
-msgid "Legacy Woo grant applied"
-msgstr "اعمال اعطای قدیمی ووکامرس"
 
 msgid "List limits and column layout"
 msgstr "محدودیت تعداد و چیدمان ستون‌ها"
@@ -637,48 +457,14 @@ msgstr "بازنشانی به پیش‌فرض ممکن نشد. وجود فایل
 msgid "You do not have permission to reset plugin settings."
 msgstr "شما اجازهٔ بازنشانی تنظیمات افزونه را ندارید."
 
-msgid "Default rules file is missing or not readable."
-msgstr "فایل قوانین پیش‌فرض وجود ندارد یا قابل خواندن نیست."
-
-msgid "Default rules file is empty."
-msgstr "فایل قوانین پیش‌فرض خالی است."
-
 msgid "Twilio can also be set via wp-config (GROWTH_ORCH_TWILIO_*) or the gro_twilio_sms_config filter."
 msgstr "Twilio را می‌توانید از wp-config (GROWTH_ORCH_TWILIO_*) یا فیلتر gro_twilio_sms_config نیز تنظیم کنید."
-
-msgid "SMS provider"
-msgstr "ارسال‌کننده پیامک"
 
 msgid "Provider"
 msgstr "ارائه‌دهنده"
 
-msgid ""
-"Choose which transport delivers queued SMS. “Automatic” uses Melipayamak when configured, "
-"then Twilio, otherwise the logging (no-op) driver."
-msgstr ""
-"کدام زیرساخت پیامک‌های صف را ارسال کند. «خودکار» در صورت پیکربندی ملی‌پیامک همان را "
-"استفاده می‌کند، سپس Twilio، وگرنه رونوشت‌گیر (بدون ارسال واقعی)."
-
-msgid ""
-"Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, "
-"otherwise the logging driver."
-msgstr ""
-"کدام زیرساخت پیامک‌های صف را ارسال کند. «خودکار» در صورت پیکربندی ملی‌پیامک همان را "
-"استفاده می‌کند، وگرنه رونوشت‌گیر (بدون ارسال واقعی)."
-
 msgid "Melipayamak uses the REST endpoint rest.payamak-panel.com (SendSMS) with sslverify enabled."
 msgstr "ملی‌پیامک از آدرس REST rest.payamak-panel.com (SendSMS) با sslverify فعال استفاده می‌کند."
-
-msgid "Melipayamak (Payamak-Panel)"
-msgstr "ملی‌پیامک (پنل پیامک)"
-
-msgid ""
-"Credentials for rest.payamak-panel.com SendSMS. You can also set GROWTH_ORCH_MELIPAYAMAK_* "
-"constants in wp-config.php. Leave password empty to keep the saved value."
-msgstr ""
-"اعتبارنامه‌های SendSMS در rest.payamak-panel.com. می‌توانید ثابت‌های "
-"GROWTH_ORCH_MELIPAYAMAK_* را در wp-config.php نیز تعیین کنید. رمز را خالی بگذارید تا مقدار "
-"ذخیره‌شده حفظ شود."
 
 msgid "Username"
 msgstr "نام کاربری"
@@ -788,102 +574,11 @@ msgstr "روزانه"
 msgid "Weekly"
 msgstr "هفتگی"
 
-msgid "Expand condition %s"
-msgstr "گسترش شرط %s"
-
-msgid "Collapse condition %s"
-msgstr "جمع‌شدن شرط %s"
-
-msgid "Expand action %s"
-msgstr "گسترش اقدام %s"
-
-msgid "Collapse action %s"
-msgstr "جمع‌شدن اقدام %s"
-
 msgid "Remove condition %s from this rule"
 msgstr "حذف شرط %s از این قانون"
 
 msgid "Remove action %s from this rule"
 msgstr "حذف اقدام %s از این قانون"
-
-msgid ""
-"Twilio remains configurable via wp-config constants (GROWTH_ORCH_TWILIO_*) or the "
-"gro_twilio_sms_config filter when that provider is selected. Melipayamak uses the REST "
-"endpoint rest.payamak-panel.com (SendSMS) with sslverify enabled."
-msgstr ""
-"Twilio همچنان از طریق ثابت‌های wp-config (GROWTH_ORCH_TWILIO_*) یا فیلتر "
-"gro_twilio_sms_config هنگام انتخاب آن ارائه‌دهنده قابل تنظیم است. ملی‌پیامک از آدرس REST "
-"rest.payamak-panel.com (SendSMS) با sslverify فعال استفاده می‌کند."
-
-msgid "Welcome SMS after user registration"
-msgstr "پیامک خوش‌آمدگویی پس از ثبت‌نام کاربر"
-
-msgid "Send SMS when profile is incomplete"
-msgstr "ارسال پیامک وقتی پروفایل ناقص است"
-
-msgid "Send discount when user has product but no subscription"
-msgstr "ارسال تخفیف وقتی کاربر محصول دارد اما اشتراک ندارد"
-
-msgid "Reminder when subscription expires in 3 days"
-msgstr "یادآوری وقتی اشتراک تا ۳ روز دیگر منقضی می‌شود"
-
-#. SMS template bodies — keep {name}, {site_name}, {site_url} placeholders unchanged.
-msgid "Welcome {name}! Your account at {site_name} is ready: {site_url}"
-msgstr "{name} عزیز، به {site_name} خوش آمدید! حساب شما آماده است: {site_url}"
-
-msgid "Hi {name}, please complete your profile at {site_url}. — {site_name}"
-msgstr "{name} عزیز، لطفاً پروفایل خود را در {site_url} تکمیل کنید. — {site_name}"
-
-msgid "Hi {name}, your subscription renews soon. — {site_name}"
-msgstr "{name} عزیز، اشتراک شما به‌زودی تمدید می‌شود. — {site_name}"
-
-msgid "Hi {name}, you have a special offer: {site_name}"
-msgstr "{name} عزیز، پیشنهاد ویژه‌ای برای شما داریم: {site_name}"
-
-msgid "SMS templates"
-msgstr "الگوهای پیامک"
-
-msgid "Message text for each template_id in your rules"
-msgstr "متن پیام برای هر شناسه الگو در قوانین شما"
-
-msgid "Message text sent for each template_id used in rules. Leave a body empty to use the built-in default. Keep placeholders such as {name} unchanged."
-msgstr "متن پیام ارسالی برای هر شناسه الگویی که در قوانین استفاده شده است. برای الگوهای پیش‌فرض، خالی گذاشتن متن یعنی استفاده از پیام پیش‌فرض. جای‌نگهدارهایی مثل {name} را تغییر ندهید."
-
-msgid "Available variables:"
-msgstr "متغیرهای در دسترس:"
-
-msgid "Template ID"
-msgstr "شناسه الگو"
-
-msgid "Description"
-msgstr "توضیح"
-
-msgid "Message"
-msgstr "پیام"
-
-msgid "Add template"
-msgstr "افزودن الگو"
-
-msgid "my_template_id"
-msgstr "شناسه_الگوی_من"
-
-msgid "Short description"
-msgstr "توضیح کوتاه"
-
-msgid "Leave empty to use the default message for built-in templates."
-msgstr "برای الگوهای پیش‌فرض خالی بگذارید تا پیام پیش‌فرض استفاده شود."
-
-msgid "Welcome SMS (registration)"
-msgstr "پیامک خوش‌آمد (ثبت‌نام)"
-
-msgid "Complete profile reminder"
-msgstr "یادآوری تکمیل پروفایل"
-
-msgid "Subscription expiring soon"
-msgstr "یادآوری نزدیک بودن انقضای اشتراک"
-
-msgid "Offer for product owner without subscription"
-msgstr "پیشنهاد برای صاحب محصول بدون اشتراک"
 
 msgid "SMS template"
 msgstr "الگوی پیامک"
@@ -894,26 +589,14 @@ msgstr "شناسه الگوی سفارشی…"
 msgid "Preview:"
 msgstr "پیش‌نمایش:"
 
-msgid "Edit message text under Configuration → SMS templates."
-msgstr "ویرایش متن پیام در پیکربندی ← الگوهای پیامک."
-
 msgid "Message patterns"
 msgstr "الگوهای پیام"
 
 msgid "SMS message patterns"
 msgstr "الگوهای پیامک"
 
-msgid "Text sent for each template_id in your rules"
-msgstr "متن ارسالی برای هر شناسه الگو در قوانین شما"
-
 msgid "Save patterns"
 msgstr "ذخیره الگوها"
-
-msgid "Override message"
-msgstr "پیام سفارشی"
-
-msgid "Current value"
-msgstr "مقدار فعلی"
 
 msgid "Default"
 msgstr "پیش‌فرض"
@@ -983,55 +666,3 @@ msgstr "مقدار فعلی (ارسال به کاربر)"
 
 msgid "Not set"
 msgstr "تنظیم نشده"
-
-#. Default automation rule labels (msgids match rules/default.rules.json; JSON stays English).
-msgid "Complete profile day 1 — welcome (5 min after registration)"
-msgstr "تکمیل پروفایل روز اول — خوش‌آمدگویی (۵ دقیقه پس از ثبت‌نام)"
-
-msgid "Complete profile day 1 — evening reminder"
-msgstr "تکمیل پروفایل روز اول — یادآوری عصر"
-
-msgid "Complete profile day 2 reminder"
-msgstr "یادآوری تکمیل پروفایل روز دوم"
-
-msgid "Complete profile day 3 reminder"
-msgstr "یادآوری تکمیل پروفایل روز سوم"
-
-msgid "Profile complete — no product yet"
-msgstr "پروفایل تکمیل شده — هنوز محصولی ثبت نشده"
-
-msgid "No product — next day 11:00"
-msgstr "بدون محصول — فردا ساعت ۱۱:۰۰"
-
-msgid "No product — day after next at 11:00"
-msgstr "بدون محصول — پس‌فردا ساعت ۱۱:۰۰"
-
-msgid "After first product approved"
-msgstr "پس از تأیید اولین محصول"
-
-msgid "Three days after product created"
-msgstr "سه روز پس از ثبت محصول"
-
-msgid "After subscription payment"
-msgstr "پس از پرداخت اشتراک"
-
-msgid "Encourage listing more products"
-msgstr "تشویق به ثبت محصولات بیشتر"
-
-msgid "Subscription expires in 2 days"
-msgstr "انقضای اشتراک تا ۲ روز دیگر"
-
-msgid "Subscription expires in 1 day"
-msgstr "انقضای اشتراک تا ۱ روز دیگر"
-
-msgid "Subscription expiry day (morning)"
-msgstr "روز انقضای اشتراک (صبح)"
-
-msgid "Subscription expiry day (3 hours left)"
-msgstr "روز انقضای اشتراک (۳ ساعت مانده)"
-
-msgid "One day after subscription expired"
-msgstr "یک روز پس از انقضای اشتراک"
-
-msgid "Two days after subscription expired"
-msgstr "دو روز پس از انقضای اشتراک"

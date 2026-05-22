@@ -1,3 +1,15 @@
+import {
+  computeDelaySeconds,
+  defaultDelaySchedule,
+  delayScheduleFromSeconds,
+  mergeDelayIntoParams,
+  parseDelayFromParams,
+  stripDelayFromParams,
+  type ActionDelaySchedule,
+} from './delaySchedule';
+
+export type { ActionDelaySchedule } from './delaySchedule';
+
 export interface RulesPanelConfig {
   maxConditions?: number;
   maxActions?: number;
@@ -29,6 +41,10 @@ export interface GroRulesEditorConfig {
   /** Suggested condition field keys with human-readable labels (from PHP). */
   suggestedFields?: SuggestedConditionField[] | string[];
   strings?: Record<string, string>;
+  /** When true, custom action dates use Jalali calendar UI (Persian/RTL admin). */
+  useJalaliCalendar?: boolean;
+  /** Twelve Jalali month labels (index 0 = Farvardin). */
+  jalaliMonthNames?: string[];
 }
 
 export interface ConditionValueChoice {
@@ -81,6 +97,7 @@ export interface ActionRowUi {
   type: string;
   template_id: string;
   delay_seconds: number;
+  delaySchedule: ActionDelaySchedule;
   paramsJson: string;
 }
 
@@ -406,11 +423,16 @@ export function actionToRow(a: Record<string, unknown>, fallbackType: string): A
   } catch {
     paramsJson = '{}';
   }
+  const delaySec = Number.isNaN(delay) ? 0 : Math.max(0, Math.floor(delay));
+  const parsedSchedule = parseDelayFromParams(params);
+  const delaySchedule = parsedSchedule ?? delayScheduleFromSeconds(delaySec);
+
   return {
     type,
     template_id: templateId,
-    delay_seconds: Number.isNaN(delay) ? 0 : delay,
-    paramsJson,
+    delay_seconds: delaySec,
+    delaySchedule,
+    paramsJson: JSON.stringify(stripDelayFromParams(params)),
   };
 }
 
@@ -418,14 +440,17 @@ export function rowToAction(row: ActionRowUi): Record<string, unknown> {
   const out: Record<string, unknown> = { type: row.type };
   const tid = String(row.template_id || '').trim();
   if (tid !== '') out.template_id = tid;
-  const delay = Number(row.delay_seconds);
-  if (!Number.isNaN(delay) && delay > 0) out.delay_seconds = Math.floor(delay);
+  const delay = computeDelaySeconds(row.delaySchedule);
+  if (delay > 0) out.delay_seconds = delay;
   const raw = String(row.paramsJson || '').trim();
+  let params: Record<string, unknown> = {};
   if (raw !== '') {
-    out.params = JSON.parse(raw);
-  } else {
-    out.params = {};
+    const parsed = JSON.parse(raw) as unknown;
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      params = parsed as Record<string, unknown>;
+    }
   }
+  out.params = mergeDelayIntoParams(params, row.delaySchedule);
   return out;
 }
 
@@ -449,7 +474,7 @@ export function ruleToEditable(
   const actions =
     Array.isArray(actionSrc) && actionSrc.length > 0
       ? actionSrc.map((a) => actionToRow(a as Record<string, unknown>, at0))
-      : [{ type: at0, template_id: '', delay_seconds: 0, paramsJson: '{}' }];
+      : [{ type: at0, template_id: '', delay_seconds: 0, delaySchedule: defaultDelaySchedule(), paramsJson: '{}' }];
   return {
     id: typeof rule.id === 'string' ? rule.id : `rule_${Date.now()}`,
     label: typeof rule.label === 'string' ? rule.label : '',

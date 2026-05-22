@@ -31,7 +31,15 @@ export function normalizeConfig(raw: GroRulesEditorConfig | undefined): GroRules
     suggestedFields: normalizeSuggestedConditionFields(raw?.suggestedFields),
     smsTemplates: normalizeSmsTemplates(raw?.smsTemplates),
     events: raw?.events ?? [],
+    useJalaliCalendar: Boolean(raw?.useJalaliCalendar),
+    jalaliMonthNames: normalizeJalaliMonthNames(raw?.jalaliMonthNames),
   };
+}
+
+function normalizeJalaliMonthNames(raw: string[] | undefined): string[] | undefined {
+  if (!Array.isArray(raw) || raw.length !== 12) return undefined;
+  const names = raw.map((m) => String(m ?? '').trim());
+  return names.every((n) => n !== '') ? names : undefined;
 }
 
 function normalizeSmsTemplates(raw: GroRulesEditorConfig['smsTemplates']): SmsTemplateChoice[] {

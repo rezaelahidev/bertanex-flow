@@ -92,44 +92,6 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
         </div>
     <?php endif; ?>
 
-    <?php if ($context->parseError === null && $context->definitions !== []) : ?>
-        <section class="gro-overview" aria-label="<?php echo esc_attr__('Rules overview', 'growth-orchestrator'); ?>">
-            <ul class="gro-overview-list">
-                <?php foreach ($context->definitions as $rule) : ?>
-                    <li class="gro-overview-card">
-                        <div class="gro-overview-card__main">
-                            <code class="gro-overview-card__id"><?php echo esc_html($rule->id); ?></code>
-                            <?php $rule_display_label = $rule->displayLabel(); ?>
-                            <span class="gro-overview-card__label"><?php echo esc_html($rule_display_label !== '' ? $rule_display_label : __('Untitled', 'growth-orchestrator')); ?></span>
-                        </div>
-                        <div class="gro-overview-card__meta">
-                            <span class="gro-pill <?php echo $rule->enabled ? 'gro-pill--success' : 'gro-pill--muted'; ?>">
-                                <?php echo $rule->enabled
-                                    ? esc_html__('Enabled', 'growth-orchestrator')
-                                    : esc_html__('Disabled', 'growth-orchestrator'); ?>
-                            </span>
-                            <span class="gro-overview-card__priority">
-                                <?php
-                                echo esc_html(
-                                    sprintf(
-                                        /* translators: %d: priority number */
-                                        __('Priority %d', 'growth-orchestrator'),
-                                        (int) $rule->priority
-                                    )
-                                );
-                                ?>
-                            </span>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        </section>
-    <?php elseif ($context->parseError === null) : ?>
-        <div class="gro-empty-state">
-            <p><?php echo esc_html__('No rules in this document yet. Use the visual builder to add your first rule.', 'growth-orchestrator'); ?></p>
-        </div>
-    <?php endif; ?>
-
     <section class="gro-workspace" aria-labelledby="gro-workspace-heading">
         <div class="gro-workspace__head">
             <h2 id="gro-workspace-heading" class="gro-workspace__title"><?php echo esc_html__('Rule editor', 'growth-orchestrator'); ?></h2>

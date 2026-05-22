@@ -16,8 +16,9 @@ export interface ActionDelayFieldProps {
   onChange: (next: ActionDelaySchedule, delaySeconds: number) => void;
 }
 
+/** Persist schedule; delay_seconds is a fallback — runtime resolves _delay from match time. */
 function syncSchedule(schedule: ActionDelaySchedule, onChange: ActionDelayFieldProps['onChange']): void {
-  onChange(schedule, computeDelaySeconds(schedule));
+  onChange(schedule, computeDelaySeconds(schedule, new Date()));
 }
 
 export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps): React.ReactElement {
@@ -136,6 +137,27 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
                   </label>
                 </div>
               ) : null}
+              <div className="gro-action-delay__detail gro-action-delay__detail--clock">
+                <label className="gro-action-delay__detail-label gro-action-delay__detail-label--stack">
+                  <span>{t(cfg, 'delayClockOnDay', 'At time on that day')}</span>
+                  <input
+                    type="time"
+                    className="gro-action-delay__time"
+                    value={schedule.customTime || ''}
+                    onChange={(ev) => {
+                      const v = ev.target.value;
+                      if (v) {
+                        patch({ timeMode: 'custom', customTime: v });
+                      } else {
+                        patch({ timeMode: 'none', customTime: '' });
+                      }
+                    }}
+                  />
+                </label>
+                <p className="gro-action-delay__hint description">
+                  {t(cfg, 'delayClockHint', 'Combine with the date above — e.g. in 1 day at 11:00')}
+                </p>
+              </div>
             </section>
 
             <section className="gro-action-delay__panel" aria-labelledby="gro-delay-time-heading">
@@ -143,12 +165,15 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
                 <GroIcon name="clock" className="gro-action-delay__panel-icon" />
                 <span>{t(cfg, 'delayTimeLegend', 'Time')}</span>
               </header>
+              <p className="gro-action-delay__panel-note description">
+                {t(cfg, 'delayExtraTimeHint', 'Optional extra wait after the date and clock time above.')}
+              </p>
               <div className="gro-action-delay__chips" role="group" aria-label={t(cfg, 'delayTimeLegend', 'Time')}>
                 <DelayChip
                   selected={schedule.timeMode === 'none'}
                   onClick={() => patch({ timeMode: 'none', relativeAmount: 0 })}
                 >
-                  {t(cfg, 'delayTimeNoneShort', 'No extra time')}
+                  {t(cfg, 'delayTimeNoneShort', 'No extra delay')}
                 </DelayChip>
                 <DelayChip
                   selected={schedule.timeMode === 'seconds'}
@@ -168,17 +193,6 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
                 >
                   + {t(cfg, 'delayTimeHours', 'hours')}
                 </DelayChip>
-                <DelayChip
-                  selected={schedule.timeMode === 'custom'}
-                  onClick={() =>
-                    patch({
-                      timeMode: 'custom',
-                      customTime: schedule.customTime || defaultCustomTime(),
-                    })
-                  }
-                >
-                  {t(cfg, 'delayTimeAt', 'At')} …
-                </DelayChip>
               </div>
               {schedule.timeMode !== 'none' && schedule.timeMode !== 'custom' ? (
                 <div className="gro-action-delay__detail">
@@ -188,19 +202,6 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
                     cfg={cfg}
                     onAmount={(amount) => patch({ timeMode: schedule.timeMode, relativeAmount: amount })}
                   />
-                </div>
-              ) : null}
-              {schedule.timeMode === 'custom' ? (
-                <div className="gro-action-delay__detail">
-                  <label className="gro-action-delay__detail-label">
-                    <span>{t(cfg, 'delayTimeAt', 'At')}</span>
-                    <input
-                      type="time"
-                      className="gro-action-delay__time"
-                      value={schedule.customTime || defaultCustomTime()}
-                      onChange={(ev) => patch({ timeMode: 'custom', customTime: ev.target.value })}
-                    />
-                  </label>
                 </div>
               ) : null}
             </section>
@@ -217,12 +218,6 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
       ) : null}
     </div>
   );
-}
-
-function defaultCustomTime(): string {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() + 30);
-  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
 function DelayChip({

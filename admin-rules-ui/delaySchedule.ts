@@ -59,38 +59,60 @@ export function todayIsoDate(ref = new Date()): string {
   return `${y}-${m}-${d}`;
 }
 
+/** Map legacy `delay_seconds` from default.rules.json into the visual schedule model. */
 export function delayScheduleFromSeconds(totalSeconds: number, ref = new Date()): ActionDelaySchedule {
   const s = defaultDelaySchedule();
   if (totalSeconds < 1) {
     return s;
   }
   s.active = true;
-  const days = Math.floor(totalSeconds / 86400);
+
+  const wholeDays = Math.floor(totalSeconds / 86400);
   const rem = totalSeconds % 86400;
-  if (days > 0) {
+
+  if (wholeDays > 0 && rem === 0) {
     s.dateMode = 'days';
-    s.days = days;
-  } else {
-    s.dateMode = 'today';
-    s.days = 0;
-  }
-  if (rem === 0) {
+    s.days = wholeDays;
     s.timeMode = 'none';
+    s.relativeAmount = 0;
+    s.customTime = '';
+    return s;
+  }
+
+  if (wholeDays > 0 && rem > 0 && rem % 60 === 0) {
+    const hours = Math.floor(rem / 3600);
+    const minutes = Math.floor((rem % 3600) / 60);
+    s.dateMode = 'days';
+    s.days = wholeDays;
+    s.timeMode = 'custom';
+    s.customTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     s.relativeAmount = 0;
     return s;
   }
-  if (rem % 3600 === 0) {
+
+  if (rem % 3600 === 0 && rem > 0) {
+    s.dateMode = 'today';
+    s.days = 0;
     s.timeMode = 'hours';
     s.relativeAmount = rem / 3600;
     return s;
   }
-  if (rem % 60 === 0) {
+
+  if (rem % 60 === 0 && rem > 0) {
+    s.dateMode = 'today';
+    s.days = 0;
     s.timeMode = 'minutes';
     s.relativeAmount = rem / 60;
     return s;
   }
+
+  if (wholeDays > 0) {
+    s.dateMode = 'days';
+    s.days = wholeDays;
+  }
+
   s.timeMode = 'seconds';
-  s.relativeAmount = rem;
+  s.relativeAmount = rem > 0 ? rem : totalSeconds;
   return s;
 }
 
@@ -136,20 +158,25 @@ export function mergeDelayIntoParams(
   return out;
 }
 
-/** Seconds from reference moment until the scheduled run (admin preview uses browser "now"). */
+function hasClockTime(schedule: ActionDelaySchedule): boolean {
+  return schedule.customTime.trim() !== '';
+}
+
+/**
+ * Seconds from the rule match moment until the scheduled run.
+ * @param ref When the triggering event occurs (not admin "now" for preview copy).
+ */
 export function computeDelaySeconds(schedule: ActionDelaySchedule, ref = new Date()): number {
   if (!schedule.active) {
     return 0;
   }
 
-  if (schedule.timeMode === 'custom' && schedule.customTime.trim() !== '') {
-    const target = resolveTargetDateTime(schedule, ref);
-    return Math.max(0, Math.floor((target.getTime() - ref.getTime()) / 1000));
-  }
-
   let total = 0;
 
-  if (schedule.dateMode === 'days') {
+  if (hasClockTime(schedule)) {
+    const target = resolveTargetDateTime(schedule, ref);
+    total = Math.max(0, Math.floor((target.getTime() - ref.getTime()) / 1000));
+  } else if (schedule.dateMode === 'days') {
     total += Math.max(0, schedule.days) * 86400;
   } else if (schedule.dateMode === 'custom' && schedule.customDate.trim() !== '') {
     const targetDay = startOfLocalDay(parseLocalDate(schedule.customDate, ref));
@@ -174,17 +201,21 @@ function resolveTargetDateTime(schedule: ActionDelaySchedule, ref: Date): Date {
   if (schedule.dateMode === 'custom' && schedule.customDate.trim() !== '') {
     target = parseLocalDate(schedule.customDate, ref);
   } else if (schedule.dateMode === 'days') {
-    target = new Date(ref);
+    target = startOfLocalDay(ref);
     target.setDate(target.getDate() + Math.max(0, schedule.days));
   } else {
-    target = new Date(ref);
+    target = startOfLocalDay(ref);
   }
   const [hh, mm] = schedule.customTime.split(':').map((x) => parseInt(x, 10) || 0);
   target.setHours(hh, mm, 0, 0);
-  if (target.getTime() <= ref.getTime() && schedule.dateMode === 'today') {
+  if (target.getTime() <= ref.getTime()) {
     target.setDate(target.getDate() + 1);
   }
   return target;
+}
+
+function formatClockTime(d: Date): string {
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
 function parseLocalDate(iso: string, fallback: Date): Date {
@@ -208,38 +239,132 @@ function formatDurationParts(totalSeconds: number): { days: number; hours: numbe
   return { days, hours, minutes, seconds };
 }
 
+function daysLabel(schedule: ActionDelaySchedule, cfg: GroRulesEditorConfig): string {
+  const n = Math.max(0, schedule.days);
+  return n === 1
+    ? stringT(cfg, 'delayOneDay', '1 day')
+    : stringT(cfg, 'delayDays', '%s days').replace('%s', String(n));
+}
+
+function hasExtraRelativeDelay(schedule: ActionDelaySchedule): boolean {
+  return (
+    schedule.timeMode === 'seconds' ||
+    schedule.timeMode === 'minutes' ||
+    schedule.timeMode === 'hours'
+  ) && schedule.relativeAmount > 0;
+}
+
+function afterMatchPhrase(cfg: GroRulesEditorConfig): string {
+  return stringT(cfg, 'delayAfterMatch', 'after the rule matches');
+}
+
+function appendExtraRelative(schedule: ActionDelaySchedule, cfg: GroRulesEditorConfig, msg: string): string {
+  if (!hasExtraRelativeDelay(schedule)) {
+    return msg;
+  }
+  const extraSec =
+    schedule.timeMode === 'seconds'
+      ? schedule.relativeAmount
+      : schedule.timeMode === 'minutes'
+        ? schedule.relativeAmount * 60
+        : schedule.relativeAmount * 3600;
+  return `${msg} ${stringT(cfg, 'delayPreviewPlusExtra', '(plus %s more)').replace('%s', formatRelativeDuration(extraSec, cfg))}`;
+}
+
+function formatRelativeOnlyOffset(schedule: ActionDelaySchedule, cfg: GroRulesEditorConfig): string {
+  const amount = Math.max(0, schedule.relativeAmount);
+  if (schedule.timeMode === 'minutes' && amount > 0) {
+    return amount === 1
+      ? stringT(cfg, 'delayOneMinute', '1 minute')
+      : stringT(cfg, 'delayMinutes', '%s minutes').replace('%s', String(amount));
+  }
+  if (schedule.timeMode === 'hours' && amount > 0) {
+    return amount === 1
+      ? stringT(cfg, 'delayOneHour', '1 hour')
+      : stringT(cfg, 'delayHours', '%s hours').replace('%s', String(amount));
+  }
+  if (schedule.timeMode === 'seconds' && amount > 0) {
+    return amount === 1
+      ? stringT(cfg, 'delayOneSecond', '1 second')
+      : stringT(cfg, 'delaySecondsUnit', '%s seconds').replace('%s', String(amount));
+  }
+  return '';
+}
+
+/**
+ * Preview text: delay is calculated from when the rule matches, not from the current admin time.
+ */
 export function formatDelayPreview(
   schedule: ActionDelaySchedule,
   cfg: GroRulesEditorConfig,
-  ref = new Date(),
 ): string {
   if (!schedule.active) {
     return stringT(cfg, 'delayImmediate', 'Immediately when the rule matches');
   }
 
-  const total = computeDelaySeconds(schedule, ref);
+  const when = afterMatchPhrase(cfg);
+  const clock = schedule.customTime.trim();
 
-  if (schedule.timeMode === 'custom' && schedule.customTime.trim() !== '') {
-    const target = resolveTargetDateTime(schedule, ref);
-    const dateStr = formatPreviewDate(target, cfg);
-    const timeStr = formatPreviewTime(target, cfg);
-    return stringT(cfg, 'delayPreviewAt', 'Scheduled at %1$s %2$s (about %3$s from now)')
-      .replace('%1$s', dateStr)
-      .replace('%2$s', timeStr)
-      .replace('%3$s', formatRelativeDuration(total, cfg));
-  }
-
-  if (total < 60) {
-    return stringT(cfg, 'delayPreviewSeconds', 'About %s seconds after the rule matches').replace(
-      '%s',
-      String(total),
+  if (clock !== '') {
+    if (schedule.dateMode === 'days' && schedule.days > 0) {
+      return appendExtraRelative(
+        schedule,
+        cfg,
+        stringT(cfg, 'delayPreviewDaysAt', 'In %1$s at %2$s %3$s')
+          .replace('%1$s', daysLabel(schedule, cfg))
+          .replace('%2$s', clock)
+          .replace('%3$s', when),
+      );
+    }
+    if (schedule.dateMode === 'custom' && schedule.customDate.trim() !== '') {
+      const dateStr = formatPreviewDate(parseLocalDate(schedule.customDate, new Date()), cfg);
+      return appendExtraRelative(
+        schedule,
+        cfg,
+        stringT(cfg, 'delayPreviewDateAt', 'On %1$s at %2$s %3$s')
+          .replace('%1$s', dateStr)
+          .replace('%2$s', clock)
+          .replace('%3$s', when),
+      );
+    }
+    return appendExtraRelative(
+      schedule,
+      cfg,
+      stringT(cfg, 'delayPreviewTodayAt', 'On the same day at %1$s %2$s')
+        .replace('%1$s', clock)
+        .replace('%2$s', when),
     );
   }
 
-  return stringT(cfg, 'delayPreviewRelative', 'About %s after the rule matches').replace(
-    '%s',
-    formatRelativeDuration(total, cfg),
-  );
+  if (schedule.dateMode === 'days' && schedule.days > 0) {
+    return appendExtraRelative(
+      schedule,
+      cfg,
+      stringT(cfg, 'delayPreviewDaysOnly', 'In %1$s %2$s')
+        .replace('%1$s', daysLabel(schedule, cfg))
+        .replace('%2$s', when),
+    );
+  }
+
+  if (schedule.dateMode === 'custom' && schedule.customDate.trim() !== '') {
+    const dateStr = formatPreviewDate(parseLocalDate(schedule.customDate, new Date()), cfg);
+    return appendExtraRelative(
+      schedule,
+      cfg,
+      stringT(cfg, 'delayPreviewOnDate', 'On %1$s %2$s').replace('%1$s', dateStr).replace('%2$s', when),
+    );
+  }
+
+  const relative = formatRelativeOnlyOffset(schedule, cfg);
+  if (relative !== '') {
+    return appendExtraRelative(
+      schedule,
+      cfg,
+      stringT(cfg, 'delayPreviewFromMatch', '%1$s %2$s').replace('%1$s', relative).replace('%2$s', when),
+    );
+  }
+
+  return when;
 }
 
 export function formatRelativeDuration(totalSeconds: number, cfg: GroRulesEditorConfig): string {
@@ -287,5 +412,20 @@ export function formatDelaySummary(
   if (!schedule.active && delaySeconds < 1) {
     return stringT(cfg, 'delayImmediateShort', 'Immediate');
   }
+
+  if (hasClockTime(schedule) && schedule.dateMode === 'days' && schedule.days > 0) {
+    return stringT(cfg, 'delaySummaryDaysAt', 'In %1$s at %2$s')
+      .replace('%1$s', daysLabel(schedule, cfg))
+      .replace('%2$s', schedule.customTime);
+  }
+
+  if (hasClockTime(schedule)) {
+    return stringT(cfg, 'delaySummaryAt', 'At %s').replace('%s', schedule.customTime);
+  }
+
+  if (schedule.dateMode === 'days' && schedule.days > 0) {
+    return daysLabel(schedule, cfg);
+  }
+
   return formatRelativeDuration(delaySeconds > 0 ? delaySeconds : computeDelaySeconds(schedule), cfg);
 }

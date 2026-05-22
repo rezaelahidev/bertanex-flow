@@ -425,7 +425,10 @@ export function actionToRow(a: Record<string, unknown>, fallbackType: string): A
   }
   const delaySec = Number.isNaN(delay) ? 0 : Math.max(0, Math.floor(delay));
   const parsedSchedule = parseDelayFromParams(params);
-  const delaySchedule = parsedSchedule ?? delayScheduleFromSeconds(delaySec);
+  let delaySchedule = parsedSchedule ?? delayScheduleFromSeconds(delaySec);
+  if (delaySec > 0 && !delaySchedule.active) {
+    delaySchedule = { ...delaySchedule, active: true };
+  }
 
   return {
     type,

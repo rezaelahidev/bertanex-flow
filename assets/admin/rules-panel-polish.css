@@ -747,6 +747,47 @@
 	flex-direction: row-reverse;
 }
 
+/* —— Reset to defaults (config tab) —— */
+.gro-panel--config .gro-settings-card--danger {
+	margin-top: var(--gro-space-xl);
+	border-color: #fecaca;
+	background: linear-gradient(180deg, #fff 0%, #fef2f2 100%);
+}
+
+.gro-settings-card--danger .gro-settings-card__title {
+	color: #991b1b;
+}
+
+.gro-settings-card--danger .gro-settings-card__subtitle {
+	color: #b91c1c;
+}
+
+.gro-reset-defaults__lede {
+	margin: 0 0 var(--gro-space-md);
+	font-size: var(--gro-text-base);
+	line-height: var(--gro-line-relaxed);
+	color: var(--gro-c-text-secondary);
+}
+
+.gro-reset-defaults__form {
+	margin: 0;
+}
+
+.gro-reset-defaults__submit.button.delete {
+	min-height: var(--gro-control-h-md);
+	padding: 0 var(--gro-space-lg);
+	border-color: #f87171;
+	color: #991b1b;
+	background: #fff;
+}
+
+.gro-reset-defaults__submit.button.delete:hover,
+.gro-reset-defaults__submit.button.delete:focus {
+	border-color: #dc2626;
+	color: #fff;
+	background: #dc2626;
+}
+
 /* —— Jalali date picker (RTL) —— */
 .gro-jalali-date {
 	display: flex;

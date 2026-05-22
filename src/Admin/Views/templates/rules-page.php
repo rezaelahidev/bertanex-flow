@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Template: Automation rules editor (JSON + visual builder overview).
+ * Template: Automation rules editor (automations, patterns, configuration).
  *
  * @var \GrowthOrchestrator\Admin\ViewModels\RulesPageContext $context
  */
@@ -63,7 +63,7 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
             <h1 class="gro-page-header__title"><?php echo esc_html__('Automation Rules', 'growth-orchestrator'); ?></h1>
             <p class="gro-page-header__lede">
                 <?php echo esc_html__(
-                    'Design IF / THEN automations, manage SMS delivery, and tune the visual builder from one workspace.',
+                    'Design IF / THEN automations, manage SMS delivery, and tune automations from one workspace.',
                     'growth-orchestrator'
                 ); ?>
             </p>
@@ -87,7 +87,7 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
             <strong><?php echo esc_html__('JSON error (preview only; saved value unchanged):', 'growth-orchestrator'); ?></strong>
             <p><?php echo esc_html($context->parseError); ?></p>
             <?php if ($context->hasDraftTransient) : ?>
-                <p><?php echo esc_html__('Fix the JSON below and save again.', 'growth-orchestrator'); ?></p>
+                <p><?php echo esc_html__('Use Reset to defaults on the Configuration tab, or restore valid rules another way.', 'growth-orchestrator'); ?></p>
             <?php endif; ?>
         </div>
     <?php endif; ?>
@@ -97,7 +97,7 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
             <h2 id="gro-workspace-heading" class="gro-workspace__title"><?php echo esc_html__('Rule editor', 'growth-orchestrator'); ?></h2>
             <p class="gro-workspace__hint">
                 <?php echo esc_html__(
-                    'Visual builder for common flows, message patterns, raw JSON, and configuration for layout and SMS delivery.',
+                    'Build automations, edit message patterns, and configure layout and SMS delivery.',
                     'growth-orchestrator'
                 ); ?>
             </p>
@@ -105,13 +105,10 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
 
         <nav class="gro-tabs" role="tablist" aria-label="<?php echo esc_attr__('Rules editor mode', 'growth-orchestrator'); ?>">
             <button type="button" role="tab" class="gro-tabs__tab gro-tabs__tab--active" data-gro-tab="visual" aria-selected="true" id="gro-rules-tab-visual">
-                <span class="gro-tabs__label"><?php echo esc_html__('Visual builder', 'growth-orchestrator'); ?></span>
+                <span class="gro-tabs__label"><?php echo esc_html__('Automations', 'growth-orchestrator'); ?></span>
             </button>
             <button type="button" role="tab" class="gro-tabs__tab" data-gro-tab="patterns" aria-selected="false" id="gro-rules-tab-patterns">
                 <span class="gro-tabs__label"><?php echo esc_html__('Message patterns', 'growth-orchestrator'); ?></span>
-            </button>
-            <button type="button" role="tab" class="gro-tabs__tab" data-gro-tab="raw" aria-selected="false" id="gro-rules-tab-raw">
-                <span class="gro-tabs__label"><?php echo esc_html__('Raw JSON', 'growth-orchestrator'); ?></span>
             </button>
             <button type="button" role="tab" class="gro-tabs__tab" data-gro-tab="config" aria-selected="false" id="gro-rules-tab-config">
                 <span class="gro-tabs__label"><?php echo esc_html__('Configuration', 'growth-orchestrator'); ?></span>
@@ -158,7 +155,7 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
                     <div class="gro-config-grid">
                         <div class="gro-settings-card">
                             <header class="gro-settings-card__header">
-                                <h3 class="gro-settings-card__title"><?php echo esc_html__('Visual builder', 'growth-orchestrator'); ?></h3>
+                                <h3 class="gro-settings-card__title"><?php echo esc_html__('Automations', 'growth-orchestrator'); ?></h3>
                                 <p class="gro-settings-card__subtitle"><?php echo esc_html__('List limits and column layout', 'growth-orchestrator'); ?></p>
                             </header>
                             <div class="gro-settings-card__body">
@@ -206,7 +203,7 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
                     <div class="gro-settings-card__body">
                         <p class="gro-reset-defaults__lede">
                             <?php echo esc_html__(
-                                'This will reset automation rules, SMS message patterns, visual builder limits, column layout, and Melipayamak settings stored in this panel. Credentials defined in wp-config or filters are not changed.',
+                                'This will reset automation rules, SMS message patterns, automation list limits, column layout, and Melipayamak settings stored in this panel. Credentials defined in wp-config or filters are not changed.',
                                 'growth-orchestrator'
                             ); ?>
                         </p>
@@ -243,23 +240,19 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
                 <div id="gro-rules-panel-visual" class="gro-panel gro-panel--visual" role="tabpanel" tabindex="0" aria-labelledby="gro-rules-tab-visual" aria-hidden="false">
                     <div id="gro-rules-visual-root" class="gro-rules-visual-mount"></div>
                     <noscript>
-                        <p class="gro-alert gro-alert--warn"><?php echo esc_html__('Enable JavaScript to use the visual rule builder.', 'growth-orchestrator'); ?></p>
+                        <p class="gro-alert gro-alert--warn"><?php echo esc_html__('Enable JavaScript to use the automations editor.', 'growth-orchestrator'); ?></p>
                     </noscript>
                 </div>
 
-                <div id="gro-rules-panel-raw" class="gro-panel gro-panel--raw" role="tabpanel" tabindex="0" aria-labelledby="gro-rules-tab-raw" aria-hidden="true" hidden>
-                    <label class="gro-raw-json-label" for="gro_rules_json">
-                        <span class="gro-raw-json-label__title"><?php echo esc_html__('Rules document (JSON)', 'growth-orchestrator'); ?></span>
-                        <span class="gro-raw-json-label__hint"><?php echo esc_html__('Full document; validate before saving.', 'growth-orchestrator'); ?></span>
-                    </label>
-                    <textarea
-                        name="gro_rules_json"
-                        id="gro_rules_json"
-                        rows="24"
-                        class="large-text code gro-rules-json-textarea"
-                        spellcheck="false"
-                    ><?php echo esc_textarea($context->textareaValue); ?></textarea>
-                </div>
+                <textarea
+                    name="gro_rules_json"
+                    id="gro_rules_json"
+                    class="gro-rules-json-hidden"
+                    hidden
+                    aria-hidden="true"
+                    tabindex="-1"
+                    spellcheck="false"
+                ><?php echo esc_textarea($context->textareaValue); ?></textarea>
 
                 <footer class="gro-editor-form__footer">
                     <?php submit_button(__('Save all rules', 'growth-orchestrator'), 'primary', 'gro_rules_save_all', true, ['id' => 'gro-rules-save-all', 'disabled' => 'disabled']); ?>

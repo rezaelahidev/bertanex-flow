@@ -34,7 +34,7 @@
 	--gro-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
-/* —— RTL / Persian (omdbox Yekan Bakh FaNum when enqueued) —— */
+/* —— RTL / Persian (theme registers `--gro-font-fa` via gro_rules_admin_rtl_font_family) —— */
 .gro-rules-admin--rtl,
 .rtl .gro-rules-admin {
 	--gro-font-fa: 'Yekan Bakh FaNum', Tahoma, serif;
@@ -372,9 +372,20 @@
 	padding: var(--gro-space-4);
 }
 
-.gro-panel--visual,
-.gro-panel--raw {
+.gro-panel--visual {
 	margin: 0;
+}
+
+.gro-rules-json-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
 }
 
 .gro-editor-form__footer {

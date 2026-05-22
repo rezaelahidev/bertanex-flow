@@ -78,7 +78,7 @@ export function AdvancedRuleCard({ ruleIndex, snapshot, onRemove }: AdvancedRule
             {t(
               cfg,
               'advancedDesc',
-              'This rule uses triggers or nested conditions that the visual editor does not edit. Change it under Raw JSON; the card will reload after a successful parse.',
+              'This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored.',
             )}
           </p>
         </div>

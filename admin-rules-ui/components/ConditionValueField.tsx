@@ -64,7 +64,7 @@ export function ConditionValueField({ row, suggestedFields, onRowChange }: Condi
   return (
     <div className="gro-nested-field gro-nested-field--full">
       <label>
-        <strong>{t(cfg, 'valueCol', 'Value')}</strong>
+        <strong>{t(cfg, 'valueColShort', 'Value')}</strong>
         <select
           value={selectValue}
           onChange={(ev) => {

@@ -22,14 +22,18 @@ declare global {
 function bootstrapFromTextarea(textareaId: string, cfg: GroRulesEditorConfig): {
   version: string;
   rules: UiRule[];
-  startsOnRawTab: boolean;
+  bootstrapError: string | null;
 } {
   const ta = typeof document !== 'undefined' ? (document.getElementById(textareaId) as HTMLTextAreaElement | null) : null;
   try {
     const parsed = parseDocumentFromTextarea(ta?.value ?? '', cfg);
-    return { version: parsed.version, rules: parsed.rules, startsOnRawTab: false };
-  } catch {
-    return { version: cfg.defaultVersion ?? '1.0.0', rules: [], startsOnRawTab: true };
+    return { version: parsed.version, rules: parsed.rules, bootstrapError: null };
+  } catch (e: unknown) {
+    return {
+      version: cfg.defaultVersion ?? '1.0.0',
+      rules: [],
+      bootstrapError: String((e as Error).message ?? e),
+    };
   }
 }
 
@@ -37,13 +41,15 @@ export interface RulesVisualAppProps {
   textareaId?: string;
 }
 
+type RulesWorkspaceTab = 'visual' | 'config' | 'patterns';
+
 export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualAppProps): React.ReactElement {
   const cfg = useMemo(() => normalizeConfig(window.groRulesEditor), []);
   const init = useMemo(() => bootstrapFromTextarea(textareaId, cfg), [textareaId, cfg]);
 
   const [version, setVersion] = useState(init.version);
   const [uiRules, setUiRules] = useState<UiRule[]>(init.rules);
-  const [parseError, setParseError] = useState<string | null>(null);
+  const [parseError, setParseError] = useState<string | null>(init.bootstrapError);
 
   const { setSavedSnapshot, isSaving, saveNotice, hasUnsavedChanges, persistDocument } = useRulesPersistence(cfg);
 
@@ -54,7 +60,7 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     uiRulesRef.current = uiRules;
   }, [version, uiRules]);
 
-  const activeTabRef = useRef<'visual' | 'raw' | 'config' | 'patterns' | null>(null);
+  const activeTabRef = useRef<RulesWorkspaceTab | null>(null);
   const displayColumns = cfg.panelConfig?.displayColumns ?? 1;
   const didNormalizeTextareaRef = useRef(false);
   const didInitBaselineRef = useRef(false);
@@ -76,20 +82,17 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     setParseError(null);
   }, [cfg, getTextarea]);
 
-  const syncPanelsForTab = useCallback((tab: 'visual' | 'raw' | 'config' | 'patterns'): void => {
+  const syncPanelsForTab = useCallback((tab: RulesWorkspaceTab): void => {
     const tabV = document.querySelector<HTMLElement>('[data-gro-tab="visual"]');
     const tabP = document.querySelector<HTMLElement>('[data-gro-tab="patterns"]');
-    const tabR = document.querySelector<HTMLElement>('[data-gro-tab="raw"]');
     const tabC = document.querySelector<HTMLElement>('[data-gro-tab="config"]');
     const tabActiveClass = 'gro-tabs__tab--active';
     const panelVisual = document.getElementById('gro-rules-panel-visual');
     const panelPatterns = document.getElementById('gro-rules-panel-patterns');
-    const panelRaw = document.getElementById('gro-rules-panel-raw');
     const panelConfig = document.getElementById('gro-rules-panel-config');
     const editorForm = document.getElementById('gro-rules-editor-form');
     const isVisual = tab === 'visual';
     const isPatterns = tab === 'patterns';
-    const isRaw = tab === 'raw';
     const isConfig = tab === 'config';
     const hideEditor = isConfig || isPatterns;
 
@@ -97,8 +100,6 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     tabV?.setAttribute('aria-selected', isVisual ? 'true' : 'false');
     tabP?.classList.toggle(tabActiveClass, isPatterns);
     tabP?.setAttribute('aria-selected', isPatterns ? 'true' : 'false');
-    tabR?.classList.toggle(tabActiveClass, isRaw);
-    tabR?.setAttribute('aria-selected', isRaw ? 'true' : 'false');
     tabC?.classList.toggle(tabActiveClass, isConfig);
     tabC?.setAttribute('aria-selected', isConfig ? 'true' : 'false');
 
@@ -110,11 +111,6 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
       panelPatterns.hidden = !isPatterns;
       panelPatterns.toggleAttribute('hidden', !isPatterns);
       panelPatterns.setAttribute('aria-hidden', isPatterns ? 'false' : 'true');
-    }
-    if (panelRaw) {
-      panelRaw.hidden = !isRaw;
-      panelRaw.toggleAttribute('hidden', !isRaw);
-      panelRaw.setAttribute('aria-hidden', isRaw ? 'false' : 'true');
     }
     if (panelConfig) {
       panelConfig.hidden = !isConfig;
@@ -128,8 +124,7 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
   }, []);
 
   const revealTab = useCallback(
-    (next: 'visual' | 'raw' | 'config' | 'patterns'): void => {
-      const prev = activeTabRef.current;
+    (next: RulesWorkspaceTab): void => {
       activeTabRef.current = next;
 
       if (next === 'config' || next === 'patterns') {
@@ -137,8 +132,8 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
         return;
       }
 
-      if (next === 'visual') {
-        syncPanelsForTab('visual');
+      syncPanelsForTab('visual');
+      if (parseError === null) {
         try {
           importFromTextarea();
         } catch (e: unknown) {
@@ -146,19 +141,9 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
           setUiRules([]);
           setVersion(cfg.defaultVersion ?? '1.0.0');
         }
-        return;
-      }
-
-      syncPanelsForTab('raw');
-      if (prev === 'visual') {
-        try {
-          flushToTextarea();
-        } catch {
-          /* ignore */
-        }
       }
     },
-    [cfg.defaultVersion, flushToTextarea, importFromTextarea, syncPanelsForTab],
+    [cfg.defaultVersion, importFromTextarea, parseError, syncPanelsForTab],
   );
 
   const revealTabRef = useRef(revealTab);
@@ -189,12 +174,11 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     if (!btn) return;
     const tab = activeTabRef.current;
     const hideSaveAll = tab === 'config' || tab === 'patterns';
-    const onRaw = tab === 'raw';
     btn.hidden = hideSaveAll;
     btn.toggleAttribute('hidden', hideSaveAll);
-    btn.disabled = onRaw ? false : !dirty || isSaving;
-    btn.textContent = isSaving && !onRaw ? t(cfg, 'saving', 'Saving…') : t(cfg, 'saveAll', 'Save all');
-  }, [cfg, dirty, isSaving]);
+    btn.disabled = parseError !== null || !dirty || isSaving;
+    btn.textContent = isSaving ? t(cfg, 'saving', 'Saving…') : t(cfg, 'saveAll', 'Save all');
+  }, [cfg, dirty, isSaving, parseError]);
 
   useLayoutEffect(() => {
     const ta = getTextarea();
@@ -203,9 +187,6 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
 
     const onVisualClick = (): void => {
       revealTabRef.current('visual');
-    };
-    const onRawClick = (): void => {
-      revealTabRef.current('raw');
     };
     const onPatternsClick = (): void => {
       revealTabRef.current('patterns');
@@ -216,22 +197,7 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
 
     document.querySelector<HTMLButtonElement>('[data-gro-tab="visual"]')?.addEventListener('click', onVisualClick);
     document.querySelector<HTMLButtonElement>('[data-gro-tab="patterns"]')?.addEventListener('click', onPatternsClick);
-    document.querySelector<HTMLButtonElement>('[data-gro-tab="raw"]')?.addEventListener('click', onRawClick);
     document.querySelector<HTMLButtonElement>('[data-gro-tab="config"]')?.addEventListener('click', onConfigClick);
-
-    let rawTimer: ReturnType<typeof setTimeout>;
-    const onRawInput = (): void => {
-      if (activeTabRef.current !== 'raw') return;
-      window.clearTimeout(rawTimer);
-      rawTimer = window.setTimeout(() => {
-        try {
-          importFromTextarea();
-        } catch (e: unknown) {
-          setParseError(String((e as Error).message ?? e));
-        }
-      }, 400);
-    };
-    ta?.addEventListener('input', onRawInput);
 
     const onSubmit = (ev: SubmitEvent): void => {
       if (activeTabRef.current !== 'visual') return;
@@ -254,14 +220,11 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     if (openTab === 'config' || openTab === 'patterns') {
       delete document.documentElement.dataset.groOpenRulesTab;
       revealTabRef.current(openTab);
-    } else if (init.startsOnRawTab) {
-      setParseError(null);
-      revealTabRef.current('raw');
     } else {
       revealTabRef.current('visual');
     }
 
-    if (!init.startsOnRawTab && !didNormalizeTextareaRef.current && ta) {
+    if (init.bootstrapError === null && !didNormalizeTextareaRef.current && ta) {
       didNormalizeTextareaRef.current = true;
       try {
         ta.value = documentJson(init.version, init.rules, cfg);
@@ -278,21 +241,18 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     return () => {
       document.querySelector<HTMLButtonElement>('[data-gro-tab="visual"]')?.removeEventListener('click', onVisualClick);
       document.querySelector<HTMLButtonElement>('[data-gro-tab="patterns"]')?.removeEventListener('click', onPatternsClick);
-      document.querySelector<HTMLButtonElement>('[data-gro-tab="raw"]')?.removeEventListener('click', onRawClick);
       document.querySelector<HTMLButtonElement>('[data-gro-tab="config"]')?.removeEventListener('click', onConfigClick);
-      ta?.removeEventListener('input', onRawInput);
       form?.removeEventListener('submit', onSubmit);
       saveAllBtn?.removeEventListener('click', onSaveAllClick);
-      window.clearTimeout(rawTimer);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps -- one-time bootstrap wiring to PHP tabs / form
   }, []);
 
   useEffect(() => {
-    if (activeTabRef.current === 'visual') {
+    if (activeTabRef.current === 'visual' && parseError === null) {
       flushToTextarea();
     }
-  }, [version, uiRules, flushToTextarea]);
+  }, [version, uiRules, flushToTextarea, parseError]);
 
   const addRule = (): void => {
     setUiRules((prev) => [
@@ -336,13 +296,19 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
       <div className="gro-rules-visual-inner">
         <div className="gro-rules-visual__toolbar">
           <div className="gro-rules-visual__toolbar-primary">
-            <GroButton variant="primary" size="lg" icon="add" className="gro-btn-add-rule" onClick={addRule}>
+            <GroButton variant="primary" size="lg" icon="add" className="gro-btn-add-rule" onClick={addRule} disabled={parseError !== null}>
               {t(cfg, 'addRule', 'Add rule')}
             </GroButton>
           </div>
           <div className="gro-rules-visual__version">
             <label htmlFor="gro_rules_doc_version">{t(cfg, 'versionLabel', 'Format version')}</label>
-            <input id="gro_rules_doc_version" type="text" value={version} onChange={(ev) => setVersion(ev.target.value)} />
+            <input
+              id="gro_rules_doc_version"
+              type="text"
+              value={version}
+              onChange={(ev) => setVersion(ev.target.value)}
+              disabled={parseError !== null}
+            />
           </div>
         </div>
         {parseError !== null ? <div className="gro-banner gro-banner--error">{parseError}</div> : null}
@@ -352,7 +318,7 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
           </div>
         ) : null}
         {parseError === null && uiRules.length === 0 ? (
-          <p className="description gro-rules-visual__empty-hint">{t(cfg, 'noRules', 'No rules. Add one or paste JSON in the Raw JSON tab.')}</p>
+          <p className="description gro-rules-visual__empty-hint">{t(cfg, 'noRules', 'No rules yet. Add your first automation.')}</p>
         ) : null}
         {parseError === null && uiRules.length > 0 ? (
           <ul

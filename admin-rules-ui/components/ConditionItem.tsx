@@ -148,7 +148,7 @@ export function ConditionItem({ ruleIndex, idx, row: c, editable: e, onChange }:
                 <span className="gro-item-card__sep" aria-hidden>
                   {' · '}
                 </span>
-                <span className="gro-item-card__meta-key">{t(cfg, 'valueCol', 'Value')}</span>{' '}
+                <span className="gro-item-card__meta-key">{t(cfg, 'valueColShort', 'Value')}</span>{' '}
                 <strong>{valueShown}</strong>
               </>
             ) : null}

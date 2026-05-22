@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator\Admin\Controllers;
 
-use GrowthOrchestrator\Admin\OmdboxAdminFonts;
+use GrowthOrchestrator\Admin\RtlAdminTypography;
 use GrowthOrchestrator\Admin\PluginDefaultsReset;
 use GrowthOrchestrator\Admin\Models\RulesAdminConfig;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
@@ -279,18 +279,13 @@ final class RulesController
         );
 
         if (is_rtl()) {
-            OmdboxAdminFonts::enqueue('gro-rules-visual-editor');
+            RtlAdminTypography::enqueue('gro-rules-visual-editor');
 
             wp_enqueue_style(
                 'gro-rules-visual-editor-rtl',
                 $base . 'rules-visual-editor-rtl.css',
                 ['gro-rules-visual-editor'],
                 self::assetFileVersion('assets/admin/rules-visual-editor-rtl.css')
-            );
-
-            wp_add_inline_style(
-                'gro-rules-visual-editor',
-                '.gro-rules-admin--rtl,.rtl .gro-rules-admin{--gro-font-fa:' . OmdboxAdminFonts::fontFamily() . ';}'
             );
         }
 
@@ -372,11 +367,11 @@ final class RulesController
                 'jalaliMonthNames' => self::jalaliMonthNamesForEditor(),
                 'strings'          => [
                     'errInvalidRoot'   => __('JSON must be an object with a "rules" array.', 'growth-orchestrator'),
-                    'noRules'          => __('No rules. Add one or paste JSON in the Raw JSON tab.', 'growth-orchestrator'),
+                    'noRules'          => __('No rules yet. Add your first automation.', 'growth-orchestrator'),
                     'addRule'          => __('Add rule', 'growth-orchestrator'),
                     'versionLabel'     => __('Format version', 'growth-orchestrator'),
                     'advancedBadge'    => __('Advanced', 'growth-orchestrator'),
-                    'advancedDesc'     => __('This rule uses triggers or nested conditions that the visual editor does not edit. Change it under Raw JSON; the card will reload after a successful parse.', 'growth-orchestrator'),
+                    'advancedDesc'     => __('This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored.', 'growth-orchestrator'),
                     'placeholderLabel' => __('Label (optional)', 'growth-orchestrator'),
                     'untitledRuleSummary' => __('Untitled rule', 'growth-orchestrator'),
                     'ruleDetailsHeading'   => __('Edit rule', 'growth-orchestrator'),
@@ -421,6 +416,7 @@ final class RulesController
                     'opCol'            => __('Operator', 'growth-orchestrator'),
                     'patternCol'       => __('Pattern (regex)', 'growth-orchestrator'),
                     'valueCol'         => __('Value (JSON)', 'growth-orchestrator'),
+                    'valueColShort'    => __('Value', 'growth-orchestrator'),
                     'customField'      => __('Custom…', 'growth-orchestrator'),
                     'fieldPlaceholder' => __('State field key', 'growth-orchestrator'),
                     'removeRow'        => __('Remove', 'growth-orchestrator'),
@@ -764,12 +760,20 @@ final class RulesController
     private static function eventTypeLabel(EventType $type): string
     {
         return match ($type) {
-            EventType::UserRegistered        => __('User registered', 'growth-orchestrator'),
-            EventType::ProfileCompleted      => __('Profile completed', 'growth-orchestrator'),
-            EventType::ProductCreated        => __('Product created', 'growth-orchestrator'),
-            EventType::SubscriptionPurchased => __('Subscription purchased', 'growth-orchestrator'),
-            EventType::SubscriptionExpired   => __('Subscription expired', 'growth-orchestrator'),
-            EventType::Login                 => __('User login', 'growth-orchestrator'),
+            EventType::UserRegistered                   => __('User registered', 'growth-orchestrator'),
+            EventType::ProfileCompleted                 => __('Profile completed', 'growth-orchestrator'),
+            EventType::ProductCreated                   => __('Product created', 'growth-orchestrator'),
+            EventType::SubscriptionPurchased            => __('Subscription purchased', 'growth-orchestrator'),
+            EventType::SubscriptionRenewed              => __('Subscription renewed', 'growth-orchestrator'),
+            EventType::SubscriptionCancelled            => __('Subscription cancelled', 'growth-orchestrator'),
+            EventType::SubscriptionExpired                => __('Subscription expired', 'growth-orchestrator'),
+            EventType::SubscriptionListingCreditUsed      => __('Listing credit used', 'growth-orchestrator'),
+            EventType::SubscriptionLadderCreditUsed       => __('Ladder credit used', 'growth-orchestrator'),
+            EventType::SubscriptionRenewalReminderSent  => __('Renewal reminder sent', 'growth-orchestrator'),
+            EventType::SubscriptionRenewalInvoiceCreated => __('Renewal invoice created', 'growth-orchestrator'),
+            EventType::SubscriptionWooOrderBenefitsPending => __('Woo order benefits pending', 'growth-orchestrator'),
+            EventType::SubscriptionLegacyWooGrantApplied => __('Legacy Woo grant applied', 'growth-orchestrator'),
+            EventType::Login                            => __('User login', 'growth-orchestrator'),
         };
     }
 

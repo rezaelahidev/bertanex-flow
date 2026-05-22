@@ -34,7 +34,7 @@ final class RuleActionsExecutor
                 continue;
             }
 
-            $delay = isset($action['delay_seconds']) ? (int) $action['delay_seconds'] : 0;
+            $delay = ActionDelayResolver::resolveSeconds($action);
 
             if ($delay > 0) {
                 $this->scheduler->schedule($delay, $userId, $action, $ruleId, $eventName);

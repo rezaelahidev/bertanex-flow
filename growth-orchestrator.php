@@ -18,6 +18,8 @@ declare(strict_types=1);
 
 namespace GrowthOrchestrator;
 
+use GrowthOrchestrator\Consumer\ConsumerDefaultsResolver;
+use GrowthOrchestrator\Consumer\ConsumerRegistry;
 use GrowthOrchestrator\Db\RulesDbSchema;
 use GrowthOrchestrator\Loader\HooksLoader;
 
@@ -61,7 +63,8 @@ if (is_readable($growth_orch_action_scheduler)) {
 register_activation_hook(
     GROWTH_ORCH_PLUGIN_FILE,
     static function (): void {
-        RulesDbSchema::onPluginActivate(GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json');
+        $resolver = new ConsumerDefaultsResolver(ConsumerRegistry::instance());
+        RulesDbSchema::onPluginActivate($resolver->mergedRulesDocumentJson());
     }
 );
 

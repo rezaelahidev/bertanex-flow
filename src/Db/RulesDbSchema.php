@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace GrowthOrchestrator\Db;
 
 use GrowthOrchestrator\Rule\DatabaseRulesSync;
-use GrowthOrchestrator\Rule\JsonFileRulesRepository;
 use GrowthOrchestrator\Rule\JsonRulesParser;
 use GrowthOrchestrator\Rule\OptionRulesRepository;
 
@@ -95,12 +94,12 @@ SQL;
     public const SOURCES_HYDRATED_OPTION = 'growth_orchestrator_rules_sources_hydrated_v1';
 
     /**
-     * One-time copy from legacy option JSON or bundled defaults when the table is still empty.
+     * One-time copy from legacy option JSON or consumer defaults when the table is still empty.
      *
      * After it runs (even if nothing was imported), {@see SOURCES_HYDRATED_OPTION} prevents accidental
      * re-import when an admin intentionally deletes all rows.
      */
-    public static function maybeHydrateFromLegacySourcesOnce(string $defaultJsonFilePath): void
+    public static function maybeHydrateFromLegacySourcesOnce(string $defaultRulesDocumentJson): void
     {
         if (! self::tableReady()) {
             return;
@@ -140,8 +139,7 @@ SQL;
         /** @phpstan-ignore-next-line */
         $countAfterOption = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table}");
         if ($countAfterOption === 0) {
-            $repo = new JsonFileRulesRepository($defaultJsonFilePath, $parser);
-            $json = $repo->readRawDocument();
+            $json = trim($defaultRulesDocumentJson);
             if ($json !== '') {
                 try {
                     $definitions = $parser->parse($json);
@@ -158,13 +156,13 @@ SQL;
     }
 
     /** Plugin activation shim (delegates upgrade + hydration). */
-    public static function onPluginActivate(string $defaultJsonPath): void
+    public static function onPluginActivate(string $defaultRulesDocumentJson): void
     {
         self::installOrUpgradeTables();
         if (self::tableReady()) {
             update_option(self::SCHEMA_VERSION_OPTION, self::SCHEMA_VERSION, true);
         }
 
-        self::maybeHydrateFromLegacySourcesOnce($defaultJsonPath);
+        self::maybeHydrateFromLegacySourcesOnce($defaultRulesDocumentJson);
     }
 }

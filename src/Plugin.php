@@ -45,6 +45,8 @@ use GrowthOrchestrator\Rule\UserStateProviderInterface;
 use GrowthOrchestrator\Sms\SmsTemplateProviderInterface;
 use GrowthOrchestrator\Admin\Controllers\RulesController;
 use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
+use GrowthOrchestrator\Consumer\ConsumerDefaultsResolver;
+use GrowthOrchestrator\Consumer\ConsumerRegistry;
 
 final class Plugin
 {
@@ -61,6 +63,7 @@ final class Plugin
         $this->hooks->add_action($this, 'loadTextdomain', 'plugins_loaded', 0, 0);
         $this->hooks->add_action($this, 'loadTextdomain', 'init', 0, 0);
         $this->hooks->add_action($this, 'bootstrapPersistence', 'plugins_loaded', 2, 0);
+        $this->hooks->add_action($this, 'bootstrapConsumerDefaults', 'init', 1, 0);
         $this->hooks->add_action($this, 'onPluginsLoaded', 'plugins_loaded', 5, 0);
         $this->hooks->register();
     }
@@ -73,7 +76,12 @@ final class Plugin
     public function bootstrapPersistence(): void
     {
         RulesDbSchema::upgradeIfNeeded();
-        RulesDbSchema::maybeHydrateFromLegacySourcesOnce(GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json');
+    }
+
+    public function bootstrapConsumerDefaults(): void
+    {
+        $resolver = $this->container->get(ConsumerDefaultsResolver::class);
+        RulesDbSchema::maybeHydrateFromLegacySourcesOnce($resolver->mergedRulesDocumentJson());
     }
 
     public function onPluginsLoaded(): void
@@ -147,6 +155,15 @@ final class Plugin
     private function registerServices(): void
     {
         $c = $this->container;
+
+        $c->singleton(ConsumerRegistry::class, static fn () => ConsumerRegistry::instance());
+
+        $c->singleton(
+            ConsumerDefaultsResolver::class,
+            static fn (Container $c) => new ConsumerDefaultsResolver(
+                $c->get(ConsumerRegistry::class)
+            )
+        );
 
         $c->singleton(EventDispatcher::class, static fn () => new EventDispatcher());
 
@@ -261,7 +278,7 @@ final class Plugin
             PluginDefaultsReset::class,
             static fn (Container $c) => new PluginDefaultsReset(
                 $c->get(RulesDocumentModel::class),
-                \GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json'
+                $c->get(ConsumerDefaultsResolver::class)
             )
         );
 

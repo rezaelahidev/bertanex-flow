@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GrowthOrchestrator;
 
 use GrowthOrchestrator\Admin\Controllers\RulesController;
+use GrowthOrchestrator\Admin\PluginDefaultsReset;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
 use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
 use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
@@ -264,13 +265,22 @@ final class Plugin
         $c->singleton(RulesEditorSettingsModel::class, static fn () => new RulesEditorSettingsModel());
 
         $c->singleton(
+            PluginDefaultsReset::class,
+            static fn (Container $c) => new PluginDefaultsReset(
+                $c->get(RulesDocumentModel::class),
+                \GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json'
+            )
+        );
+
+        $c->singleton(
             RulesController::class,
             static fn (Container $c) => new RulesController(
                 $c->get(RulesDocumentModel::class),
                 $c->get(RulesPageView::class),
                 $c->get(RulesEditorSettingsModel::class),
                 $c->get(SmsSettingsModel::class),
-                $c->get(SmsTemplatesModel::class)
+                $c->get(SmsTemplatesModel::class),
+                $c->get(PluginDefaultsReset::class)
             )
         );
 

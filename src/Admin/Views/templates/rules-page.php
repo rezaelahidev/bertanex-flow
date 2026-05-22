@@ -30,7 +30,25 @@ if ($context->showSuccessNotice) {
         '</p></div>';
 }
 
-if (isset($_GET['settings-updated'])) {
+if (isset($_GET['gro_reset']) && (string) $_GET['gro_reset'] === '1') {
+    echo '<div class="notice notice-success is-dismissible"><p>' .
+        esc_html__(
+            'All customizations were reset to plugin defaults. Rules, message patterns, panel layout, and SMS settings were restored.',
+            'growth-orchestrator'
+        ) .
+        '</p></div>';
+}
+
+if (isset($_GET['gro_reset']) && (string) $_GET['gro_reset'] === 'error') {
+    echo '<div class="notice notice-error is-dismissible"><p>' .
+        esc_html__(
+            'Could not reset to defaults. Check that the default rules file exists and try again.',
+            'growth-orchestrator'
+        ) .
+        '</p></div>';
+}
+
+if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
     $openTab = isset($_GET['gro_open_tab']) ? sanitize_key((string) $_GET['gro_open_tab']) : 'config';
     if (! in_array($openTab, ['config', 'patterns'], true)) {
         $openTab = 'config';
@@ -210,6 +228,50 @@ if (isset($_GET['settings-updated'])) {
                         <?php endif; ?>
                     </footer>
                 </form>
+
+                <section class="gro-settings-card gro-settings-card--danger" aria-labelledby="gro-reset-defaults-heading">
+                    <header class="gro-settings-card__header">
+                        <h3 id="gro-reset-defaults-heading" class="gro-settings-card__title">
+                            <?php echo esc_html__('Reset to defaults', 'growth-orchestrator'); ?>
+                        </h3>
+                        <p class="gro-settings-card__subtitle">
+                            <?php echo esc_html__(
+                                'Remove all saved customizations and restore the plugin’s original state.',
+                                'growth-orchestrator'
+                            ); ?>
+                        </p>
+                    </header>
+                    <div class="gro-settings-card__body">
+                        <p class="gro-reset-defaults__lede">
+                            <?php echo esc_html__(
+                                'This will reset automation rules, SMS message patterns, visual builder limits, column layout, and Melipayamak settings stored in this panel. Credentials defined in wp-config or filters are not changed.',
+                                'growth-orchestrator'
+                            ); ?>
+                        </p>
+                        <form
+                            method="post"
+                            action="<?php echo esc_url(admin_url('admin-post.php')); ?>"
+                            class="gro-reset-defaults__form"
+                            onsubmit="return window.confirm(<?php echo wp_json_encode(
+                                __(
+                                    'Reset all Growth Orchestrator customizations to defaults? This cannot be undone.',
+                                    'growth-orchestrator'
+                                ),
+                                JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+                            ); ?>);"
+                        >
+                            <?php wp_nonce_field('gro_reset_defaults'); ?>
+                            <input type="hidden" name="action" value="gro_reset_defaults" />
+                            <input type="hidden" name="page" value="<?php echo esc_attr(\GrowthOrchestrator\Admin\Controllers\RulesController::PAGE_SLUG); ?>" />
+                            <?php submit_button(
+                                __('Reset all to defaults', 'growth-orchestrator'),
+                                'delete gro-reset-defaults__submit',
+                                'gro_reset_defaults_submit',
+                                false
+                            ); ?>
+                        </form>
+                    </div>
+                </section>
             </div>
 
             <form method="post" action="<?php echo esc_url($context->formActionUrl); ?>" id="gro-rules-editor-form" class="gro-editor-form">

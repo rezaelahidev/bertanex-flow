@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GrowthOrchestrator\Admin\Controllers;
 
 use GrowthOrchestrator\Admin\OmdboxAdminFonts;
+use GrowthOrchestrator\Admin\PluginDefaultsReset;
 use GrowthOrchestrator\Admin\Models\RulesAdminConfig;
 use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
 use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
@@ -32,7 +33,8 @@ final class RulesController
         private readonly RulesPageView $view,
         private readonly RulesEditorSettingsModel $editorSettings,
         private readonly SmsSettingsModel $smsSettings,
-        private readonly SmsTemplatesModel $smsTemplates
+        private readonly SmsTemplatesModel $smsTemplates,
+        private readonly PluginDefaultsReset $defaultsReset
     ) {
     }
 
@@ -44,6 +46,49 @@ final class RulesController
         $hooks->add_action($this, 'onAdminInit', 'admin_init', 1, 0);
         $hooks->add_action($this, 'enqueueAssets', 'admin_enqueue_scripts', 10, 1);
         $hooks->add_action($this, 'onAjaxSaveRules', 'wp_ajax_gro_rules_save', 0, 0);
+        $hooks->add_action($this, 'onAdminPostResetDefaults', 'admin_post_gro_reset_defaults', 0, 0);
+    }
+
+    public function onAdminPostResetDefaults(): void
+    {
+        if (! current_user_can('manage_options')) {
+            wp_die(esc_html__('You do not have permission to reset plugin settings.', 'growth-orchestrator'));
+        }
+
+        check_admin_referer('gro_reset_defaults');
+
+        $page = isset($_REQUEST['page']) ? sanitize_key((string) $_REQUEST['page']) : '';
+        if ($page !== self::PAGE_SLUG) {
+            $page = self::PAGE_SLUG;
+        }
+
+        try {
+            $this->defaultsReset->resetAll();
+        } catch (\Throwable $e) {
+            wp_safe_redirect(
+                add_query_arg(
+                    [
+                        'page'      => $page,
+                        'gro_reset' => 'error',
+                        'gro_open_tab' => 'config',
+                    ],
+                    admin_url('admin.php')
+                )
+            );
+            exit;
+        }
+
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    'page'         => $page,
+                    'gro_reset'    => '1',
+                    'gro_open_tab' => 'config',
+                ],
+                admin_url('admin.php')
+            )
+        );
+        exit;
     }
 
     public function registerEditorSettings(): void

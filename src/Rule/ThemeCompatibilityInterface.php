@@ -38,4 +38,11 @@ interface ThemeCompatibilityInterface
      * @return integer the calculated days number value to expiry.
      */
     public function getCalculatedDaysToExpiry(int $userId): int;
+
+    /**
+     * Account role for rule conditions (site-specific values via theme integration).
+     *
+     * @param int $userId the user id.
+     */
+    public function getUserType(int $userId): string;
 }

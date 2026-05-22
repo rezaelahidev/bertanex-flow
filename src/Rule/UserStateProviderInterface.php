@@ -12,7 +12,8 @@ namespace GrowthOrchestrator\Rule;
  *     has_product?: bool,
  *     has_subscription?: bool,
  *     subscription_status?: string,
- *     subscription_days_until_expiry?: int|null
+ *     subscription_days_until_expiry?: int|null,
+ *     user_type?: string
  * }
  */
 interface UserStateProviderInterface

@@ -338,6 +338,63 @@ msgstr "انتخاب تاریخ و زمان بعد از الان"
 msgid "No extra time"
 msgstr "بدون زمان اضافه"
 
+msgid "No extra delay"
+msgstr "بدون تأخیر اضافه"
+
+msgid "At time on that day"
+msgstr "در ساعت مشخص همان روز"
+
+msgid "Combine with the date above — e.g. in 1 day at 11:00"
+msgstr "همراه با تاریخ بالا — مثلاً تا ۱ روز دیگر ساعت ۱۱:۰۰"
+
+msgid "Optional extra wait after the date and clock time above."
+msgstr "تأخیر اختیاری پس از تاریخ و ساعت بالا."
+
+msgid "after the rule matches"
+msgstr "پس از تطابق قانون"
+
+msgid "%1$s %2$s"
+msgstr "%1$s %2$s"
+
+msgid "In %1$s at %2$s %3$s"
+msgstr "تا %1$s دیگر ساعت %2$s %3$s"
+
+msgid "In %1$s %2$s"
+msgstr "تا %1$s دیگر %2$s"
+
+msgid "On %1$s at %2$s %3$s"
+msgstr "در %1$s ساعت %2$s %3$s"
+
+msgid "On %1$s %2$s"
+msgstr "در %1$s %2$s"
+
+msgid "On the same day at %1$s %2$s"
+msgstr "همان روز ساعت %1$s %2$s"
+
+msgid "In %1$s at %2$s on %3$s (about %4$s from now)"
+msgstr "تا %1$s دیگر ساعت %2$s در %3$s (حدود %4$s از الان)"
+
+msgid "In %1$s (about %2$s from now)"
+msgstr "تا %1$s دیگر (حدود %2$s از الان)"
+
+msgid "On %1$s at %2$s (about %3$s from now)"
+msgstr "در %1$s ساعت %2$s (حدود %3$s از الان)"
+
+msgid "On %1$s (about %2$s from now)"
+msgstr "در %1$s (حدود %2$s از الان)"
+
+msgid "Today at %1$s (about %2$s from now), on %3$s"
+msgstr "امروز ساعت %1$s (حدود %2$s از الان)، در %3$s"
+
+msgid "(plus %s more)"
+msgstr "(به‌علاوه %s)"
+
+msgid "In %1$s at %2$s"
+msgstr "تا %1$s دیگر ساعت %2$s"
+
+msgid "At %s"
+msgstr "ساعت %s"
+
 msgid "Day"
 msgstr "روز"
 
@@ -523,6 +580,36 @@ msgstr "ارائه‌دهنده و اعتبارنامه ملی‌پیامک"
 
 msgid "Save configuration"
 msgstr "ذخیره پیکربندی"
+
+msgid "Reset to defaults"
+msgstr "بازگردانی به پیش‌فرض"
+
+msgid "Remove all saved customizations and restore the plugin’s original state."
+msgstr "همهٔ سفارشی‌سازی‌های ذخیره‌شده حذف و وضعیت اولیهٔ افزونه بازگردانده می‌شود."
+
+msgid "This will reset automation rules, SMS message patterns, visual builder limits, column layout, and Melipayamak settings stored in this panel. Credentials defined in wp-config or filters are not changed."
+msgstr "قوانین اتوماسیون، الگوهای پیامک، محدودیت‌های سازندهٔ بصری، چیدمان ستون‌ها و تنظیمات ملی‌پیامک ذخیره‌شده در این پنل بازنشانی می‌شوند. اعتبارنامه‌های تعریف‌شده در wp-config یا فیلترها تغییر نمی‌کنند."
+
+msgid "Reset all to defaults"
+msgstr "بازنشانی همه به پیش‌فرض"
+
+msgid "Reset all Growth Orchestrator customizations to defaults? This cannot be undone."
+msgstr "همهٔ سفارشی‌سازی‌های Growth Orchestrator به پیش‌فرض بازگردانده شود؟ این کار قابل بازگشت نیست."
+
+msgid "All customizations were reset to plugin defaults. Rules, message patterns, panel layout, and SMS settings were restored."
+msgstr "همهٔ سفارشی‌سازی‌ها به پیش‌فرض افزونه بازگردانده شد. قوانین، الگوهای پیام، چیدمان پنل و تنظیمات پیامک بازیابی شدند."
+
+msgid "Could not reset to defaults. Check that the default rules file exists and try again."
+msgstr "بازنشانی به پیش‌فرض ممکن نشد. وجود فایل قوانین پیش‌فرض را بررسی و دوباره تلاش کنید."
+
+msgid "You do not have permission to reset plugin settings."
+msgstr "شما اجازهٔ بازنشانی تنظیمات افزونه را ندارید."
+
+msgid "Default rules file is missing or not readable."
+msgstr "فایل قوانین پیش‌فرض وجود ندارد یا قابل خواندن نیست."
+
+msgid "Default rules file is empty."
+msgstr "فایل قوانین پیش‌فرض خالی است."
 
 msgid "Twilio can also be set via wp-config (GROWTH_ORCH_TWILIO_*) or the gro_twilio_sms_config filter."
 msgstr "Twilio را می‌توانید از wp-config (GROWTH_ORCH_TWILIO_*) یا فیلتر gro_twilio_sms_config نیز تنظیم کنید."
@@ -826,6 +913,15 @@ msgstr "کپی شد"
 msgid "Add pattern"
 msgstr "افزودن الگو"
 
+msgid "Pattern ID"
+msgstr "شناسه الگو"
+
+msgid "Title"
+msgstr "عنوان"
+
+msgid "New pattern"
+msgstr "الگوی جدید"
+
 msgid "pattern_id"
 msgstr "شناسه_الگو"
 
@@ -855,3 +951,55 @@ msgstr "مقدار فعلی (ارسال به کاربر)"
 
 msgid "Not set"
 msgstr "تنظیم نشده"
+
+#. Default automation rule labels (msgids match rules/default.rules.json; JSON stays English).
+msgid "Complete profile day 1 — welcome (5 min after registration)"
+msgstr "تکمیل پروفایل روز اول — خوش‌آمدگویی (۵ دقیقه پس از ثبت‌نام)"
+
+msgid "Complete profile day 1 — evening reminder"
+msgstr "تکمیل پروفایل روز اول — یادآوری عصر"
+
+msgid "Complete profile day 2 reminder"
+msgstr "یادآوری تکمیل پروفایل روز دوم"
+
+msgid "Complete profile day 3 reminder"
+msgstr "یادآوری تکمیل پروفایل روز سوم"
+
+msgid "Profile complete — no product yet"
+msgstr "پروفایل تکمیل شده — هنوز محصولی ثبت نشده"
+
+msgid "No product — next day 11:00"
+msgstr "بدون محصول — فردا ساعت ۱۱:۰۰"
+
+msgid "No product — day after next at 11:00"
+msgstr "بدون محصول — پس‌فردا ساعت ۱۱:۰۰"
+
+msgid "After first product approved"
+msgstr "پس از تأیید اولین محصول"
+
+msgid "Three days after product created"
+msgstr "سه روز پس از ثبت محصول"
+
+msgid "After subscription payment"
+msgstr "پس از پرداخت اشتراک"
+
+msgid "Encourage listing more products"
+msgstr "تشویق به ثبت محصولات بیشتر"
+
+msgid "Subscription expires in 2 days"
+msgstr "انقضای اشتراک تا ۲ روز دیگر"
+
+msgid "Subscription expires in 1 day"
+msgstr "انقضای اشتراک تا ۱ روز دیگر"
+
+msgid "Subscription expiry day (morning)"
+msgstr "روز انقضای اشتراک (صبح)"
+
+msgid "Subscription expiry day (3 hours left)"
+msgstr "روز انقضای اشتراک (۳ ساعت مانده)"
+
+msgid "One day after subscription expired"
+msgstr "یک روز پس از انقضای اشتراک"
+
+msgid "Two days after subscription expired"
+msgstr "دو روز پس از انقضای اشتراک"

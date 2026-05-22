@@ -165,12 +165,19 @@ if (! function_exists('growth_orchestrator_omdbox_subscription_days_until_expiry
             }
         }
 
+        if (function_exists('growth_subscriptions_user_date_subscription_days_remaining')) {
+            $days = growth_subscriptions_user_date_subscription_days_remaining($user_id);
+            if ($days !== null) {
+                return max(0, $days);
+            }
+        }
+
         $expire_raw = '';
         if (function_exists('growth_subscriptions_subscription_expires_at')) {
             $expire_raw = growth_subscriptions_subscription_expires_at($user_id);
         }
-        if ($expire_raw === '') {
-            $expire_raw = (string) get_user_meta($user_id, 'user_subscribe_expire', true);
+        if ($expire_raw === '' && class_exists(\GrowthSubscriptions\Bridge\OmdboxLegacyUserMetaApplicator::class)) {
+            $expire_raw = \GrowthSubscriptions\Bridge\OmdboxLegacyUserMetaApplicator::legacySubscribeExpireDisplayYmd($user_id);
         }
 
         if ($expire_raw === '') {

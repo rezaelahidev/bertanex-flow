@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: Growth Orchestrator 0.1.0\n"
 "Report-Msgid-Bugs-To:\n"
 "POT-Creation-Date: 2026-05-07 12:00+0000\n"
-"PO-Revision-Date: 2026-05-20 12:00+0000\n"
+"PO-Revision-Date: 2026-05-22 12:00+0000\n"
 "Last-Translator:\n"
 "Language-Team: Persian (Iran)\n"
 "Language: fa_IR\n"
@@ -16,16 +16,19 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 msgid "Rules"
-msgstr "قوانین اتوماسیون"
+msgstr "ویرایشگر اتوماسیون"
 
 msgid "Automation Rules"
-msgstr "قوانین اتوماسیون"
+msgstr "ویرایشگر اتوماسیون"
+
+msgid "Design IF / THEN automations, manage SMS delivery, and tune automations from one workspace."
+msgstr "اتوماسیون‌های IF / THEN بسازید، ارسال پیامک را مدیریت کنید و اتوماسیون‌ها را از یک فضای کاری تنظیم کنید."
 
 msgid "Growth Orchestrator — SMS"
 msgstr "هماهنگ‌ساز رشد — پیامک"
 
 msgid "Rules saved."
-msgstr "قانون‌ها ذخیره شد."
+msgstr "اتوماسیون‌ها ذخیره شد."
 
 msgid "Save SMS settings"
 msgstr "ذخیره تنظیمات پیامک"
@@ -34,23 +37,23 @@ msgid "You do not have permission to access this page."
 msgstr "شما مجوز دسترسی به این صفحه را ندارید."
 
 msgid "You do not have permission to save rules."
-msgstr "شما مجوز ذخیره قانون‌ها را ندارید."
+msgstr "شما مجوز ذخیره اتوماسیون‌ها را ندارید."
 
 #. translators: %s: parser or persistence error message
 msgid "Rules could not be saved: %s"
-msgstr "قانون‌ها ذخیره نشدند: %s"
+msgstr "اتوماسیون‌ها ذخیره نشدند: %s"
 
 msgid "Rules template missing."
-msgstr "الگوی صفحه قانون یافت نشد."
+msgstr "الگوی صفحه اتوماسیون یافت نشد."
 
 msgid "SMS settings template missing."
 msgstr "الگوی صفحه تنظیمات پیامک یافت نشد."
 
 msgid "Rules database table missing or could not be created."
-msgstr "جدول پایگاه‌داده قانون وجود ندارد یا ساخته نشد."
+msgstr "جدول پایگاه‌داده اتوماسیون وجود ندارد یا ساخته نشد."
 
 msgid "Failed to persist rules to the database."
-msgstr "ذخیره قانون‌ها در پایگاه‌داده ناموفق بود."
+msgstr "ذخیره اتوماسیون‌ها در پایگاه‌داده ناموفق بود."
 
 msgid "JSON error (preview only; saved value unchanged):"
 msgstr "خطای JSON (فقط پیش‌نمایش؛ مقدار ذخیره‌شده بدون تغییر است):"
@@ -59,10 +62,10 @@ msgid "Use Reset to defaults on the Configuration tab, or restore valid rules an
 msgstr "در زبانه پیکربندی «بازگردانی به پیش‌فرض» را بزنید، یا قوانین معتبر را به روش دیگری بازیابی کنید."
 
 msgid "Rules summary"
-msgstr "خلاصه قانون‌ها"
+msgstr "خلاصه اتوماسیون‌ها"
 
 msgid "Total rules"
-msgstr "تعداد قانون‌ها"
+msgstr "تعداد اتوماسیون‌ها"
 
 msgid "ID"
 msgstr "شناسه"
@@ -77,10 +80,10 @@ msgid "Priority"
 msgstr "اولویت"
 
 msgid "Rule editor"
-msgstr "ویرایشگر قانون"
+msgstr "ویرایشگر اتوماسیون"
 
 msgid "Rules editor mode"
-msgstr "حالت ویرایشگر قانون"
+msgstr "حالت ویرایشگر اتوماسیون"
 
 msgid "Automations"
 msgstr "اتوماسیون‌ها"
@@ -95,10 +98,10 @@ msgid "JSON must be an object with a \"rules\" array."
 msgstr "JSON باید یک شیء با آرایه «rules» باشد."
 
 msgid "No rules yet. Add your first automation."
-msgstr "هنوز قانونی نیست. اولین اتوماسیون را اضافه کنید."
+msgstr "هنوز اتوماسیونی نیست. اولین اتوماسیون را اضافه کنید."
 
 msgid "Add rule"
-msgstr "افزودن قانون"
+msgstr "افزودن اتوماسیون"
 
 msgid "Format version"
 msgstr "نسخه قالب"
@@ -106,17 +109,20 @@ msgstr "نسخه قالب"
 msgid "Advanced"
 msgstr "پیشرفته"
 
+msgid "This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored."
+msgstr "این اتوماسیون از محرک‌ها یا شرط‌های تو در تو استفاده می‌کند که این ویرایشگر نمی‌تواند آن‌ها را تغییر دهد. فقط خواندنی می‌ماند و همان‌طور که ذخیره شده اجرا می‌شود."
+
 msgid "Label (optional)"
 msgstr "عنوان (اختیاری)"
 
 msgid "Untitled rule"
-msgstr "قانون بدون عنوان"
+msgstr "اتوماسیون بدون عنوان"
 
 msgid "Edit rule"
-msgstr "ویرایش قانون"
+msgstr "ویرایش اتوماسیون"
 
 msgid "Edit rule %s"
-msgstr "ویرایش قانون %s"
+msgstr "ویرایش اتوماسیون %s"
 
 msgid "Edit condition %s"
 msgstr "ویرایش شرط %s"
@@ -137,7 +143,7 @@ msgid "Move down"
 msgstr "جابه‌جایی به پایین"
 
 msgid "Remove rule"
-msgstr "حذف قانون"
+msgstr "حذف اتوماسیون"
 
 msgid "Remove"
 msgstr "حذف"
@@ -146,13 +152,13 @@ msgid "Close"
 msgstr "بستن"
 
 msgid "Save rule"
-msgstr "ذخیره قانون"
+msgstr "ذخیره اتوماسیون"
 
 msgid "Save all"
 msgstr "ذخیره همه"
 
 msgid "Save all rules"
-msgstr "ذخیره همه قانون‌ها"
+msgstr "ذخیره همه اتوماسیون‌ها"
 
 msgid "Saving…"
 msgstr "در حال ذخیره…"
@@ -164,22 +170,22 @@ msgid "Remove %s permanently from this list"
 msgstr "حذف دائمی %s از این فهرست"
 
 msgid "Configured rules"
-msgstr "قانون‌های پیکربندی‌شده"
+msgstr "اتوماسیون‌های پیکربندی‌شده"
 
 msgid "Disabled"
 msgstr "غیرفعال"
 
 msgid "Rule ID:"
-msgstr "شناسه قانون:"
+msgstr "شناسه اتوماسیون:"
 
 msgid "Priority:"
 msgstr "اولویت:"
 
 msgid "Remove this rule?"
-msgstr "این قانون حذف شود؟"
+msgstr "این اتوماسیون حذف شود؟"
 
 msgid "Remove this rule from the document?"
-msgstr "این قانون از سند حذف شود؟"
+msgstr "این اتوماسیون از سند حذف شود؟"
 
 msgid "When to run"
 msgstr "زمان اجرا"
@@ -201,7 +207,7 @@ msgid "%1$s of %2$s events selected"
 msgstr "%1$s از %2$s رویداد انتخاب شده"
 
 msgid "Rule runs when any selected event fires."
-msgstr "قانون هنگام رخ دادن هر رویداد انتخاب‌شده اجرا می‌شود."
+msgstr "اتوماسیون هنگام رخ دادن هر رویداد انتخاب‌شده اجرا می‌شود."
 
 msgid "Select at least one event or add custom names below."
 msgstr "حداقل یک رویداد انتخاب کنید یا نام‌های سفارشی را در پایین وارد کنید."
@@ -273,10 +279,10 @@ msgid "Delay"
 msgstr "تأخیر"
 
 msgid "Run immediately when the rule matches"
-msgstr "بلافاصله پس از تطابق قانون اجرا شود"
+msgstr "بلافاصله پس از تطابق اتوماسیون اجرا شود"
 
 msgid "When the rule matches"
-msgstr "هنگام تطابق قانون"
+msgstr "هنگام تطابق اتوماسیون"
 
 msgid "Schedule"
 msgstr "زمان‌بندی"
@@ -297,7 +303,7 @@ msgid "Optional extra wait after the date and clock time above."
 msgstr "تأخیر اختیاری پس از تاریخ و ساعت بالا."
 
 msgid "after the rule matches"
-msgstr "پس از تطابق قانون"
+msgstr "پس از تطابق اتوماسیون"
 
 msgid "%1$s %2$s"
 msgstr "%1$s %2$s"
@@ -369,7 +375,7 @@ msgid "At"
 msgstr "در ساعت"
 
 msgid "Immediately when the rule matches"
-msgstr "بلافاصله پس از تطابق قانون"
+msgstr "بلافاصله پس از تطابق اتوماسیون"
 
 msgid "Immediate"
 msgstr "فوری"
@@ -378,10 +384,10 @@ msgid "Scheduled at %1$s %2$s (about %3$s from now)"
 msgstr "زمان‌بندی در %1$s %2$s (حدود %3$s از الان)"
 
 msgid "About %s seconds after the rule matches"
-msgstr "حدود %s ثانیه پس از تطابق قانون"
+msgstr "حدود %s ثانیه پس از تطابق اتوماسیون"
 
 msgid "About %s after the rule matches"
-msgstr "حدود %s پس از تطابق قانون"
+msgstr "حدود %s پس از تطابق اتوماسیون"
 
 msgid "%s days"
 msgstr "%s روز"
@@ -426,13 +432,13 @@ msgid "List limits and column layout"
 msgstr "محدودیت تعداد و چیدمان ستون‌ها"
 
 msgid "Limits and layout for the visual rule builder lists."
-msgstr "محدودیت و چیدمان فهرست‌های سازندهٔ بصری قانون."
+msgstr "محدودیت و چیدمان فهرست‌های سازندهٔ بصری اتوماسیون."
 
 msgid "Max conditions per rule"
-msgstr "حداکثر شرط در هر قانون"
+msgstr "حداکثر شرط در هر اتوماسیون"
 
 msgid "Max actions per rule"
-msgstr "حداکثر اقدام در هر قانون"
+msgstr "حداکثر اقدام در هر اتوماسیون"
 
 msgid "Display columns"
 msgstr "تعداد ستون‌ها"
@@ -444,13 +450,22 @@ msgid "2 columns"
 msgstr "۲ ستون"
 
 msgid "Applies to the rules list and condition/action lists inside each rule."
-msgstr "برای فهرست قانون‌ها و فهرست شرط/اقدام در هر قانون اعمال می‌شود."
+msgstr "برای فهرست اتوماسیون‌ها و فهرست شرط/اقدام در هر اتوماسیون اعمال می‌شود."
 
 msgid "SMS delivery"
 msgstr "ارسال پیامک"
 
 msgid "Provider and Melipayamak credentials"
 msgstr "ارائه‌دهنده و اعتبارنامه ملی‌پیامک"
+
+msgid "Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, otherwise the logging driver."
+msgstr "ارائه‌دهنده ارسال پیامک‌های در صف را انتخاب کنید. حالت خودکار در صورت پیکربندی بودن ملی‌پیامک از آن استفاده می‌کند؛ در غیر این صورت از درایور ثبت در گزارش."
+
+msgid "Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, then Twilio, otherwise the logging driver."
+msgstr "ارائه‌دهنده ارسال پیامک‌های در صف را انتخاب کنید. حالت خودکار در صورت پیکربندی بودن ملی‌پیامک از آن استفاده می‌کند، سپس Twilio، و در غیر این صورت از درایور ثبت در گزارش."
+
+msgid "Credentials for rest.payamak-panel.com SendSMS. Use wp-config constants or leave password empty to keep the saved value."
+msgstr "اعتبارنامه rest.payamak-panel.com SendSMS. از ثابت‌های wp-config استفاده کنید یا برای حفظ مقدار ذخیره‌شده رمز را خالی بگذارید."
 
 msgid "Save configuration"
 msgstr "ذخیره پیکربندی"
@@ -462,7 +477,7 @@ msgid "Remove all saved customizations and restore the plugin’s original state
 msgstr "همهٔ سفارشی‌سازی‌های ذخیره‌شده حذف و وضعیت اولیهٔ افزونه بازگردانده می‌شود."
 
 msgid "This will reset automation rules, SMS message patterns, automation list limits, column layout, and Melipayamak settings stored in this panel. Credentials defined in wp-config or filters are not changed."
-msgstr "قوانین اتوماسیون، الگوهای پیامک، محدودیت‌های فهرست اتوماسیون، چیدمان ستون‌ها و تنظیمات ملی‌پیامک ذخیره‌شده در این پنل بازنشانی می‌شوند. اعتبارنامه‌های تعریف‌شده در wp-config یا فیلترها تغییر نمی‌کنند."
+msgstr "ویرایشگر اتوماسیون، الگوهای پیامک، محدودیت‌های فهرست اتوماسیون، چیدمان ستون‌ها و تنظیمات ملی‌پیامک ذخیره‌شده در این پنل بازنشانی می‌شوند. اعتبارنامه‌های تعریف‌شده در wp-config یا فیلترها تغییر نمی‌کنند."
 
 msgid "Reset all to defaults"
 msgstr "بازنشانی همه به پیش‌فرض"
@@ -475,6 +490,9 @@ msgstr "همهٔ سفارشی‌سازی‌ها به پیش‌فرض افزون�
 
 msgid "Could not reset to defaults. Check that the default rules file exists and try again."
 msgstr "بازنشانی به پیش‌فرض ممکن نشد. وجود فایل قوانین پیش‌فرض را بررسی و دوباره تلاش کنید."
+
+msgid "No default rules are registered by integrated consumers."
+msgstr "هیچ اتوماسیون پیش‌فرضی توسط مصرف‌کننده‌های یکپارچه ثبت نشده است."
 
 msgid "You do not have permission to reset plugin settings."
 msgstr "شما اجازهٔ بازنشانی تنظیمات افزونه را ندارید."
@@ -597,10 +615,10 @@ msgid "Weekly"
 msgstr "هفتگی"
 
 msgid "Remove condition %s from this rule"
-msgstr "حذف شرط %s از این قانون"
+msgstr "حذف شرط %s از این اتوماسیون"
 
 msgid "Remove action %s from this rule"
-msgstr "حذف اقدام %s از این قانون"
+msgstr "حذف اقدام %s از این اتوماسیون"
 
 msgid "SMS template"
 msgstr "الگوی پیامک"
@@ -633,7 +651,7 @@ msgid "Build automations, edit message patterns, and configure layout and SMS de
 msgstr "اتوماسیون بسازید، الگوهای پیام را ویرایش کنید، و چیدمان و ارسال پیامک را پیکربندی کنید."
 
 msgid "Persian texts sent to customers via Melipayamak. Each pattern matches a template_id in your automation rules."
-msgstr "متن‌های فارسی ارسالی به مشتریان از طریق ملی‌پیامک. هر الگو با شناسه template_id در قوانین اتوماسیون شما جفت می‌شود."
+msgstr "متن‌های فارسی ارسالی به مشتریان از طریق ملی‌پیامک. هر الگو با شناسه template_id در ویرایشگر اتوماسیون شما جفت می‌شود."
 
 msgid "Write messages in Persian. Keep placeholders like {name} and {site_name} exactly as shown — they are replaced when the SMS is sent."
 msgstr "پیام‌ها را به فارسی بنویسید. جای‌نگهدارهایی مثل {name} و {site_name} را دقیقاً همان‌طور که نمایش داده شده نگه دارید — هنگام ارسال پیامک جایگزین می‌شوند."

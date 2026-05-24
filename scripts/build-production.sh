@@ -50,7 +50,34 @@ else
   echo "warn: msgfmt not found — skip compiling languages/*.mo"
 fi
 
+# --- Release ZIP (outside plugin root, WordPress-ready folder layout) ---
+if ! command -v zip >/dev/null 2>&1; then
+  echo "error: zip is required to create the release archive." >&2
+  exit 1
+fi
+
+PLUGIN_SLUG="$(basename "$ROOT")"
+OUT_DIR="$(dirname "$ROOT")"
+VERSION="$(
+  grep -m1 'Version:' "$ROOT/growth-orchestrator.php" \
+    | sed -E 's/.*Version:[[:space:]]+//' \
+    | tr -d '\r\n' \
+    | awk '{print $1}'
+)"
+ZIP="$OUT_DIR/${PLUGIN_SLUG}-${VERSION}.zip"
+STAGING="$(mktemp -d "${TMPDIR:-/tmp}/growth-orchestrator-build.XXXXXX")"
+cleanup() {
+  rm -rf "$STAGING"
+}
+trap cleanup EXIT
+
+echo "==> release archive (rsync + zip)"
+rsync -a --exclude-from="$ROOT/.distignore" "$ROOT/" "$STAGING/$PLUGIN_SLUG/"
+rm -f "$ZIP"
+(cd "$STAGING" && zip -rq "$ZIP" "$PLUGIN_SLUG")
+
 echo "==> Production build complete"
 echo "    Bundle: assets/admin/rules-visual-editor.bundle.js ($(wc -c < "$BUNDLE" | tr -d ' ') bytes)"
 echo "    Vendor: vendor/ (composer --no-dev)"
-echo "    Ready to deploy this plugin directory to WordPress."
+echo "    Zip:    $ZIP ($(wc -c < "$ZIP" | tr -d ' ') bytes)"
+echo "    Ready to deploy the plugin directory or install from the zip."

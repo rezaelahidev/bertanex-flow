@@ -20,6 +20,7 @@ This runs `scripts/build-production.sh`, which:
 1. **`composer install --no-dev`** — `vendor/` (Action Scheduler, autoload)
 2. **Vite production bundle** — `assets/admin/rules-visual-editor.bundle.js` (minified, no source maps)
 3. **`msgfmt`** — `languages/growth-orchestrator-fa_IR.mo` and `growth-orchestrator-fa.mo`
+4. **Release ZIP** — `../growth-orchestrator-{version}.zip` (one level above the plugin root, e.g. `wp-content/plugins/growth-orchestrator-0.1.0.zip`)
 
 ## Development-only commands
 
@@ -31,7 +32,18 @@ This runs `scripts/build-production.sh`, which:
 
 ## Release archive
 
-Use `.distignore` when creating a zip for distribution. Do not include `admin-rules-ui/node_modules/` or `.git/`.
+The production build writes a WordPress-ready zip automatically:
+
+```text
+wp-content/plugins/growth-orchestrator-{version}.zip
+  └── growth-orchestrator/
+        ├── growth-orchestrator.php
+        ├── vendor/
+        ├── assets/
+        └── …
+```
+
+Exclusions follow `.distignore` (no `.git/`, `admin-rules-ui/node_modules/`, build docs, etc.).
 
 ## Verify
 

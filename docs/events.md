@@ -8,6 +8,8 @@ Event names are declared by integrated consumers on `gro_register_orchestrator_c
 - `USER_REGISTERED`
 - `PROFILE_COMPLETED`
 - `PRODUCT_CREATED`
+- `PRODUCT_APPROVED` (listing `pending` / `draft` / `future` → `publish`)
+- `PRODUCT_EDIT_CONFIRMED` (admin confirms seller edit via `confirm_data`)
 
 ## Growth Subscriptions (`growth-subscriptions`)
 

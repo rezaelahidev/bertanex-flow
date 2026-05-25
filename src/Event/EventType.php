@@ -12,6 +12,8 @@ enum EventType: string
     case Login                            = 'LOGIN';
     case UserRegistered          = 'USER_REGISTERED';
     case ProductCreated          = 'PRODUCT_CREATED';
+    case ProductApproved         = 'PRODUCT_APPROVED';
+    case ProductEditConfirmed    = 'PRODUCT_EDIT_CONFIRMED';
     case ProfileCompleted        = 'PROFILE_COMPLETED';
     case SubscriptionRenewed              = 'SUBSCRIPTION_RENEWED';
     case SubscriptionExpired              = 'SUBSCRIPTION_EXPIRED';

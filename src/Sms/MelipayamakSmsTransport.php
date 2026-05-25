@@ -7,7 +7,8 @@ namespace GrowthOrchestrator\Sms;
 use GrowthOrchestrator\Sms\Exception\SmsTransportException;
 
 /**
- * Melipayamak REST SendSMS ({@see https://rest.payamak-panel.com/api/SendSMS/SendSMS}) via {@see wp_remote_post()}.
+ * Melipayamak REST SendSMS ({@see https://rest.payamak-panel.com/api/SendSMS/SendSMS}) via {@see wp_remote_post()}
+ * or {@see MelipayamakHttpTunnel} when {@see WP_HTTP_BLOCK_EXTERNAL} blocks the outbound request.
  *
  * @phpstan-import-type JobMeta from SmsTransportInterface
  */
@@ -88,7 +89,7 @@ final class MelipayamakSmsTransport implements SmsTransportInterface
         $args = apply_filters('gro_melipayamak_http_request_args', $args, $to, $meta);
 
         /** @var array<string, mixed>|\WP_Error $response */
-        $response = wp_remote_post($url, $args);
+        $response = MelipayamakHttpTunnel::post($url, $args);
 
         if ($response instanceof \WP_Error) {
             throw new SmsTransportException(

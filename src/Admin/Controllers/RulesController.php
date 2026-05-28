@@ -116,7 +116,11 @@ final class RulesController
             return $location;
         }
 
-        if ((string) $_POST['option_page'] !== RulesAdminConfig::SETTINGS_GROUP) {
+        $optionPage = (string) $_POST['option_page'];
+        if (
+            $optionPage !== RulesAdminConfig::SETTINGS_GROUP
+            && $optionPage !== RulesAdminConfig::PATTERNS_SETTINGS_GROUP
+        ) {
             return $location;
         }
 

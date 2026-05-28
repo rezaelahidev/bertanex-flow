@@ -10,7 +10,8 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
-$configGroup = \GrowthOrchestrator\Admin\Models\RulesAdminConfig::SETTINGS_GROUP;
+$configGroup    = \GrowthOrchestrator\Admin\Models\RulesAdminConfig::SETTINGS_GROUP;
+$patternsGroup  = \GrowthOrchestrator\Admin\Models\RulesAdminConfig::PATTERNS_SETTINGS_GROUP;
 $ruleCount   = $context->parseError === null ? count($context->definitions) : 0;
 $enabledCount = 0;
 if ($context->parseError === null) {
@@ -23,6 +24,7 @@ if ($context->parseError === null) {
 
 settings_errors('gro_rules');
 settings_errors($configGroup);
+settings_errors($patternsGroup);
 
 if ($context->showSuccessNotice) {
     echo '<div class="notice notice-success is-dismissible"><p>' .
@@ -126,11 +128,11 @@ if (isset($_GET['settings-updated']) || isset($_GET['gro_reset'])) {
                 hidden
             >
                 <form method="post" action="<?php echo esc_url(admin_url('options.php')); ?>" class="gro-patterns-form" autocomplete="off">
-                    <?php settings_fields($configGroup); ?>
+                    <?php settings_fields($patternsGroup); ?>
                     <input type="hidden" name="gro_open_rules_tab" value="patterns" />
 
                     <div class="gro-patterns-shell">
-                        <?php \GrowthOrchestrator\Admin\Views\SettingsSectionRenderer::render($configGroup, 'gro_sms_templates_section'); ?>
+                        <?php \GrowthOrchestrator\Admin\Views\SettingsSectionRenderer::render($patternsGroup, 'gro_sms_templates_section'); ?>
                     </div>
 
                     <footer class="gro-patterns-form__footer">

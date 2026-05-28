@@ -14,7 +14,7 @@ use GrowthOrchestrator\Consumer\ConsumerRegistry;
  */
 final class SmsTemplatesModel
 {
-    public const SETTINGS_GROUP = RulesAdminConfig::SETTINGS_GROUP;
+    public const SETTINGS_GROUP = RulesAdminConfig::PATTERNS_SETTINGS_GROUP;
 
     public const OPTION = 'growth_orchestrator_sms_templates';
 

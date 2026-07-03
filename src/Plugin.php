@@ -60,12 +60,19 @@ final class Plugin
     {
         $this->registerServices();
 
+        add_action('growth_orchestrator_rules_persisted', [$this, 'flushRulesCache']);
+
         $this->hooks->add_action($this, 'loadTextdomain', 'plugins_loaded', 0, 0);
         $this->hooks->add_action($this, 'loadTextdomain', 'init', 0, 0);
         $this->hooks->add_action($this, 'bootstrapPersistence', 'plugins_loaded', 2, 0);
         $this->hooks->add_action($this, 'bootstrapConsumerDefaults', 'init', 1, 0);
         $this->hooks->add_action($this, 'onPluginsLoaded', 'plugins_loaded', 5, 0);
         $this->hooks->register();
+    }
+
+    public function flushRulesCache(): void
+    {
+        $this->container->get(DelegatingRulesRepository::class)->flushCache();
     }
 
     public function loadTextdomain(): void
@@ -80,6 +87,10 @@ final class Plugin
 
     public function bootstrapConsumerDefaults(): void
     {
+        if (get_option(RulesDbSchema::SOURCES_HYDRATED_OPTION)) {
+            return;
+        }
+
         $resolver = $this->container->get(ConsumerDefaultsResolver::class);
         RulesDbSchema::maybeHydrateFromLegacySourcesOnce($resolver->mergedRulesDocumentJson());
     }

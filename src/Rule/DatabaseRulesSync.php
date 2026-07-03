@@ -68,6 +68,8 @@ final class DatabaseRulesSync
             }
         }
 
+        do_action('growth_orchestrator_rules_persisted');
+
         return true;
     }
 }

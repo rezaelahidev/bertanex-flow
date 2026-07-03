@@ -18,6 +18,8 @@ final class RulesDbSchema
     /** Bump when altering DDL so dbDelta detects schema changes reliably. */
     public const SCHEMA_VERSION = '2026-02-06-3';
 
+    private static ?bool $tableReadyCache = null;
+
     public static function tableName(): string
     {
         global $wpdb;
@@ -27,6 +29,10 @@ final class RulesDbSchema
 
     public static function tableReady(): bool
     {
+        if (self::$tableReadyCache !== null) {
+            return self::$tableReadyCache;
+        }
+
         global $wpdb;
 
         $table = self::tableName();
@@ -36,7 +42,9 @@ final class RulesDbSchema
             $wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table))
         );
 
-        return $found === $table;
+        self::$tableReadyCache = $found === $table;
+
+        return self::$tableReadyCache;
     }
 
     /**
@@ -44,10 +52,7 @@ final class RulesDbSchema
      */
     public static function upgradeIfNeeded(): void
     {
-        if (
-            self::tableReady()
-            && (string) get_option(self::SCHEMA_VERSION_OPTION, '') === self::SCHEMA_VERSION
-        ) {
+        if ((string) get_option(self::SCHEMA_VERSION_OPTION, '') === self::SCHEMA_VERSION) {
             return;
         }
 
@@ -101,6 +106,10 @@ SQL;
      */
     public static function maybeHydrateFromLegacySourcesOnce(string $defaultRulesDocumentJson): void
     {
+        if (get_option(self::SOURCES_HYDRATED_OPTION)) {
+            return;
+        }
+
         if (! self::tableReady()) {
             return;
         }

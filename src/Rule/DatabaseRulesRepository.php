@@ -11,6 +11,11 @@ use GrowthOrchestrator\Db\RulesDbSchema;
  */
 final class DatabaseRulesRepository implements RulesRepositoryInterface
 {
+    /** @var list<RuleDefinition>|null */
+    private ?array $rulesCache = null;
+
+    private ?int $ruleCountCache = null;
+
     public function __construct(
         /** @phpstan-ignore-next-line */
         private readonly \wpdb $wpdb
@@ -31,14 +36,28 @@ final class DatabaseRulesRepository implements RulesRepositoryInterface
 
     public function ruleCountCached(): int
     {
+        if ($this->ruleCountCache !== null) {
+            return $this->ruleCountCache;
+        }
+
         if (! RulesDbSchema::tableReady()) {
+            $this->ruleCountCache = 0;
+
             return 0;
         }
 
         $table = RulesDbSchema::tableName();
 
         /** @phpstan-ignore-next-line */
-        return max(0, (int) $this->wpdb->get_var("SELECT COUNT(*) FROM {$table}"));
+        $this->ruleCountCache = max(0, (int) $this->wpdb->get_var("SELECT COUNT(*) FROM {$table}"));
+
+        return $this->ruleCountCache;
+    }
+
+    public function flushCache(): void
+    {
+        $this->rulesCache = null;
+        $this->ruleCountCache = null;
     }
 
     /**
@@ -46,8 +65,14 @@ final class DatabaseRulesRepository implements RulesRepositoryInterface
      */
     public function getRules(): array
     {
+        if ($this->rulesCache !== null) {
+            return $this->rulesCache;
+        }
+
         if (! RulesDbSchema::tableReady()) {
-            return [];
+            $this->rulesCache = [];
+
+            return $this->rulesCache;
         }
 
         $table = RulesDbSchema::tableName();
@@ -140,7 +165,9 @@ final class DatabaseRulesRepository implements RulesRepositoryInterface
         }
 
         /** @var list<RuleDefinition> */
-        return apply_filters('gro_parsed_rules', $definitions, 'database:' . $table);
+        $this->rulesCache = apply_filters('gro_parsed_rules', $definitions, 'database:' . $table);
+
+        return $this->rulesCache;
     }
 
     /** Pretty JSON `{ version, rules:[…] }` for editor textareas. */

@@ -11,6 +11,9 @@ use GrowthOrchestrator\Db\RulesDbSchema;
  */
 final class DelegatingRulesRepository implements RulesRepositoryInterface
 {
+    /** @var list<RuleDefinition>|null */
+    private ?array $resolvedRules = null;
+
     public function __construct(
         private readonly DatabaseRulesRepository $database,
         private readonly OptionRulesRepository $optionFallthrough,
@@ -23,15 +26,31 @@ final class DelegatingRulesRepository implements RulesRepositoryInterface
      */
     public function getRules(): array
     {
+        if ($this->resolvedRules !== null) {
+            return $this->resolvedRules;
+        }
+
         if ((bool) apply_filters('gro_rules_force_json_file', false)) {
-            return $this->fileOnlyRepository->getRules();
+            $this->resolvedRules = $this->fileOnlyRepository->getRules();
+
+            return $this->resolvedRules;
         }
 
         if (RulesDbSchema::tableReady() && $this->database->hasPersistedRules()) {
-            return $this->database->getRules();
+            $this->resolvedRules = $this->database->getRules();
+
+            return $this->resolvedRules;
         }
 
         /** Legacy option-backed JSON mirrors and/or plugin file fallback behaviour from {@see OptionRulesRepository}. */
-        return $this->optionFallthrough->getRules();
+        $this->resolvedRules = $this->optionFallthrough->getRules();
+
+        return $this->resolvedRules;
+    }
+
+    public function flushCache(): void
+    {
+        $this->resolvedRules = null;
+        $this->database->flushCache();
     }
 }

@@ -33,6 +33,14 @@ final class RulesDbSchema
             return self::$tableReadyCache;
         }
 
+        // Schema version is autoloaded; matching it means dbDelta already created the table.
+        // Avoid SHOW TABLES LIKE on the hot path — it scans information_schema and is a frequent slow query.
+        if ((string) get_option(self::SCHEMA_VERSION_OPTION, '') === self::SCHEMA_VERSION) {
+            self::$tableReadyCache = true;
+
+            return true;
+        }
+
         global $wpdb;
 
         $table = self::tableName();
@@ -94,6 +102,7 @@ CREATE TABLE {$table} (
 SQL;
 
         dbDelta($sql);
+        self::$tableReadyCache = null;
     }
 
     public const SOURCES_HYDRATED_OPTION = 'growth_orchestrator_rules_sources_hydrated_v1';

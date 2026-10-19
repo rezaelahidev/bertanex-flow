@@ -2,11 +2,11 @@
 /**
  * Plugin Name:       Bertanex Flow
  * Plugin URI:        https://github.com/rezaelahidev/bertanex-flow
- * Description:       Event-driven growth automation: rules, SMS, queues, and extensible hooks.
+ * Description:       Send SMS and email automatically for WordPress and WooCommerce, and edit every flow yourself.
  * Version:           0.1.0
  * Requires at least: 6.5
  * Requires PHP:      8.1
- * Author:            Your Company
+ * Author:            Bertanex
  * License:           GPL-2.0-or-later
  * Text Domain:       bertanex-flow
  * Domain Path: /languages
@@ -55,16 +55,22 @@ if (is_readable(BERTANEX_FLOW_PLUGIN_DIR . 'vendor/autoload.php')) {
     Autoloader::register(BERTANEX_FLOW_PLUGIN_DIR . 'src', __NAMESPACE__ . '\\');
 }
 
-$growth_orch_action_scheduler = BERTANEX_FLOW_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
-if (is_readable($growth_orch_action_scheduler)) {
-    require_once $growth_orch_action_scheduler;
+require_once BERTANEX_FLOW_PLUGIN_DIR . 'src/Autoloader.php';
+Autoloader::register(BERTANEX_FLOW_PLUGIN_DIR . 'src', 'BertanexFlow\\');
+
+$bertanex_flow_action_scheduler = BERTANEX_FLOW_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
+if (is_readable($bertanex_flow_action_scheduler)) {
+    require_once $bertanex_flow_action_scheduler;
 }
 
 register_activation_hook(
     BERTANEX_FLOW_PLUGIN_FILE,
     static function (): void {
+        RulesDbSchema::migrateLegacyNames();
         $resolver = new ConsumerDefaultsResolver(ConsumerRegistry::instance());
         RulesDbSchema::onPluginActivate($resolver->mergedRulesDocumentJson());
+        \BertanexFlow\Core\Bootstrap\Kernel::install();
+        update_option('bertanex_flow_onboarding_pending', '1', false);
     }
 );
 

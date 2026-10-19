@@ -47,6 +47,7 @@ use BertanexFlow\Admin\Controllers\RulesController;
 use BertanexFlow\Admin\Models\RulesEditorSettingsModel;
 use BertanexFlow\Consumer\ConsumerDefaultsResolver;
 use BertanexFlow\Consumer\ConsumerRegistry;
+use BertanexFlow\Consumer\PlatformConsumer;
 
 final class Plugin
 {
@@ -60,6 +61,7 @@ final class Plugin
     {
         $this->registerServices();
 
+        add_action('gro_register_orchestrator_consumers', [PlatformConsumer::class, 'register']);
         add_action('bertanex_flow_rules_persisted', [$this, 'flushRulesCache']);
 
         $this->hooks->add_action($this, 'loadTextdomain', 'plugins_loaded', 0, 0);
@@ -67,7 +69,10 @@ final class Plugin
         $this->hooks->add_action($this, 'bootstrapPersistence', 'plugins_loaded', 2, 0);
         $this->hooks->add_action($this, 'bootstrapConsumerDefaults', 'init', 1, 0);
         $this->hooks->add_action($this, 'onPluginsLoaded', 'plugins_loaded', 5, 0);
+        $this->hooks->add_action($this, 'bootstrapFlowKernel', 'plugins_loaded', 20, 0);
         $this->hooks->register();
+        (new \BertanexFlow\Admin\EmailTemplateType())->register();
+        (new \BertanexFlow\Admin\Onboarding())->register();
     }
 
     public function flushRulesCache(): void
@@ -82,6 +87,7 @@ final class Plugin
 
     public function bootstrapPersistence(): void
     {
+        RulesDbSchema::migrateLegacyNames();
         RulesDbSchema::upgradeIfNeeded();
     }
 
@@ -93,6 +99,11 @@ final class Plugin
 
         $resolver = $this->container->get(ConsumerDefaultsResolver::class);
         RulesDbSchema::maybeHydrateFromLegacySourcesOnce($resolver->mergedRulesDocumentJson());
+    }
+
+    public function bootstrapFlowKernel(): void
+    {
+        \BertanexFlow\Core\Bootstrap\Kernel::boot();
     }
 
     public function onPluginsLoaded(): void

@@ -16,3 +16,7 @@ BUILD.md
 .distignore
 
 patch
+.cursor
+tests
+dist
+*.map

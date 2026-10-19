@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" fill="none">
+	<defs>
+		<linearGradient id="gro-icon-g" x1="10" y1="4" x2="70" y2="76" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#2563EB"/>
+			<stop offset="0.5" stop-color="#4F46E5"/>
+			<stop offset="1" stop-color="#7C3AED"/>
+		</linearGradient>
+	</defs>
+	<rect width="80" height="80" rx="18" fill="url(#gro-icon-g)"/>
+	<text
+		x="40"
+		y="56"
+		text-anchor="middle"
+		fill="#fff"
+		font-family="SF Arabic Rounded, Geeza Pro, Tahoma, sans-serif"
+		font-size="50"
+		font-weight="600"
+	>ف</text>
+</svg>

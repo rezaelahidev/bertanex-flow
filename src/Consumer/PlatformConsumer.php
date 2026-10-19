@@ -37,7 +37,7 @@ final class PlatformConsumer
         foreach (EventType::cases() as $case) {
             $events[] = [
                 'value' => $case->value,
-                'label' => $case->value,
+                'label' => bertanex_flow_event_label($case->value),
             ];
         }
 

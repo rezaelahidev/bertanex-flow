@@ -1463,6 +1463,54 @@ msgstr "مشتری ساخته شد"
 msgid "Refund created"
 msgstr "بازپرداخت ساخته شد"
 
+msgid "Login"
+msgstr "ورود"
+
+msgid "User registered"
+msgstr "کاربر ثبت‌نام کرد"
+
+msgid "Product created"
+msgstr "محصول ساخته شد"
+
+msgid "Product approved"
+msgstr "محصول تأیید شد"
+
+msgid "Product edit confirmed"
+msgstr "ویرایش محصول تأیید شد"
+
+msgid "Profile completed"
+msgstr "پروفایل تکمیل شد"
+
+msgid "Subscription renewed"
+msgstr "اشتراک تمدید شد"
+
+msgid "Subscription expired"
+msgstr "اشتراک منقضی شد"
+
+msgid "Subscription purchased"
+msgstr "اشتراک خریداری شد"
+
+msgid "Subscription cancelled"
+msgstr "اشتراک لغو شد"
+
+msgid "Subscription ladder credit used"
+msgstr "اعتبار نردبان اشتراک استفاده شد"
+
+msgid "Subscription listing credit used"
+msgstr "اعتبار آگهی اشتراک استفاده شد"
+
+msgid "Subscription renewal reminder sent"
+msgstr "یادآوری تمدید اشتراک ارسال شد"
+
+msgid "Subscription renewal invoice created"
+msgstr "فاکتور تمدید اشتراک ساخته شد"
+
+msgid "Subscription legacy Woo grant applied"
+msgstr "اعطای اشتراک قدیمی ووکامرس اعمال شد"
+
+msgid "Subscription Woo order benefits pending"
+msgstr "مزایای سفارش ووکامرس اشتراک در انتظار است"
+
 msgid "User ID"
 msgstr "شناسه کاربر"
 

@@ -10,7 +10,10 @@
   "autoload": {
     "psr-4": {
       "BertanexFlow\\": "src/"
-    }
+    },
+    "files": [
+      "src/Event/event-label.php"
+    ]
   },
   "config": {
     "sort-packages": true

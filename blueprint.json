@@ -1,0 +1,51 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/wp-admin/admin.php?page=bertanex-flow",
+  "login": true,
+  "preferredVersions": {
+    "php": "8.3",
+    "wp": "latest"
+  },
+  "features": {
+    "networking": true
+  },
+  "steps": [
+    {
+      "step": "setSiteLanguage",
+      "language": "fa_IR"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "Bertanex Flow"
+      }
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "wordpress.org/plugins",
+        "slug": "woocommerce"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "git:directory",
+        "url": "https://github.com/rezaelahidev/bertanex-flow",
+        "ref": "main",
+        "refType": "branch"
+      },
+      "options": {
+        "activate": true,
+        "targetFolderName": "bertanex-flow"
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once '/wordpress/wp-load.php'; update_option('woocommerce_coming_soon', 'no'); update_option('woocommerce_task_list_hidden', 'yes'); delete_transient('_wc_activation_redirect'); ?>"
+    }
+  ]
+}

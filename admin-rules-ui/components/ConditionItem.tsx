@@ -64,70 +64,59 @@ export function ConditionItem({ ruleIndex, idx, row: c, editable: e, onChange }:
     const match = suggestedNames.includes(row.field);
     const fieldSelValue = match ? row.field : '__custom__';
 
+    const SelectControl = window.wp.components.SelectControl;
+    const TextControl = window.wp.components.TextControl;
+
     return (
-      <div className="gro-condition-item-fields">
-        <div className="gro-nested-field gro-nested-field--full">
-          <label>
-            <strong>{t(cfg, 'fieldCol', 'Field')}</strong>
-            <select
-              value={fieldSelValue}
-              onChange={(ev) => {
-                const v = ev.target.value;
-                const prevField = row.field;
-                if (v === '__custom__') {
-                  onRowChange(applyFieldDefaults({ ...row, field: match ? '' : row.field }, suggested, prevField));
-                  return;
-                }
-                onRowChange(applyFieldDefaults({ ...row, field: v }, suggested, prevField));
-              }}
-            >
-              <option value="__custom__">{t(cfg, 'customField', 'Custom…')}</option>
-              {suggested.map((sf) => (
-                <option key={sf.name} value={sf.name}>
-                  {sf.label}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              className="regular-text"
-              placeholder={t(cfg, 'fieldPlaceholder', 'State field key')}
-              style={{ display: fieldSelValue === '__custom__' ? undefined : 'none', marginTop: '8px' }}
-              value={match ? '' : row.field}
-              onChange={(ev) => onRowChange({ ...row, field: ev.target.value })}
-            />
-          </label>
-        </div>
-        <div className="gro-nested-field gro-nested-field--full">
-          <label>
-            <strong>{t(cfg, 'opCol', 'Operator')}</strong>
-            <select
-              value={row.op}
-              onChange={(ev) => onRowChange(applyFieldDefaults({ ...row, op: ev.target.value }, suggested, row.field))}
-            >
-              {operatorOptions(cfg, row.op).map((o) => (
-                <option key={o} value={o}>
-                  {slugLabel(cfg.operatorLabels, o)}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+      <div className="gro-action-form">
+        <div className="gro-action-form__body gro-condition-item-fields">
+        <SelectControl
+          label={t(cfg, 'fieldCol', 'Field')}
+          value={fieldSelValue}
+          options={[
+            { label: t(cfg, 'customField', 'Custom…'), value: '__custom__' },
+            ...suggested.map((sf) => ({ label: sf.label, value: sf.name })),
+          ]}
+          onChange={(value: string) => {
+            const prevField = row.field;
+            if (value === '__custom__') {
+              onRowChange(applyFieldDefaults({ ...row, field: match ? '' : row.field }, suggested, prevField));
+              return;
+            }
+            onRowChange(applyFieldDefaults({ ...row, field: value }, suggested, prevField));
+          }}
+          __nextHasNoMarginBottom
+          __next40pxDefaultSize
+        />
+        {fieldSelValue === '__custom__' ? (
+          <TextControl
+            label={t(cfg, 'fieldPlaceholder', 'State field key')}
+            value={match ? '' : row.field}
+            onChange={(field: string) => onRowChange({ ...row, field })}
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize
+          />
+        ) : null}
+        <SelectControl
+          label={t(cfg, 'opCol', 'Operator')}
+          value={row.op}
+          options={operatorOptions(cfg, row.op).map((o) => ({ label: slugLabel(cfg.operatorLabels, o), value: o }))}
+          onChange={(op: string) => onRowChange(applyFieldDefaults({ ...row, op }, suggested, row.field))}
+          __nextHasNoMarginBottom
+          __next40pxDefaultSize
+        />
         {row.op === 'regex' ? (
-          <div className="gro-nested-field gro-nested-field--full">
-            <label>
-              <strong>{t(cfg, 'patternCol', 'Pattern (regex)')}</strong>
-              <input
-                type="text"
-                className="code"
-                placeholder={t(cfg, 'regexPatternPlaceholder', '/^...$/')}
-                value={row.pattern}
-                onChange={(ev) => onRowChange({ ...row, pattern: ev.target.value })}
-              />
-            </label>
-          </div>
+          <TextControl
+            label={t(cfg, 'patternCol', 'Pattern (regex)')}
+            value={row.pattern}
+            placeholder={t(cfg, 'regexPatternPlaceholder', '/^...$/')}
+            onChange={(pattern: string) => onRowChange({ ...row, pattern })}
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize
+          />
         ) : null}
         <ConditionValueField row={row} suggestedFields={suggested} onRowChange={onRowChange} />
+        </div>
       </div>
     );
   };
@@ -177,11 +166,6 @@ export function ConditionItem({ ruleIndex, idx, row: c, editable: e, onChange }:
         title={`${t(cfg, 'conditionsHeading', 'Conditions')} #${numHuman}`}
         isOpen={isOpen}
         onClose={applyAndClose}
-        footer={
-          <GroButton variant="primary" size="md" icon="save" onClick={applyAndClose}>
-            {t(cfg, 'modalClose', 'Close')}
-          </GroButton>
-        }
       >
         {draft ? renderForm(draft, setDraft) : null}
       </Modal>

@@ -1,6 +1,5 @@
 import { slugLabel, type EditableTrigger } from '../ruleModel';
 import { GroButton } from './GroButton';
-import { GroIcon } from './GroIcon';
 import { t, useCfg } from './ConfigContext';
 import React, { useMemo } from 'react';
 
@@ -12,7 +11,6 @@ export interface TriggersBlockProps {
 
 export function TriggersBlock({ ruleIndex, editable: te, onChange }: TriggersBlockProps): React.ReactElement {
   const cfg = useCfg();
-  const radioGroup = `gro_tr_${ruleIndex}`;
   const eventOpts = cfg.events ?? [];
 
   const extras = useMemo(() => te.events.filter((x) => !eventOpts.some((eo) => eo.value === x)), [te.events, eventOpts]);
@@ -55,39 +53,42 @@ export function TriggersBlock({ ruleIndex, editable: te, onChange }: TriggersBlo
     onChange({ ...te, events: merged });
   };
 
+  const TextControl = window.wp.components.TextControl;
+  const SelectControl = window.wp.components.SelectControl;
+
+  const modes = [
+    ['none', t(cfg, 'triggerNone', 'Evaluate without event filter'), t(cfg, 'triggerNoneHint', 'Runs whenever rules are checked')],
+    ['events', t(cfg, 'triggerEvents', 'On automation events'), t(cfg, 'eventsSelectedHint', 'Rule runs when any selected event fires.')],
+    ['schedule', t(cfg, 'triggerSchedule', 'On a schedule (cron)'), t(cfg, 'triggerScheduleHint', 'WordPress cron recurrence')],
+  ] as const;
+
   return (
-    <div className="gro-rule-section">
-      <h4 className="gro-section-title gro-rule-section__title">
-        <GroIcon name="trigger" />
-        <span>{t(cfg, 'triggerHeading', 'When to run')}</span>
-      </h4>
-      <div className="gro-trigger-mode">
-        {(
-          [
-            ['none', t(cfg, 'triggerNone', 'Evaluate without event filter')],
-            ['events', t(cfg, 'triggerEvents', 'On automation events')],
-            ['schedule', t(cfg, 'triggerSchedule', 'On a schedule (cron)')],
-          ] as const
-        ).map(([value, label]) => (
-          <label key={value}>
-            <input
-              type="radio"
-              name={radioGroup}
-              checked={te.mode === value}
-              onChange={() => {
-                const rec = cfg.recurrences?.[0] ?? 'daily';
-                onChange({
-                  ...te,
-                  mode: value,
-                  schedule:
-                    value === 'schedule' && (!te.schedule.hook || te.mode !== 'schedule')
-                      ? { hook: '', recurrence: te.schedule.recurrence || rec }
-                      : te.schedule,
-                });
-              }}
-            />{' '}
-            {label}
-          </label>
+    <section className="gro-action-form__section">
+      <h3 className="gro-action-form__heading">{t(cfg, 'triggerHeading', 'When to run')}</h3>
+      <div className="gro-action-form__body">
+      <div className="gro-action-delay__mode gro-trigger-modes" role="radiogroup" aria-label={t(cfg, 'triggerHeading', 'When to run')}>
+        {modes.map(([value, title, hint]) => (
+          <button
+            key={value}
+            type="button"
+            role="radio"
+            aria-checked={te.mode === value}
+            className={`gro-action-delay__mode-btn${te.mode === value ? ' is-active' : ''}`}
+            onClick={() => {
+              const rec = cfg.recurrences?.[0] ?? 'daily';
+              onChange({
+                ...te,
+                mode: value,
+                schedule:
+                  value === 'schedule' && (!te.schedule.hook || te.mode !== 'schedule')
+                    ? { hook: '', recurrence: te.schedule.recurrence || rec }
+                    : te.schedule,
+              });
+            }}
+          >
+            <span className="gro-action-delay__mode-title">{title}</span>
+            <span className="gro-action-delay__mode-desc">{hint}</span>
+          </button>
         ))}
       </div>
       {te.mode === 'events' ? (
@@ -145,24 +146,16 @@ export function TriggersBlock({ ruleIndex, editable: te, onChange }: TriggersBlo
                   const showSlug = Boolean(ev.label && ev.label !== ev.value);
 
                   return (
-                    <label
+                    <button
                       key={ev.value}
-                      className={`gro-event-chip${selected ? ' gro-event-chip--selected' : ''}`}
+                      type="button"
+                      className={`gro-event-option${selected ? ' is-selected' : ''}`}
+                      aria-pressed={selected}
+                      onClick={() => toggleEvent(ev.value, !selected)}
                     >
-                      <input
-                        type="checkbox"
-                        className="gro-event-chip__input"
-                        checked={selected}
-                        onChange={(e) => toggleEvent(ev.value, e.target.checked)}
-                      />
-                      <span className="gro-event-chip__indicator" aria-hidden="true">
-                        <span className="gro-event-chip__check" />
-                      </span>
-                      <span className="gro-event-chip__body">
-                        <span className="gro-event-chip__label">{label}</span>
-                        {showSlug ? <span className="gro-event-chip__slug">{ev.value}</span> : null}
-                      </span>
-                    </label>
+                      <span className="gro-event-option__label">{label.replace(/_/g, '_\u200b')}</span>
+                      {showSlug ? <span className="gro-event-option__slug">{ev.value.replace(/_/g, '_\u200b')}</span> : null}
+                    </button>
                   );
                 })}
               </div>
@@ -172,50 +165,36 @@ export function TriggersBlock({ ruleIndex, editable: te, onChange }: TriggersBlo
               </p>
             )}
           </div>
-          <p>
-            <label>
-              <strong>{t(cfg, 'customEventsLabel', 'Additional event names (comma-separated)')}</strong>
-            </label>
-            <input
-              type="text"
-              className="large-text"
-              defaultValue={extras.join(', ')}
-              key={`ce-${extras.join('|')}-${ruleIndex}`}
-              onBlur={(e) => syncCustomExtras(e.target.value)}
-            />
-          </p>
+          <TextControl
+            key={`ce-${extras.join('|')}-${ruleIndex}`}
+            label={t(cfg, 'customEventsLabel', 'Additional event names (comma-separated)')}
+            defaultValue={extras.join(', ')}
+            onBlur={(event: React.FocusEvent<HTMLInputElement>) => syncCustomExtras(event.target.value)}
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize
+          />
         </>
       ) : null}
       {te.mode === 'schedule' ? (
         <div className="gro-schedule-fields">
-          <p>
-            <label>
-              <strong>{t(cfg, 'hookLabel', 'Cron hook')}</strong>
-            </label>
-            <input
-              type="text"
-              className="regular-text"
-              value={te.schedule.hook}
-              onChange={(e) => onChange({ ...te, schedule: { ...te.schedule, hook: e.target.value } })}
-            />
-          </p>
-          <p>
-            <label>
-              <strong>{t(cfg, 'recurrenceLabel', 'Recurrence')}</strong>
-            </label>
-            <select
-              value={te.schedule.recurrence}
-              onChange={(e) => onChange({ ...te, schedule: { ...te.schedule, recurrence: e.target.value } })}
-            >
-              {(cfg.recurrences ?? []).map((r) => (
-                <option key={r} value={r}>
-                  {slugLabel(cfg.recurrenceLabels, r)}
-                </option>
-              ))}
-            </select>
-          </p>
+          <TextControl
+            label={t(cfg, 'hookLabel', 'Cron hook')}
+            value={te.schedule.hook}
+            onChange={(hook: string) => onChange({ ...te, schedule: { ...te.schedule, hook } })}
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize
+          />
+          <SelectControl
+            label={t(cfg, 'recurrenceLabel', 'Recurrence')}
+            value={te.schedule.recurrence}
+            options={(cfg.recurrences ?? []).map((r) => ({ label: slugLabel(cfg.recurrenceLabels, r), value: r }))}
+            onChange={(recurrence: string) => onChange({ ...te, schedule: { ...te.schedule, recurrence } })}
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize
+          />
         </div>
       ) : null}
-    </div>
+      </div>
+    </section>
   );
 }

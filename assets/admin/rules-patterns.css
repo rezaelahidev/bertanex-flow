@@ -40,7 +40,7 @@
 	padding: var(--gro-space-4);
 	border: 1px solid var(--gro-c-border);
 	border-radius: var(--gro-r-3);
-	background: linear-gradient(135deg, #f0fdfa 0%, #ecfeff 45%, var(--gro-c-surface) 100%);
+	background: linear-gradient(135deg, var(--gro-c-accent-soft) 0%, var(--gro-c-surface) 45%, var(--gro-c-surface) 100%);
 	box-shadow: var(--gro-shadow-sm);
 }
 
@@ -52,7 +52,7 @@
 	width: 48px;
 	height: 48px;
 	border-radius: var(--gro-r-2);
-	background: #0d9488;
+	background: var(--gro-c-accent);
 	color: #fff;
 }
 
@@ -87,12 +87,12 @@
 .gro-patterns-tip {
 	margin: 0 0 var(--gro-space-4);
 	padding: var(--gro-space-3) var(--gro-space-4);
-	border-inline-start: 3px solid #14b8a6;
+	border-inline-start: 3px solid var(--gro-c-accent);
 	border-radius: var(--gro-r-1);
-	background: #f0fdfa;
+	background: var(--gro-c-accent-soft);
 	font-size: 13px;
 	line-height: 1.6;
-	color: #115e59;
+	color: var(--gro-c-accent);
 }
 
 /* —— Variable chips —— */
@@ -146,11 +146,11 @@
 
 .gro-patterns-var:hover {
 	border-color: #5eead4;
-	background: #f0fdfa;
+	background: var(--gro-c-accent-soft);
 }
 
 .gro-patterns-var:focus-visible {
-	outline: 2px solid #0d9488;
+	outline: 2px solid var(--gro-c-accent);
 	outline-offset: 2px;
 }
 
@@ -192,11 +192,11 @@
 }
 
 .gro-pattern-card:hover {
-	border-color: #99f6e4;
+	border-color: var(--gro-c-accent-border);
 }
 
 .gro-pattern-card--builtin {
-	border-inline-start: 4px solid #0d9488;
+	border-inline-start: 4px solid var(--gro-c-accent);
 }
 
 .gro-pattern-accordion.is-open {
@@ -233,15 +233,10 @@
 	font: inherit;
 	text-align: start;
 	cursor: pointer;
-	transition: background-color 0.12s ease;
-}
-
-.gro-pattern-accordion__trigger:hover {
-	background: rgba(13, 148, 136, 0.06);
 }
 
 .gro-pattern-accordion__trigger:focus-visible {
-	outline: 2px solid #0d9488;
+	outline: 2px solid var(--gro-c-accent);
 	outline-offset: -2px;
 }
 
@@ -250,7 +245,7 @@
 	width: 20px;
 	height: 20px;
 	font-size: 20px;
-	color: #0d9488;
+	color: var(--gro-c-accent);
 	transition: transform 0.2s ease;
 }
 
@@ -283,8 +278,8 @@
 	width: fit-content;
 	padding: 2px 8px;
 	border-radius: var(--gro-r-1);
-	background: #ccfbf1;
-	color: #0f766e;
+	background: var(--gro-c-accent-soft);
+	color: var(--gro-c-accent);
 	font-family: var(--gro-font-mono);
 	font-size: 11px;
 	font-weight: 600;
@@ -351,8 +346,8 @@
 	align-items: center;
 	padding: 4px 10px;
 	border-radius: var(--gro-r-1);
-	background: #ccfbf1;
-	color: #0f766e;
+	background: var(--gro-c-accent-soft);
+	color: var(--gro-c-accent);
 }
 
 .gro-pattern-card__id-badge code {
@@ -402,13 +397,13 @@
 
 .gro-pattern-card__id-input:hover,
 .gro-pattern-card__label-input:hover {
-	border-color: #99f6e4;
+	border-color: var(--gro-c-accent-border);
 	background: #fff;
 }
 
 .gro-pattern-card__id-input:focus,
 .gro-pattern-card__label-input:focus {
-	border-color: #2dd4bf;
+	border-color: var(--gro-c-accent);
 	outline: none;
 	background: #fff;
 	box-shadow:
@@ -424,7 +419,7 @@
 
 .gro-pattern-accordion.is-open .gro-pattern-card__label-input {
 	border-color: #5eead4;
-	background: linear-gradient(180deg, #fff 0%, #f0fdfa 100%);
+	background: linear-gradient(180deg, #fff 0%, var(--gro-c-accent-soft) 100%);
 }
 
 .gro-pattern-card__meta {
@@ -454,8 +449,8 @@
 }
 
 .gro-pattern-card__status--default {
-	color: #0f766e;
-	background: #ccfbf1;
+	color: var(--gro-c-accent);
+	background: var(--gro-c-accent-soft);
 }
 
 .gro-pattern-card__status--custom {
@@ -561,7 +556,7 @@
 }
 
 .gro-pattern-card__textarea:focus {
-	border-color: #2dd4bf;
+	border-color: var(--gro-c-accent);
 	outline: none;
 	box-shadow:
 		inset 0 1px 2px rgba(15, 23, 42, 0.04),
@@ -596,9 +591,9 @@
 .gro-pattern-card__preview {
 	min-height: 6.5rem;
 	padding: var(--gro-space-3);
-	border: 1px dashed #99f6e4;
+	border: 1px dashed var(--gro-c-accent-border);
 	border-radius: var(--gro-r-2);
-	background: linear-gradient(180deg, #f0fdfa 0%, var(--gro-c-surface-muted) 100%);
+	background: linear-gradient(180deg, var(--gro-c-accent-soft) 0%, var(--gro-c-surface-muted) 100%);
 	font-size: 14px;
 	line-height: 1.65;
 	white-space: pre-wrap;
@@ -607,7 +602,7 @@
 }
 
 .gro-pattern-card__col--preview .gro-pattern-card__field-label {
-	color: #0f766e;
+	color: var(--gro-c-accent);
 }
 
 .gro-patterns-editor__footer {
@@ -619,22 +614,39 @@
 	gap: 6px;
 	min-height: 36px;
 	padding: 0 14px !important;
-	border-color: #99f6e4 !important;
+	border-color: var(--gro-c-accent-border) !important;
 	border-radius: var(--gro-r-2) !important;
-	background: #f0fdfa !important;
-	color: #0f766e !important;
+	background: var(--gro-c-accent-soft) !important;
+	color: var(--gro-c-accent) !important;
 }
 
 .gro-patterns-add:hover {
-	border-color: #2dd4bf !important;
-	background: #ccfbf1 !important;
-	color: #115e59 !important;
+	border-color: var(--gro-c-accent) !important;
+	background: var(--gro-c-accent-soft) !important;
+	color: var(--gro-c-accent) !important;
 }
 
 .gro-patterns-add .dashicons {
 	width: 18px;
 	height: 18px;
 	font-size: 18px;
+}
+
+.gro-patterns-search {
+	display: block;
+	margin: 0 0 1rem;
+}
+
+.gro-patterns-search input {
+	width: min(100%, 22rem);
+}
+
+.gro-activity__heading {
+	margin: 1.5rem 0 0.75rem;
+}
+
+.gro-activity__replay {
+	margin-top: 1rem;
 }
 
 .gro-patterns-form__footer {
@@ -654,14 +666,14 @@
 	min-height: 40px;
 	padding: 0 22px !important;
 	border-radius: var(--gro-r-2) !important;
-	background: #0d9488 !important;
-	border-color: #0f766e !important;
-	box-shadow: 0 1px 2px rgba(15, 118, 110, 0.2) !important;
+	background: var(--gro-c-accent) !important;
+	border-color: var(--gro-c-accent) !important;
+	box-shadow: none !important;
 }
 
 .gro-patterns-form__submit.button-primary:hover {
-	background: #0f766e !important;
-	border-color: #115e59 !important;
+	background: var(--gro-c-accent) !important;
+	border-color: var(--gro-c-accent) !important;
 }
 
 /* —— RTL layout —— */
@@ -706,6 +718,6 @@
 .rtl .gro-patterns-tip,
 .gro-rules-admin--rtl .gro-patterns-tip {
 	border-inline-start: none;
-	border-inline-end: 3px solid #14b8a6;
+	border-inline-end: 3px solid var(--gro-c-accent);
 	text-align: right;
 }

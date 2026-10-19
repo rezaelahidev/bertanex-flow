@@ -1,6 +1,7 @@
 import type { EditableRule } from '../ruleModel';
 import { GroButton } from './GroButton';
 import { GroIcon } from './GroIcon';
+import { ConfirmDialog } from './ConfirmDialog';
 import { Modal } from './Modal';
 import { openRuleModalAria, removeCollapsedAria, t, useCfg } from './ConfigContext';
 import { SimpleRuleForm } from './SimpleRuleForm';
@@ -26,9 +27,6 @@ export interface SimpleRuleCardProps {
   onDuplicate: () => void;
   onMove: (delta: number) => void;
   onRemove: () => void;
-  onSave: () => Promise<boolean>;
-  isSaving: boolean;
-  hasDocumentChanges: boolean;
 }
 
 export function SimpleRuleCard({
@@ -38,12 +36,10 @@ export function SimpleRuleCard({
   onDuplicate,
   onMove,
   onRemove,
-  onSave,
-  isSaving,
-  hasDocumentChanges,
 }: SimpleRuleCardProps): React.ReactElement {
   const cfg = useCfg();
   const [isOpen, setIsOpen] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const [draft, setDraft] = useState<EditableRule | null>(null);
   const [localDirty, setLocalDirty] = useState(false);
 
@@ -76,15 +72,6 @@ export function SimpleRuleCard({
   const handleChange = (next: EditableRule): void => {
     setLocalDirty(true);
     setDraft(next);
-  };
-
-  const handleSave = async (): Promise<void> => {
-    if (draft) commitDraft(draft);
-    const ok = await onSave();
-    if (ok) {
-      setLocalDirty(false);
-      closeModal();
-    }
   };
 
   return (
@@ -120,32 +107,23 @@ export function SimpleRuleCard({
           iconOnly
           className="gro-rule-row__delete"
           aria-label={removeAria}
-          onClick={() => {
-            if (!window.confirm(t(cfg, 'confirmRemove', 'Remove this rule?'))) return;
-            onRemove();
-          }}
+          onClick={() => setConfirmRemove(true)}
         />
       </article>
+      <ConfirmDialog
+        isOpen={confirmRemove}
+        message={t(cfg, 'confirmRemove', 'Remove this rule?')}
+        confirmLabel={t(cfg, 'removeRule', 'Remove')}
+        onConfirm={() => {
+          setConfirmRemove(false);
+          onRemove();
+        }}
+        onCancel={() => setConfirmRemove(false)}
+      />
       <Modal
         title={`${t(cfg, 'ruleDetailsHeading', 'Edit rule')} — ${modalTitle}`}
         isOpen={isOpen}
         onClose={closeModal}
-        footer={
-          <>
-            <GroButton variant="ghost" size="md" icon="close" onClick={closeModal}>
-              {t(cfg, 'modalClose', 'Close')}
-            </GroButton>
-            <GroButton
-              variant="primary"
-              size="md"
-              icon="save"
-              disabled={isSaving || (!localDirty && !hasDocumentChanges)}
-              onClick={() => void handleSave()}
-            >
-              {isSaving ? t(cfg, 'saving', 'Saving…') : t(cfg, 'saveRule', 'Save rule')}
-            </GroButton>
-          </>
-        }
       >
         {draft ? (
           <SimpleRuleForm

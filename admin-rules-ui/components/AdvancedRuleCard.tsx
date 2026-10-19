@@ -1,5 +1,6 @@
 import { GroButton } from './GroButton';
 import { GroIcon } from './GroIcon';
+import { ConfirmDialog } from './ConfirmDialog';
 import { Modal } from './Modal';
 import { openRuleModalAria, removeCollapsedAria, t, useCfg } from './ConfigContext';
 import React, { useState } from 'react';
@@ -13,6 +14,7 @@ export interface AdvancedRuleCardProps {
 export function AdvancedRuleCard({ ruleIndex, snapshot, onRemove }: AdvancedRuleCardProps): React.ReactElement {
   const cfg = useCfg();
   const [isOpen, setIsOpen] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
   const ruleId = typeof snapshot.id === 'string' ? snapshot.id : `#${ruleIndex + 1}`;
   const ruleNumHuman = ruleIndex + 1;
   const summaryForAria = typeof snapshot.id === 'string' ? snapshot.id : `Rule ${ruleNumHuman}`;
@@ -57,46 +59,45 @@ export function AdvancedRuleCard({ ruleIndex, snapshot, onRemove }: AdvancedRule
           iconOnly
           className="gro-rule-row__delete"
           aria-label={removeAria}
-          onClick={() => {
-            if (!window.confirm(t(cfg, 'confirmRemoveAdv', 'Remove this rule from the document?'))) return;
-            onRemove();
-          }}
+          onClick={() => setConfirmRemove(true)}
         />
       </article>
       <Modal
         title={String(ruleId)}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        footer={
-          <GroButton variant="ghost" size="md" icon="close" onClick={() => setIsOpen(false)}>
-            {t(cfg, 'modalClose', 'Close')}
-          </GroButton>
-        }
       >
-        <div className="gro-banner gro-banner--advanced">
-          <p>
-            {t(
-              cfg,
-              'advancedDesc',
-              'This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored.',
-            )}
-          </p>
-        </div>
-        <div className="gro-rule-card__actions-row">
+        {React.createElement(
+          window.wp.components.Notice,
+          { status: 'warning', isDismissible: false },
+          t(
+            cfg,
+            'advancedDesc',
+            'This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored.',
+          ),
+        )}
+        <div className="gro-editor-modal__toolbar">
           <GroButton
             size="sm"
             variant="danger"
             icon="delete"
-            onClick={() => {
-              if (!window.confirm(t(cfg, 'confirmRemoveAdv', 'Remove this rule from the document?'))) return;
-              onRemove();
-              setIsOpen(false);
-            }}
+            onClick={() => setConfirmRemove(true)}
           >
             {t(cfg, 'removeRule', 'Remove')}
           </GroButton>
         </div>
       </Modal>
+      <ConfirmDialog
+        isOpen={confirmRemove}
+        message={t(cfg, 'confirmRemoveAdv', 'Remove this rule from the document?')}
+        confirmLabel={t(cfg, 'removeRule', 'Remove')}
+        onConfirm={() => {
+          setConfirmRemove(false);
+          setIsOpen(false);
+          onRemove();
+        }}
+        onCancel={() => setConfirmRemove(false)}
+      />
     </>
   );
 }

@@ -1,248 +1,319 @@
 (function () {
-	'use strict';
-
-	function getRoot(row) {
-		return row.closest('[data-gro-sms-templates]');
+	if (!window.wp || !wp.element || !wp.components || !wp.components.Modal) {
+		return;
 	}
 
-	function updateStatus(row, override, defaultBody, effective) {
-		const root = getRoot(row);
-		const statusEl = row.querySelector('[data-gro-pattern-status]');
-		if (!statusEl || !root) {
-			return;
-		}
-
-		const labelDefault = root.getAttribute('data-gro-badge-default') || 'Default';
-		const labelCustom = root.getAttribute('data-gro-badge-custom') || 'Custom';
-		const labelEmpty = root.getAttribute('data-gro-badge-empty') || 'Not set';
-
-		statusEl.classList.remove(
-			'gro-pattern-card__status--default',
-			'gro-pattern-card__status--custom',
-			'gro-pattern-card__status--empty'
-		);
-
-		if (override !== '') {
-			statusEl.textContent = labelCustom;
-			statusEl.classList.add('gro-pattern-card__status--custom');
-		} else if (defaultBody !== '' && effective === defaultBody) {
-			statusEl.textContent = labelDefault;
-			statusEl.classList.add('gro-pattern-card__status--default');
-		} else {
-			statusEl.textContent = labelEmpty;
-			statusEl.classList.add('gro-pattern-card__status--empty');
-		}
+	var dataNode = document.getElementById('gro-sms-patterns-data');
+	var root = document.getElementById('gro-sms-patterns');
+	if (!dataNode || !root) {
+		return;
 	}
 
-	function updateCharCount(row) {
-		const textarea = row.querySelector('[data-gro-pattern-textarea]');
-		const counter = row.querySelector('[data-gro-pattern-chars]');
-		if (!textarea || !counter) {
-			return;
-		}
-
-		const text = textarea.value;
-		const len = text.length;
-		const max = parseInt(counter.getAttribute('data-max') || '500', 10);
-		const template = counter.getAttribute('data-gro-chars-template');
-
-		if (template) {
-			counter.textContent = template.replace('%1$d', String(len)).replace('%2$d', String(max));
-		} else {
-			counter.textContent = len + ' / ' + max;
-		}
-
-		counter.classList.toggle('gro-pattern-card__chars--warn', len > max * 0.9);
+	var config = {};
+	try {
+		config = JSON.parse(dataNode.textContent || '{}');
+	} catch (error) {
+		config = {};
 	}
 
-	function truncateSnippet(text, maxLen) {
-		if (!text || text === '—') {
-			return '—';
-		}
-		if (text.length <= maxLen) {
-			return text;
-		}
-		return text.slice(0, maxLen) + '…';
+	var el = wp.element.createElement;
+	var useState = wp.element.useState;
+	var useEffect = wp.element.useEffect;
+	var useRef = wp.element.useRef;
+	var Button = wp.components.Button;
+	var TextControl = wp.components.TextControl;
+	var TextareaControl = wp.components.TextareaControl;
+	var SearchControl = wp.components.SearchControl;
+	var Modal = wp.components.Modal;
+	var ConfirmDialog = wp.components.__experimentalConfirmDialog;
+	var labels = config.labels || {};
+
+	function label(key, fallback) {
+		return labels[key] || fallback;
 	}
 
-	function updateAccordionSummary(row) {
-		const titleEl = row.querySelector('[data-gro-pattern-accordion-title]');
-		const snippetEl = row.querySelector('[data-gro-pattern-snippet]');
-		const labelInput = row.querySelector('[data-gro-pattern-label-input]');
-		const idInput = row.querySelector('[data-gro-pattern-id-input]');
-		const idCode = row.querySelector('.gro-pattern-accordion__id');
-		const currentEl = row.querySelector('[data-gro-sms-current]');
-
-		if (titleEl && labelInput) {
-			const label = labelInput.value.trim();
-			const id = idInput ? idInput.value.trim() : idCode ? idCode.textContent.trim() : '';
-			titleEl.textContent = label !== '' ? label : id !== '' ? id : titleEl.getAttribute('data-gro-fallback-title') || '…';
-		}
-
-		if (snippetEl && currentEl) {
-			snippetEl.textContent = truncateSnippet(currentEl.textContent.trim(), 72);
-		}
+	function applySamples(text) {
+		var samples = config.samples || {};
+		return String(text || '').replace(/\{([a-zA-Z][a-zA-Z0-9_]*)\}/g, function (match, name) {
+			return Object.prototype.hasOwnProperty.call(samples, name) ? samples[name] : match;
+		});
 	}
 
-	function setAccordionOpen(row, open) {
-		const trigger = row.querySelector('[data-gro-pattern-accordion-toggle]');
-		const panel = row.querySelector('.gro-pattern-accordion__panel');
-		if (!trigger || !panel) {
-			return;
+	function statusOf(row) {
+		if (row.body !== '') {
+			return label('custom', 'Custom');
 		}
-		row.classList.toggle('is-open', open);
-		trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-		panel.hidden = !open;
+		if (row.defaultBody !== '') {
+			return label('default', 'Default');
+		}
+		return label('empty', 'Not set');
 	}
 
-	function updateRowCurrent(row) {
-		const textarea = row.querySelector('[data-gro-pattern-textarea], textarea');
-		const currentEl = row.querySelector('[data-gro-sms-current]');
-		if (!textarea || !currentEl) {
-			return;
+	function Patterns() {
+		var rowsState = useState(Array.isArray(config.rows) ? config.rows : []);
+		var rows = rowsState[0];
+		var setRows = rowsState[1];
+		var queryState = useState('');
+		var query = queryState[0];
+		var setQuery = queryState[1];
+		var openState = useState(-1);
+		var openIndex = openState[0];
+		var setOpenIndex = openState[1];
+		var removeState = useState(-1);
+		var removeIndex = removeState[0];
+		var setRemoveIndex = removeState[1];
+
+		function update(index, patch) {
+			setRows(rows.map(function (row, i) {
+				return i === index ? Object.assign({}, row, patch) : row;
+			}));
 		}
 
-		const override = textarea.value.trim();
-		const defaultBody = row.getAttribute('data-gro-sms-default-body') || '';
-		const effective = override !== '' ? override : defaultBody !== '' ? defaultBody : '—';
-
-		currentEl.textContent = effective;
-		updateStatus(row, override, defaultBody, effective);
-		updateCharCount(row);
-		updateAccordionSummary(row);
-	}
-
-	function reindexRows(list) {
-		const rows = list.querySelectorAll('[data-gro-sms-templates-row]');
-		rows.forEach(function (row, index) {
-			row.querySelectorAll('input, textarea').forEach(function (el) {
-				const name = el.getAttribute('name');
-				if (!name) {
-					return;
+		var visible = rows
+			.map(function (row, index) {
+				return { row: row, index: index };
+			})
+			.filter(function (item) {
+				if (!query) {
+					return true;
 				}
-				el.setAttribute(
-					'name',
-					name.replace(/bertanex_flow_sms_templates\[[^\]]+]/, 'bertanex_flow_sms_templates[' + index + ']')
-				);
+				var hay = (item.row.label + ' ' + item.row.id + ' ' + item.row.body).toLowerCase();
+				return hay.indexOf(query.toLowerCase()) !== -1;
 			});
+
+		var seenRows = useRef('');
+		useEffect(function () {
+			var signature = JSON.stringify(rows.map(function (row) {
+				return { id: row.id, label: row.label, body: row.body };
+			}));
+			if (seenRows.current === '') {
+				seenRows.current = signature;
+				document.dispatchEvent(new CustomEvent('gro-patterns-ready'));
+				return;
+			}
+			if (signature === seenRows.current) {
+				return;
+			}
+			seenRows.current = signature;
+			document.dispatchEvent(new CustomEvent('gro-panel-touch', { detail: { panel: 'patterns' } }));
 		});
+
+		var openRow = openIndex >= 0 ? rows[openIndex] : null;
+		var effective = openRow ? (openRow.body !== '' ? openRow.body : openRow.defaultBody) : '';
+		var count = openRow ? (openRow.body || '').length : 0;
+
+		return el(
+			'div',
+			null,
+			el('h2', { className: 'gro-panel-title' }, label('title', 'SMS message patterns')),
+			el('p', { className: 'gro-panel-lede' }, label('intro', '')),
+			el('div', { className: 'gro-sms-toolbar' }, el(SearchControl, {
+				label: label('search', 'Search patterns'),
+				value: query,
+				onChange: setQuery,
+				__nextHasNoMarginBottom: true,
+			})),
+			visible.length
+				? el(
+					'ul',
+					{ className: 'gro-sms-list', role: 'list' },
+					visible.map(function (item) {
+						var row = item.row;
+						var title = row.label || row.id || label('add', 'Pattern');
+						return el(
+							'li',
+							{ key: item.index },
+							el(
+								'article',
+								{ className: 'gro-item-card gro-item-card--closed' },
+								el(
+									'button',
+									{
+										type: 'button',
+										className: 'gro-item-card__open',
+										onClick: function () {
+											setOpenIndex(item.index);
+										},
+									},
+									el('span', { className: 'gro-item-card__index', 'aria-hidden': 'true' }, '#' + (item.index + 1)),
+									el('span', { className: 'gro-item-card__field' }, title),
+									el(
+										'span',
+										{ className: 'gro-item-card__meta' },
+										el('span', { className: 'gro-item-card__meta-key' }, label('id', 'Pattern ID')),
+										' ',
+										el('strong', null, row.id || '—'),
+										el('span', { className: 'gro-item-card__sep', 'aria-hidden': 'true' }, ' · '),
+										el('span', { className: 'gro-item-card__meta-key' }, label('body', 'Message')),
+										' ',
+										el('strong', null, statusOf(row))
+									)
+								),
+								row.builtin
+									? null
+									: el(Button, {
+										className: 'gro-item-card__delete',
+										icon: 'trash',
+										label: label('remove', 'Remove pattern'),
+										showTooltip: true,
+										size: 'compact',
+										isDestructive: true,
+										variant: 'tertiary',
+										onClick: function () {
+											setRemoveIndex(item.index);
+										},
+									})
+							)
+						);
+					})
+				)
+				: (query ? el('p', { className: 'description' }, label('search', 'Search patterns')) : null),
+			el(Button, {
+				variant: 'primary',
+				icon: 'plus',
+				className: 'gro-sms-add',
+				onClick: function () {
+					var next = rows.concat([{ id: '', label: '', body: '', builtin: false, defaultBody: '' }]);
+					setRows(next);
+					setOpenIndex(next.length - 1);
+				},
+			}, label('add', 'Add pattern')),
+			openRow
+				? el(
+					Modal,
+					{
+						title: (openRow.label || openRow.id || label('add', 'Pattern')) + ' #' + (openIndex + 1),
+						onRequestClose: function () {
+							setOpenIndex(-1);
+						},
+						size: 'large',
+						className: 'gro-editor-modal',
+					},
+					el(
+						'div',
+						{ className: 'gro-editor-modal__body' },
+						el(
+							'div',
+							{ className: 'gro-action-form' },
+							el(
+								'section',
+								{ className: 'gro-action-form__section' },
+								el('h3', { className: 'gro-action-form__heading' }, label('name', 'Title')),
+								el(
+									'div',
+									{ className: 'gro-action-form__body' },
+									el(TextControl, {
+										label: label('name', 'Title'),
+										value: openRow.label,
+										onChange: function (value) {
+											update(openIndex, { label: value });
+										},
+										__nextHasNoMarginBottom: true,
+										__next40pxDefaultSize: true,
+									}),
+									el(TextControl, {
+										label: label('id', 'Pattern ID'),
+										value: openRow.id,
+										disabled: !!openRow.builtin,
+										onChange: function (value) {
+											update(openIndex, { id: value });
+										},
+										__nextHasNoMarginBottom: true,
+										__next40pxDefaultSize: true,
+									})
+								)
+							),
+							el(
+								'section',
+								{ className: 'gro-action-form__section' },
+								el('h3', { className: 'gro-action-form__heading' }, label('body', 'Your message (override)')),
+								el(
+									'div',
+									{ className: 'gro-action-form__body' },
+									el(TextareaControl, {
+										label: label('body', 'Your message (override)'),
+										hideLabelFromVision: true,
+										value: openRow.body,
+										onChange: function (value) {
+											update(openIndex, { body: value });
+										},
+										rows: 5,
+										__nextHasNoMarginBottom: true,
+									}),
+									el(
+										'div',
+										{ className: 'gro-sms-tokens' },
+										el('span', { className: 'gro-sms-tokens__label' }, label('placeholders', 'Placeholders')),
+										el(
+											'div',
+											{ className: 'gro-sms-tokens__list' },
+											(config.variables || []).map(function (name) {
+												var token = '{' + name + '}';
+												return el(
+													Button,
+													{
+														key: name,
+														variant: 'secondary',
+														size: 'compact',
+														onClick: function () {
+															update(openIndex, { body: (openRow.body || '') + token });
+														},
+													},
+													token
+												);
+											})
+										)
+									),
+									el('p', { className: 'gro-sms-meta' }, label('emptyHint', '') + ' · ' + label('chars', '%1$d / %2$d').replace('%1$d', String(count)).replace('%2$d', String(config.maxBody || 500))),
+									el(
+										'div',
+										{ className: 'gro-sms-preview' },
+										el('span', { className: 'gro-sms-preview__label' }, label('preview', 'Preview')),
+										el('p', { className: 'gro-sms-preview__text' }, applySamples(effective) || '—')
+									)
+								)
+							)
+						)
+					)
+				)
+				: null,
+			ConfirmDialog
+				? el(ConfirmDialog, {
+					isOpen: removeIndex >= 0,
+					onConfirm: function () {
+						var index = removeIndex;
+						setRemoveIndex(-1);
+						if (openIndex === index) {
+							setOpenIndex(-1);
+						} else if (openIndex > index) {
+							setOpenIndex(openIndex - 1);
+						}
+						setRows(rows.filter(function (_, i) {
+							return i !== index;
+						}));
+					},
+					onCancel: function () {
+						setRemoveIndex(-1);
+					},
+					confirmButtonText: label('remove', 'Remove pattern'),
+				}, label('confirmRemove', 'Remove this pattern?'))
+				: null,
+			rows.map(function (row, index) {
+				var name = (config.option || 'bertanex_flow_sms_templates') + '[' + index + ']';
+				return el(
+					'div',
+					{ key: 'hidden-' + index },
+					el('input', { type: 'hidden', name: name + '[id]', value: row.id }),
+					el('input', { type: 'hidden', name: name + '[label]', value: row.label }),
+					el('input', { type: 'hidden', name: name + '[body]', value: row.body })
+				);
+			})
+		);
 	}
 
-	function bindCopyVars(root) {
-		const copiedLabel = root.getAttribute('data-gro-copied-label') || 'Copied';
-
-		root.closest('.gro-patterns-shell')?.addEventListener('click', function (ev) {
-			const btn = ev.target.closest('[data-gro-copy-var]');
-			if (!btn) {
-				return;
-			}
-			const token = btn.getAttribute('data-gro-copy-var');
-			if (!token) {
-				return;
-			}
-
-			const done = function () {
-				btn.classList.add('gro-patterns-var--copied');
-				const prev = btn.getAttribute('title');
-				btn.setAttribute('title', copiedLabel);
-				window.setTimeout(function () {
-					btn.classList.remove('gro-patterns-var--copied');
-					if (prev) {
-						btn.setAttribute('title', prev);
-					}
-				}, 1200);
-			};
-
-			if (navigator.clipboard && navigator.clipboard.writeText) {
-				navigator.clipboard.writeText(token).then(done).catch(function () {
-					window.prompt('', token);
-				});
-			} else {
-				window.prompt('', token);
-				done();
-			}
-		});
+	if (wp.element.createRoot) {
+		wp.element.createRoot(root).render(el(Patterns, null));
+		return;
 	}
-
-	function bindAccordion(root) {
-		root.addEventListener('click', function (ev) {
-			const toggle = ev.target.closest('[data-gro-pattern-accordion-toggle]');
-			if (toggle) {
-				const row = toggle.closest('[data-gro-pattern-accordion]');
-				if (row) {
-					setAccordionOpen(row, !row.classList.contains('is-open'));
-				}
-				return;
-			}
-
-			if (ev.target.closest('[data-gro-sms-templates-remove]')) {
-				ev.stopPropagation();
-			}
-		});
-	}
-
-	function bindEditor(root) {
-		const list = root.querySelector('[data-gro-sms-templates-rows]');
-		const tpl = document.getElementById('gro-sms-template-row-blank');
-		if (!list || !tpl) {
-			return;
-		}
-
-		bindCopyVars(root);
-		bindAccordion(root);
-
-		list.querySelectorAll('[data-gro-sms-templates-row]').forEach(function (row) {
-			const titleEl = row.querySelector('[data-gro-pattern-accordion-title]');
-			if (titleEl && !titleEl.getAttribute('data-gro-fallback-title')) {
-				titleEl.setAttribute('data-gro-fallback-title', titleEl.textContent);
-			}
-			updateRowCurrent(row);
-		});
-
-		root.addEventListener('input', function (ev) {
-			const row = ev.target.closest('[data-gro-sms-templates-row]');
-			if (!row) {
-				return;
-			}
-			if (ev.target.matches('textarea, [data-gro-pattern-textarea]')) {
-				updateRowCurrent(row);
-			}
-			if (ev.target.matches('[data-gro-pattern-label-input], [data-gro-pattern-id-input]')) {
-				updateAccordionSummary(row);
-				const idInput = row.querySelector('[data-gro-pattern-id-input]');
-				const idCode = row.querySelector('.gro-pattern-accordion__id');
-				if (idInput && idCode) {
-					idCode.textContent = idInput.value.trim();
-				}
-			}
-		});
-
-		root.querySelector('[data-gro-sms-templates-add]')?.addEventListener('click', function () {
-			const index = list.querySelectorAll('[data-gro-sms-templates-row]').length;
-			const html = tpl.innerHTML.replace(/__INDEX__/g, String(index));
-			const wrap = document.createElement('div');
-			wrap.innerHTML = html.trim();
-			const row = wrap.firstElementChild;
-			if (row) {
-				list.appendChild(row);
-				updateRowCurrent(row);
-				setAccordionOpen(row, true);
-				row.querySelector('textarea, [data-gro-pattern-textarea]')?.focus();
-			}
-		});
-
-		root.addEventListener('click', function (ev) {
-			const btn = ev.target.closest('[data-gro-sms-templates-remove]');
-			if (!btn) {
-				return;
-			}
-			const row = btn.closest('[data-gro-sms-templates-row]');
-			if (row && window.confirm(btn.getAttribute('data-confirm') || 'Remove this pattern?')) {
-				row.remove();
-				reindexRows(list);
-			}
-		});
-	}
-
-	document.querySelectorAll('[data-gro-sms-templates]').forEach(bindEditor);
+	wp.element.render(el(Patterns, null), root);
 })();

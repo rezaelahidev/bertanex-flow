@@ -38,46 +38,6 @@ final class SmsTemplatesModel
             'gro_sms_templates_section',
             '',
             static function (): void {
-                echo '<header class="gro-patterns-hero">';
-                echo '<div class="gro-patterns-hero__icon" aria-hidden="true">';
-                echo '<span class="dashicons dashicons-email-alt"></span>';
-                echo '</div>';
-                echo '<div class="gro-patterns-hero__text">';
-                echo '<h3 class="gro-patterns-hero__title">' .
-                    esc_html__('SMS message patterns', 'bertanex-flow') .
-                    '</h3>';
-                echo '<p class="gro-patterns-hero__lede">' .
-                    esc_html__(
-                        'Persian texts sent to customers via Melipayamak. Each pattern matches a template_id in your automation rules.',
-                        'bertanex-flow'
-                    ) .
-                    '</p>';
-                echo '</div>';
-                echo '</header>';
-
-                echo '<p class="gro-patterns-tip">' .
-                    esc_html__(
-                        'Write messages in Persian. Keep placeholders like {name} and {site_name} exactly as shown — they are replaced when the SMS is sent.',
-                        'bertanex-flow'
-                    ) .
-                    '</p>';
-
-                echo '<div class="gro-patterns-vars">';
-                echo '<span class="gro-patterns-vars__label">' .
-                    esc_html__('Placeholders', 'bertanex-flow') .
-                    '</span>';
-                echo '<ul class="gro-patterns-vars__list" role="list">';
-                foreach (self::variableNames() as $var) {
-                    echo '<li role="listitem"><button type="button" class="gro-patterns-var" data-gro-copy-var="{' .
-                        esc_attr($var) .
-                        '}" title="' .
-                        esc_attr__('Click to copy', 'bertanex-flow') .
-                        '"><code>{' .
-                        esc_html($var) .
-                        '}</code></button></li>';
-                }
-                echo '</ul>';
-                echo '</div>';
             },
             self::SETTINGS_GROUP
         );
@@ -249,204 +209,50 @@ final class SmsTemplatesModel
 
     public function renderTemplatesField(): void
     {
-        $rows     = self::rowsForForm();
-        $resolved = self::resolvedBodies();
         $defaults = [];
         foreach (self::catalog() as $item) {
             $defaults[$item['id']] = $item['defaultBody'];
         }
-        ?>
-        <div
-            class="gro-patterns-editor"
-            data-gro-sms-templates
-            data-gro-badge-default="<?php echo esc_attr__('Default', 'bertanex-flow'); ?>"
-            data-gro-badge-custom="<?php echo esc_attr__('Custom', 'bertanex-flow'); ?>"
-            data-gro-badge-empty="<?php echo esc_attr__('Not set', 'bertanex-flow'); ?>"
-            data-gro-copied-label="<?php echo esc_attr__('Copied', 'bertanex-flow'); ?>"
-        >
-            <ul class="gro-patterns-list" data-gro-sms-templates-rows role="list">
-                <?php foreach ($rows as $index => $row) : ?>
-                    <?php
-                    $id = (string) ($row['id'] ?? '');
-                    self::renderTemplateRow(
-                        $index,
-                        $row,
-                        $id !== '' ? (string) ($resolved[$id] ?? '') : '',
-                        (string) ($defaults[$id] ?? '')
-                    );
-                    ?>
-                <?php endforeach; ?>
-            </ul>
-            <div class="gro-patterns-editor__footer">
-                <button type="button" class="button gro-patterns-add" data-gro-sms-templates-add>
-                    <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
-                    <?php esc_html_e('Add pattern', 'bertanex-flow'); ?>
-                </button>
-            </div>
-            <template id="gro-sms-template-row-blank">
-                <?php self::renderTemplateRow('__INDEX__', ['id' => '', 'label' => '', 'body' => '', 'builtin' => false], '', ''); ?>
-            </template>
-        </div>
-        <?php
+        $rows = [];
+        foreach (self::rowsForForm() as $row) {
+            $id = (string) ($row['id'] ?? '');
+            $rows[] = [
+                'id' => $id,
+                'label' => (string) ($row['label'] ?? ''),
+                'body' => (string) ($row['body'] ?? ''),
+                'builtin' => ! empty($row['builtin']),
+                'defaultBody' => (string) ($defaults[$id] ?? ''),
+            ];
+        }
+        $payload = [
+            'option' => self::OPTION,
+            'maxBody' => self::MAX_BODY_LENGTH,
+            'rows' => $rows,
+            'samples' => self::sampleValues(),
+            'variables' => self::variableNames(),
+            'labels' => [
+                'title' => __('SMS message patterns', 'bertanex-flow'),
+                'intro' => __('Persian texts sent to customers via Melipayamak. Each pattern matches a template_id in your automation rules.', 'bertanex-flow'),
+                'search' => __('Search patterns', 'bertanex-flow'),
+                'add' => __('Add pattern', 'bertanex-flow'),
+                'id' => __('Pattern ID', 'bertanex-flow'),
+                'name' => __('Title', 'bertanex-flow'),
+                'body' => __('Your message (override)', 'bertanex-flow'),
+                'emptyHint' => __('Empty field = default text', 'bertanex-flow'),
+                'preview' => __('Preview with sample values', 'bertanex-flow'),
+                'remove' => __('Remove pattern', 'bertanex-flow'),
+                'confirmRemove' => __('Remove this pattern?', 'bertanex-flow'),
+                'placeholders' => __('Placeholders', 'bertanex-flow'),
+                'default' => __('Default', 'bertanex-flow'),
+                'custom' => __('Custom', 'bertanex-flow'),
+                'empty' => __('Not set', 'bertanex-flow'),
+                'chars' => __('%1$d / %2$d characters', 'bertanex-flow'),
+            ],
+        ];
+        echo '<div id="gro-sms-patterns"></div>';
+        echo '<script type="application/json" id="gro-sms-patterns-data">' . wp_json_encode($payload) . '</script>';
     }
 
-    /**
-     * @param int|string $index
-     * @param SmsTemplateRow $row
-     */
-    private static function renderTemplateRow($index, array $row, string $currentValue, string $defaultBody): void
-    {
-        $builtin = ! empty($row['builtin']);
-        $id      = (string) ($row['id'] ?? '');
-        $label   = (string) ($row['label'] ?? '');
-        $body    = (string) ($row['body'] ?? '');
-        $name    = self::OPTION . '[' . $index . ']';
-        $usesDefault = $body === '' && $defaultBody !== '' && $currentValue === $defaultBody;
-        $usesCustom  = $body !== '';
-        $statusClass = $usesCustom ? 'gro-pattern-card__status--custom' : ($usesDefault ? 'gro-pattern-card__status--default' : 'gro-pattern-card__status--empty');
-        $statusLabel = $usesCustom
-            ? __('Custom', 'bertanex-flow')
-            : ($usesDefault ? __('Default', 'bertanex-flow') : __('Not set', 'bertanex-flow'));
-        $charCount   = function_exists('mb_strlen') ? mb_strlen($body, 'UTF-8') : strlen($body);
-        $isOpen      = is_int($index) && $index === 0;
-        $panelId     = 'gro-pattern-panel-' . (is_string($index) ? 'new' : sanitize_key($id !== '' ? $id : 'row-' . (string) $index));
-        $displayTitle = $label !== '' ? $label : ($id !== '' ? $id : __('New pattern', 'bertanex-flow'));
-        $snippet     = $currentValue !== '' ? $currentValue : '—';
-        if (function_exists('mb_strlen') && mb_strlen($snippet, 'UTF-8') > 72) {
-            $snippet = mb_substr($snippet, 0, 72, 'UTF-8') . '…';
-        } elseif (strlen($snippet) > 72) {
-            $snippet = substr($snippet, 0, 72) . '…';
-        }
-        ?>
-        <li
-            class="gro-pattern-card gro-pattern-accordion<?php echo $builtin ? ' gro-pattern-card--builtin' : ''; ?><?php echo $isOpen ? ' is-open' : ''; ?>"
-            data-gro-sms-templates-row
-            data-gro-pattern-accordion
-            data-gro-sms-default-body="<?php echo esc_attr($defaultBody); ?>"
-            role="listitem"
-        >
-            <div class="gro-pattern-accordion__bar">
-                <button
-                    type="button"
-                    class="gro-pattern-accordion__trigger"
-                    data-gro-pattern-accordion-toggle
-                    aria-expanded="<?php echo $isOpen ? 'true' : 'false'; ?>"
-                    aria-controls="<?php echo esc_attr($panelId); ?>"
-                    id="<?php echo esc_attr($panelId . '-trigger'); ?>"
-                >
-                    <span class="gro-pattern-accordion__chevron dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
-                    <span class="gro-pattern-accordion__summary">
-                        <span class="gro-pattern-accordion__title" data-gro-pattern-accordion-title><?php echo esc_html($displayTitle); ?></span>
-                        <?php if ($id !== '') : ?>
-                            <code class="gro-pattern-accordion__id" dir="ltr" lang="en"><?php echo esc_html($id); ?></code>
-                        <?php endif; ?>
-                        <span class="gro-pattern-accordion__snippet" data-gro-pattern-snippet dir="auto"><?php echo esc_html($snippet); ?></span>
-                    </span>
-                </button>
-                <div class="gro-pattern-card__meta">
-                    <span class="gro-pattern-card__status <?php echo esc_attr($statusClass); ?>" data-gro-pattern-status>
-                        <?php echo esc_html($statusLabel); ?>
-                    </span>
-                    <?php if (! $builtin) : ?>
-                        <button
-                            type="button"
-                            class="gro-pattern-card__remove"
-                            data-gro-sms-templates-remove
-                            data-confirm="<?php echo esc_attr__('Remove this pattern?', 'bertanex-flow'); ?>"
-                            aria-label="<?php echo esc_attr__('Remove pattern', 'bertanex-flow'); ?>"
-                        >
-                            <span class="dashicons dashicons-trash" aria-hidden="true"></span>
-                        </button>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <div
-                id="<?php echo esc_attr($panelId); ?>"
-                class="gro-pattern-accordion__panel"
-                role="region"
-                aria-labelledby="<?php echo esc_attr($panelId . '-trigger'); ?>"
-                <?php echo $isOpen ? '' : ' hidden'; ?>
-            >
-                <div class="gro-pattern-card__identity">
-                    <?php if ($builtin) : ?>
-                        <span class="gro-pattern-card__id-badge" dir="ltr" lang="en">
-                            <code><?php echo esc_html($id); ?></code>
-                        </span>
-                        <input type="hidden" name="<?php echo esc_attr($name . '[id]'); ?>" value="<?php echo esc_attr($id); ?>" />
-                    <?php else : ?>
-                        <label class="gro-pattern-card__inline-label">
-                            <span><?php esc_html_e('Pattern ID', 'bertanex-flow'); ?></span>
-                            <input
-                                type="text"
-                                class="gro-pattern-card__id-input"
-                                name="<?php echo esc_attr($name . '[id]'); ?>"
-                                value="<?php echo esc_attr($id); ?>"
-                                placeholder="<?php echo esc_attr__('pattern_id', 'bertanex-flow'); ?>"
-                                pattern="[a-z][a-z0-9_]*"
-                                dir="ltr"
-                                lang="en"
-                                spellcheck="false"
-                                required
-                                data-gro-pattern-id-input
-                            />
-                        </label>
-                    <?php endif; ?>
-                    <label class="gro-pattern-card__inline-label gro-pattern-card__inline-label--grow">
-                        <span><?php esc_html_e('Title', 'bertanex-flow'); ?></span>
-                        <input
-                            type="text"
-                            class="gro-pattern-card__label-input"
-                            name="<?php echo esc_attr($name . '[label]'); ?>"
-                            value="<?php echo esc_attr($label); ?>"
-                            placeholder="<?php echo esc_attr__('Short title for this pattern', 'bertanex-flow'); ?>"
-                            dir="auto"
-                            data-gro-pattern-label-input
-                        />
-                    </label>
-                </div>
-            <div class="gro-pattern-card__grid">
-                <div class="gro-pattern-card__col gro-pattern-card__col--edit">
-                    <label class="gro-pattern-card__field-label">
-                        <?php esc_html_e('Your message (override)', 'bertanex-flow'); ?>
-                    </label>
-                    <textarea
-                        name="<?php echo esc_attr($name . '[body]'); ?>"
-                        rows="4"
-                        class="gro-pattern-card__textarea"
-                        maxlength="<?php echo esc_attr((string) self::MAX_BODY_LENGTH); ?>"
-                        placeholder="<?php echo esc_attr__('Leave empty to use the built-in Persian default for this pattern.', 'bertanex-flow'); ?>"
-                        dir="auto"
-                        data-gro-pattern-textarea
-                    ><?php echo esc_textarea($body); ?></textarea>
-                    <div class="gro-pattern-card__field-foot">
-                        <span class="gro-pattern-card__hint">
-                            <?php esc_html_e('Empty field = default text', 'bertanex-flow'); ?>
-                        </span>
-                        <span class="gro-pattern-card__chars" data-gro-pattern-chars data-max="<?php echo esc_attr((string) self::MAX_BODY_LENGTH); ?>">
-                            <?php
-                            echo esc_html(
-                                sprintf(
-                                    /* translators: 1: current length, 2: max length */
-                                    __('%1$d / %2$d characters', 'bertanex-flow'),
-                                    $charCount,
-                                    self::MAX_BODY_LENGTH
-                                )
-                            );
-                            ?>
-                        </span>
-                    </div>
-                </div>
-                <div class="gro-pattern-card__col gro-pattern-card__col--preview">
-                    <label class="gro-pattern-card__field-label">
-                        <?php esc_html_e('Current value (sent to user)', 'bertanex-flow'); ?>
-                    </label>
-                    <div class="gro-pattern-card__preview" data-gro-sms-current aria-live="polite" dir="auto"><?php echo esc_html($currentValue !== '' ? $currentValue : '—'); ?></div>
-                </div>
-            </div>
-            </div>
-        </li>
-        <?php
-    }
 
     /**
      * @param mixed $value
@@ -539,6 +345,28 @@ final class SmsTemplatesModel
         }
 
         return $labels;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private static function sampleValues(): array
+    {
+        $samples = [
+            'name' => 'Sara Rahimi',
+            'site_name' => 'Bertanex',
+            'site_url' => 'https://bertanex.test',
+            'shop_name' => 'Bertanex Shop',
+            'phone' => '09120000000',
+            'user_login' => 'sara',
+            'user_email' => 'sara@example.com',
+            'first_name' => 'Sara',
+            'last_name' => 'Rahimi',
+        ];
+
+        $filtered = apply_filters('gro_sms_template_sample_values', $samples);
+
+        return is_array($filtered) ? $filtered : $samples;
     }
 
     private static function catalogHasId(string $id): bool

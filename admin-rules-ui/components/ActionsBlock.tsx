@@ -2,7 +2,6 @@ import { defaultDelaySchedule } from '../delaySchedule';
 import type { EditableRule } from '../ruleModel';
 import { ActionItem } from './ActionItem';
 import { GroButton } from './GroButton';
-import { GroIcon } from './GroIcon';
 import { gridColsClass, t, useCfg, usePanelConfig } from './ConfigContext';
 import React from 'react';
 
@@ -19,11 +18,9 @@ export function ActionsBlock({ ruleIndex, editable: e, onChange }: ActionsBlockP
   const canAdd = e.actions.length < panel.maxActions;
 
   return (
-    <div className="gro-rule-section">
-      <h4 className="gro-section-title gro-rule-section__title">
-        <GroIcon name="action" />
-        <span>{t(cfg, 'actionsHeading', 'Actions')}</span>
-      </h4>
+    <section className="gro-action-form__section">
+      <h3 className="gro-action-form__heading">{t(cfg, 'actionsHeading', 'Actions')}</h3>
+      <div className="gro-action-form__body">
       <div className={gridColsClass('gro-items-grid', panel.displayColumns)} role="list">
         {e.actions.map((a, idx) => (
           <div key={idx} className="gro-items-grid__item" role="listitem">
@@ -53,6 +50,7 @@ export function ActionsBlock({ ruleIndex, editable: e, onChange }: ActionsBlockP
           {t(cfg, 'actionsLimitReached', 'Maximum number of actions reached (%s).').replace('%s', String(panel.maxActions))}
         </p>
       )}
-    </div>
+      </div>
+    </section>
   );
 }

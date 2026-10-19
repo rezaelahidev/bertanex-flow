@@ -1,7 +1,6 @@
 import type { EditableRule } from '../ruleModel';
 import { ConditionItem } from './ConditionItem';
 import { GroButton } from './GroButton';
-import { GroIcon } from './GroIcon';
 import { gridColsClass, t, useCfg, usePanelConfig } from './ConfigContext';
 import React from 'react';
 
@@ -17,11 +16,9 @@ export function ConditionsBlock({ ruleIndex, editable: e, onChange }: Conditions
   const canAdd = e.conditions.length < panel.maxConditions;
 
   return (
-    <div className="gro-rule-section">
-      <h4 className="gro-section-title gro-rule-section__title">
-        <GroIcon name="condition" />
-        <span>{t(cfg, 'conditionsHeading', 'Conditions (all must match)')}</span>
-      </h4>
+    <section className="gro-action-form__section">
+      <h3 className="gro-action-form__heading">{t(cfg, 'conditionsHeading', 'Conditions (all must match)')}</h3>
+      <div className="gro-action-form__body">
       <div className={gridColsClass('gro-items-grid', panel.displayColumns)} role="list">
         {e.conditions.map((c, idx) => (
           <div key={idx} className="gro-items-grid__item" role="listitem">
@@ -46,6 +43,7 @@ export function ConditionsBlock({ ruleIndex, editable: e, onChange }: Conditions
           )}
         </p>
       )}
-    </div>
+      </div>
+    </section>
   );
 }

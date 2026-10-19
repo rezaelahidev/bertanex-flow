@@ -27,76 +27,6 @@ final class RulesEditorSettingsModel
 
     public function registerSettings(): void
     {
-        register_setting(
-            self::SETTINGS_GROUP,
-            self::OPTION_MAX_CONDITIONS,
-            [
-                'type'              => 'integer',
-                'default'           => self::DEFAULT_MAX_CONDITIONS,
-                'sanitize_callback' => static fn ($v): int => self::sanitizeLimit($v, self::DEFAULT_MAX_CONDITIONS),
-            ]
-        );
-
-        register_setting(
-            self::SETTINGS_GROUP,
-            self::OPTION_MAX_ACTIONS,
-            [
-                'type'              => 'integer',
-                'default'           => self::DEFAULT_MAX_ACTIONS,
-                'sanitize_callback' => static fn ($v): int => self::sanitizeLimit($v, self::DEFAULT_MAX_ACTIONS),
-            ]
-        );
-
-        register_setting(
-            self::SETTINGS_GROUP,
-            self::OPTION_DISPLAY_COLUMNS,
-            [
-                'type'              => 'integer',
-                'default'           => self::DEFAULT_DISPLAY_COLUMNS,
-                'sanitize_callback' => static fn ($v): int => self::sanitizeDisplayColumns($v),
-            ]
-        );
-
-        add_settings_section(
-            'gro_rules_editor_panel_section',
-            '',
-            static function (): void {
-                echo '<p class="gro-settings-card__lede">' .
-                    esc_html__(
-                        'Limits and layout for the visual rule builder lists.',
-                        'bertanex-flow'
-                    ) .
-                    '</p>';
-            },
-            self::SETTINGS_GROUP
-        );
-
-        add_settings_field(
-            self::OPTION_MAX_CONDITIONS,
-            __('Max conditions per rule', 'bertanex-flow'),
-            [$this, 'renderMaxConditionsField'],
-            self::SETTINGS_GROUP,
-            'gro_rules_editor_panel_section',
-            ['label_for' => self::OPTION_MAX_CONDITIONS]
-        );
-
-        add_settings_field(
-            self::OPTION_MAX_ACTIONS,
-            __('Max actions per rule', 'bertanex-flow'),
-            [$this, 'renderMaxActionsField'],
-            self::SETTINGS_GROUP,
-            'gro_rules_editor_panel_section',
-            ['label_for' => self::OPTION_MAX_ACTIONS]
-        );
-
-        add_settings_field(
-            self::OPTION_DISPLAY_COLUMNS,
-            __('Display columns', 'bertanex-flow'),
-            [$this, 'renderDisplayColumnsField'],
-            self::SETTINGS_GROUP,
-            'gro_rules_editor_panel_section',
-            ['label_for' => self::OPTION_DISPLAY_COLUMNS]
-        );
     }
 
     public function renderMaxConditionsField(): void
@@ -148,9 +78,9 @@ final class RulesEditorSettingsModel
     public static function panelConfigForScript(): array
     {
         $config = [
-            'maxConditions'  => self::maxConditions(),
-            'maxActions'     => self::maxActions(),
-            'displayColumns' => self::displayColumns(),
+            'maxConditions'  => self::DEFAULT_MAX_CONDITIONS,
+            'maxActions'     => self::DEFAULT_MAX_ACTIONS,
+            'displayColumns' => self::DEFAULT_DISPLAY_COLUMNS,
         ];
 
         /**
@@ -167,17 +97,17 @@ final class RulesEditorSettingsModel
 
     public static function maxConditions(): int
     {
-        return self::sanitizeLimit(get_option(self::OPTION_MAX_CONDITIONS, self::DEFAULT_MAX_CONDITIONS), self::DEFAULT_MAX_CONDITIONS);
+        return self::DEFAULT_MAX_CONDITIONS;
     }
 
     public static function maxActions(): int
     {
-        return self::sanitizeLimit(get_option(self::OPTION_MAX_ACTIONS, self::DEFAULT_MAX_ACTIONS), self::DEFAULT_MAX_ACTIONS);
+        return self::DEFAULT_MAX_ACTIONS;
     }
 
     public static function displayColumns(): int
     {
-        return self::sanitizeDisplayColumns(get_option(self::OPTION_DISPLAY_COLUMNS, self::DEFAULT_DISPLAY_COLUMNS));
+        return self::DEFAULT_DISPLAY_COLUMNS;
     }
 
     private static function sanitizeLimit(mixed $value, int $default): int

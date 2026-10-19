@@ -27,6 +27,8 @@ final class RulesController
 {
     public const PAGE_SLUG = 'bertanex-flow';
 
+    public const USER_META_PANEL = 'gro_rules_last_panel';
+
     private const DRAFT_TRANSIENT_PREFIX = 'gro_rules_admin_draft_';
 
     public function __construct(
@@ -46,7 +48,9 @@ final class RulesController
         $hooks->add_action($this, 'redirectLegacySmsMenu', 'admin_init', 2, 0);
         $hooks->add_action($this, 'onAdminInit', 'admin_init', 1, 0);
         $hooks->add_action($this, 'enqueueAssets', 'admin_enqueue_scripts', 10, 1);
+        $hooks->add_filter($this, 'adminBodyClass', 'admin_body_class', 10, 1);
         $hooks->add_action($this, 'onAjaxSaveRules', 'wp_ajax_gro_rules_save', 0, 0);
+        $hooks->add_action($this, 'onAjaxSavePanel', 'wp_ajax_gro_rules_panel', 0, 0);
         $hooks->add_action($this, 'onAdminPostResetDefaults', 'admin_post_gro_reset_defaults', 0, 0);
     }
 
@@ -57,6 +61,21 @@ final class RulesController
         }
 
         check_admin_referer('gro_reset_defaults');
+
+        $phrase = isset($_POST['gro_reset_phrase']) ? (string) wp_unslash($_POST['gro_reset_phrase']) : '';
+        if ($phrase !== 'reset-all') {
+            wp_safe_redirect(
+                add_query_arg(
+                    [
+                        'page'         => self::PAGE_SLUG,
+                        'gro_reset'    => 'error',
+                        'gro_open_tab' => 'reset',
+                    ],
+                    admin_url('admin.php')
+                )
+            );
+            exit;
+        }
 
         $page = isset($_REQUEST['page']) ? sanitize_key((string) $_REQUEST['page']) : '';
         if ($page !== self::PAGE_SLUG) {
@@ -71,7 +90,7 @@ final class RulesController
                     [
                         'page'      => $page,
                         'gro_reset' => 'error',
-                        'gro_open_tab' => 'config',
+                        'gro_open_tab' => 'reset',
                     ],
                     admin_url('admin.php')
                 )
@@ -84,7 +103,7 @@ final class RulesController
                 [
                     'page'         => $page,
                     'gro_reset'    => '1',
-                    'gro_open_tab' => 'config',
+                    'gro_open_tab' => 'reset',
                 ],
                 admin_url('admin.php')
             )
@@ -101,6 +120,7 @@ final class RulesController
         $this->editorSettings->registerSettings();
         $this->smsSettings->registerSettings();
         $this->smsTemplates->registerSettings();
+        (new \BertanexFlow\Admin\Models\EmailTemplatesModel())->registerSettings();
 
         add_filter('wp_redirect', [$this, 'preserveRulesTabOnSettingsSave'], 10, 2);
     }
@@ -120,13 +140,14 @@ final class RulesController
         if (
             $optionPage !== RulesAdminConfig::SETTINGS_GROUP
             && $optionPage !== RulesAdminConfig::PATTERNS_SETTINGS_GROUP
+            && $optionPage !== \BertanexFlow\Admin\Models\EmailTemplatesModel::SETTINGS_GROUP
         ) {
             return $location;
         }
 
         $tab = isset($_POST['gro_open_rules_tab']) ? sanitize_key(wp_unslash((string) $_POST['gro_open_rules_tab'])) : '';
 
-        if (in_array($tab, ['config', 'patterns'], true)) {
+        if (in_array($tab, ['config', 'reset', 'patterns', 'email', 'runs'], true)) {
             return add_query_arg('gro_open_tab', $tab, $location);
         }
 
@@ -245,8 +266,43 @@ final class RulesController
         ]);
     }
 
+    public function onAjaxSavePanel(): void
+    {
+        if (! current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('You do not have permission to save this panel.', 'bertanex-flow')], 403);
+        }
+
+        check_ajax_referer('gro_rules_save', 'nonce');
+
+        $tab = isset($_POST['tab']) ? sanitize_key((string) wp_unslash($_POST['tab'])) : '';
+        if (! in_array($tab, ['visual', 'patterns', 'email', 'runs', 'config', 'reset'], true)) {
+            wp_send_json_error(['message' => __('Unknown panel.', 'bertanex-flow')], 400);
+        }
+
+        update_user_meta(get_current_user_id(), self::USER_META_PANEL, $tab);
+        wp_send_json_success(['tab' => $tab]);
+    }
+
+    public function adminBodyClass(string $classes): string
+    {
+        $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+        if ($screen && $screen->id === 'toplevel_page_' . self::PAGE_SLUG) {
+            $classes .= ' is-fullscreen-mode';
+        }
+
+        return $classes;
+    }
+
     public function enqueueAssets(string $hook_suffix): void
     {
+        wp_register_style('gro-admin-menu-icon', false, [], null);
+        wp_enqueue_style('gro-admin-menu-icon');
+        wp_add_inline_style(
+            'gro-admin-menu-icon',
+            '#adminmenu .toplevel_page_bertanex-flow div.wp-menu-image{display:flex;align-items:center;justify-content:center;}'
+            . '#adminmenu .toplevel_page_bertanex-flow div.wp-menu-image img{width:20px;height:20px;padding:0;object-fit:contain;}'
+        );
+
         if ($hook_suffix !== 'toplevel_page_' . self::PAGE_SLUG) {
             return;
         }
@@ -260,27 +316,15 @@ final class RulesController
         $base = BERTANEX_FLOW_PLUGIN_URL . 'assets/admin/';
 
         wp_enqueue_style('dashicons');
+        wp_enqueue_style('wp-components');
+        wp_enqueue_style('wp-edit-site');
 
         $cssVer = self::assetFileVersion('assets/admin/rules-visual-editor.css');
         wp_enqueue_style(
             'gro-rules-visual-editor',
             $base . 'rules-visual-editor.css',
-            [],
+            ['wp-edit-site', 'wp-components'],
             $cssVer
-        );
-
-        wp_enqueue_style(
-            'gro-rules-panel-polish',
-            $base . 'rules-panel-polish.css',
-            ['gro-rules-visual-editor'],
-            self::assetFileVersion('assets/admin/rules-panel-polish.css')
-        );
-
-        wp_enqueue_style(
-            'gro-rules-patterns',
-            $base . 'rules-patterns.css',
-            ['gro-rules-visual-editor', 'gro-rules-panel-polish'],
-            self::assetFileVersion('assets/admin/rules-patterns.css')
         );
 
         if (is_rtl()) {
@@ -297,15 +341,31 @@ final class RulesController
         wp_enqueue_script(
             'gro-rules-visual-editor',
             $base . 'rules-visual-editor.bundle.js',
-            [],
+            ['wp-element', 'wp-components'],
             self::assetFileVersion('assets/admin/rules-visual-editor.bundle.js'),
+            true
+        );
+
+        wp_enqueue_script(
+            'gro-sidebar-save',
+            $base . 'sidebar-save.js',
+            [],
+            self::assetFileVersion('assets/admin/sidebar-save.js'),
+            true
+        );
+
+        wp_enqueue_script(
+            'gro-confirm-dialog',
+            $base . 'confirm-dialog.js',
+            ['wp-element', 'wp-components'],
+            self::assetFileVersion('assets/admin/confirm-dialog.js'),
             true
         );
 
         wp_enqueue_script(
             'gro-sms-templates-settings',
             $base . 'sms-templates-settings.js',
-            [],
+            ['wp-element', 'wp-components', 'wp-i18n'],
             self::assetFileVersion('assets/admin/sms-templates-settings.js'),
             true
         );
@@ -346,6 +406,7 @@ final class RulesController
             [
                 'saveAjaxUrl'      => admin_url('admin-ajax.php'),
                 'saveAction'       => 'gro_rules_save',
+                'panelAction'      => 'gro_rules_panel',
                 'saveNonce'        => wp_create_nonce('gro_rules_save'),
                 'panelConfig'      => RulesEditorSettingsModel::panelConfigForScript(),
                 'defaultVersion'   => '1.0.0',
@@ -366,6 +427,11 @@ final class RulesController
                 'strings'          => [
                     'errInvalidRoot'   => __('JSON must be an object with a "rules" array.', 'bertanex-flow'),
                     'noRules'          => __('No rules yet. Add your first automation.', 'bertanex-flow'),
+                    'automationsTitle' => __('Automation Rules', 'bertanex-flow'),
+                    'automationsLede'  => __('Build automations, then manage SMS patterns, email templates, and delivery settings separately.', 'bertanex-flow'),
+                    'totalRules'       => __('Total rules', 'bertanex-flow'),
+                    'enabledRules'     => __('Enabled', 'bertanex-flow'),
+                    'rulesSummary'     => __('Rules summary', 'bertanex-flow'),
                     'addRule'          => __('Add rule', 'bertanex-flow'),
                     'versionLabel'     => __('Format version', 'bertanex-flow'),
                     'advancedBadge'    => __('Advanced', 'bertanex-flow'),
@@ -402,10 +468,13 @@ final class RulesController
                     'collapsedPriorityLabel' => __('Priority:', 'bertanex-flow'),
                     'confirmRemove'    => __('Remove this rule?', 'bertanex-flow'),
                     'confirmRemoveAdv' => __('Remove this rule from the document?', 'bertanex-flow'),
+                    'ruleSection'      => __('Rule', 'bertanex-flow'),
                     'triggerHeading'   => __('When to run', 'bertanex-flow'),
                     'triggerNone'      => __('Evaluate without event filter', 'bertanex-flow'),
+                    'triggerNoneHint'  => __('Runs whenever rules are checked', 'bertanex-flow'),
                     'triggerEvents'    => __('On automation events', 'bertanex-flow'),
                     'triggerSchedule'  => __('On a schedule (cron)', 'bertanex-flow'),
+                    'triggerScheduleHint' => __('WordPress cron recurrence', 'bertanex-flow'),
                     'customEventsLabel'=> __('Additional event names (comma-separated)', 'bertanex-flow'),
                     'eventsSelectedCount' => __('%1$s of %2$s events selected', 'bertanex-flow'),
                     'eventsSelectedHint' => __('Rule runs when any selected event fires.', 'bertanex-flow'),
@@ -702,12 +771,12 @@ final class RulesController
 
         add_menu_page(
             __('Automation Rules', 'bertanex-flow'),
-            __('Rules', 'bertanex-flow'),
+            __('Flow', 'bertanex-flow'),
             'manage_options',
             self::PAGE_SLUG,
             [$this, 'render'],
-            'dashicons-clipboard',
-            58
+            \BERTANEX_FLOW_PLUGIN_URL . 'assets/admin/bertanex-flow-logo.svg',
+            61
         );
     }
 

@@ -75,39 +75,37 @@ export function ActionItem({ ruleIndex, idx, row: a, editable: e, onChange }: Ac
     const selected = smsTemplates.find((x) => x.id === row.template_id);
     const previewBody = selected?.body ?? '';
 
+    const TextControl = window.wp.components.TextControl;
+    const SelectControl = window.wp.components.SelectControl;
+    const Button = window.wp.components.Button;
+
     if (!showPicker) {
       return (
-        <p className="gro-action-field gro-action-field--template">
-          <label>
-            <strong>{t(cfg, 'templateId', 'template_id')}</strong>
-            <input
-              type="text"
-              className="regular-text code"
-              value={row.template_id}
-              onChange={(ev) => onRowChange({ ...row, template_id: ev.target.value })}
-            />
-          </label>
-        </p>
+        <TextControl
+          label={t(cfg, 'templateId', 'template_id')}
+          value={row.template_id}
+          onChange={(template_id: string) => onRowChange({ ...row, template_id })}
+          __nextHasNoMarginBottom
+          __next40pxDefaultSize
+        />
       );
     }
 
     if (customTemplateId) {
       return (
-        <p className="gro-action-field gro-action-field--template">
-          <label>
-            <strong>{t(cfg, 'templateId', 'template_id')}</strong>
-            <input
-              type="text"
-              className="regular-text code"
-              value={row.template_id}
-              onChange={(ev) => onRowChange({ ...row, template_id: ev.target.value })}
-              placeholder={t(cfg, 'templateCustom', 'Custom template ID…')}
-            />
-          </label>
-          <button type="button" className="button-link gro-action-template-back" onClick={() => setCustomTemplateId(false)}>
+        <>
+          <TextControl
+            label={t(cfg, 'templateId', 'template_id')}
+            value={row.template_id}
+            placeholder={t(cfg, 'templateCustom', 'Custom template ID…')}
+            onChange={(template_id: string) => onRowChange({ ...row, template_id })}
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize
+          />
+          <Button variant="tertiary" onClick={() => setCustomTemplateId(false)}>
             {t(cfg, 'templateSelect', 'SMS template')}
-          </button>
-        </p>
+          </Button>
+        </>
       );
     }
 
@@ -115,87 +113,80 @@ export function ActionItem({ ruleIndex, idx, row: a, editable: e, onChange }: Ac
     const orphanInList = orphanId !== '' && !smsTemplates.some((x) => x.id === orphanId);
 
     return (
-      <p className="gro-action-field gro-action-field--template gro-action-field--template-picker">
-        <label>
-          <strong>{t(cfg, 'templateSelect', 'SMS template')}</strong>
-          <select
-            value={orphanInList ? orphanId : row.template_id}
-            onChange={(ev) => {
-              const v = ev.target.value;
-              if (v === '__custom__') {
-                setCustomTemplateId(true);
-                onRowChange({ ...row, template_id: '' });
-                return;
-              }
-              onRowChange({ ...row, template_id: v });
-            }}
-          >
-            <option value="">{t(cfg, 'valueSelectPlaceholder', 'Select a value…')}</option>
-            {smsTemplates.map((tpl) => (
-              <option key={tpl.id} value={tpl.id}>
-                {tpl.label} ({tpl.id})
-              </option>
-            ))}
-            {orphanInList ? (
-              <option value={orphanId}>
-                {orphanId}
-              </option>
-            ) : null}
-            <option value="__custom__">{t(cfg, 'templateCustom', 'Custom template ID…')}</option>
-          </select>
-        </label>
+      <>
+        <SelectControl
+          label={t(cfg, 'templateSelect', 'SMS template')}
+          value={orphanInList ? orphanId : row.template_id}
+          options={[
+            { label: t(cfg, 'valueSelectPlaceholder', 'Select a value…'), value: '' },
+            ...smsTemplates.map((tpl) => ({ label: `${tpl.label} (${tpl.id})`, value: tpl.id })),
+            ...(orphanInList ? [{ label: orphanId, value: orphanId }] : []),
+            { label: t(cfg, 'templateCustom', 'Custom template ID…'), value: '__custom__' },
+          ]}
+          onChange={(value: string) => {
+            if (value === '__custom__') {
+              setCustomTemplateId(true);
+              onRowChange({ ...row, template_id: '' });
+              return;
+            }
+            onRowChange({ ...row, template_id: value });
+          }}
+          __nextHasNoMarginBottom
+          __next40pxDefaultSize
+        />
         {previewBody ? (
-          <p className="description gro-action-template-preview">
-            <span className="gro-action-template-preview__label">{t(cfg, 'templatePreview', 'Preview:')}</span>{' '}
-            {previewBody}
-          </p>
+          <div className="gro-action-preview">
+            <span className="gro-action-preview__label">{t(cfg, 'templatePreview', 'Preview:')}</span>
+            <p className="gro-action-preview__text">{previewBody}</p>
+          </div>
         ) : null}
-        <p className="description">
-          <button type="button" className="button-link" onClick={openPatternsTab}>
-            {t(cfg, 'templateConfigHint', 'Edit message text under Message patterns.')}
-          </button>
-        </p>
-      </p>
+        <Button className="gro-action-form__link" variant="link" onClick={openPatternsTab}>
+          {t(cfg, 'templateConfigHint', 'Edit message text under Message patterns.')}
+        </Button>
+      </>
     );
   };
 
   const renderForm = (row: ActionRowUi, onRowChange: (next: ActionRowUi) => void): React.ReactElement => (
-    <div className="gro-action-row gro-action-row--nested">
-      <div className="gro-action-row__grid gro-action-row__grid--main">
-        <p className="gro-action-field gro-action-field--type">
-          <label>
-            <strong>{t(cfg, 'actionType', 'Type')}</strong>
-            <select value={at.includes(row.type) ? row.type : at[0]} onChange={(ev) => onRowChange({ ...row, type: ev.target.value })}>
-              {at.map((x) => (
-                <option key={x} value={x}>
-                  {slugLabel(cfg.actionTypeLabels, x)}
-                </option>
-              ))}
-            </select>
-          </label>
-        </p>
-        {renderTemplateField(row, onRowChange)}
-      </div>
-      <div className="gro-action-field gro-action-field--delay gro-action-field--delay-schedule">
-        <strong className="gro-action-field__legend">{t(cfg, 'delayLabel', 'Delay')}</strong>
-        <ActionDelayField
-          schedule={row.delaySchedule ?? defaultDelaySchedule()}
-          onChange={(schedule, delaySeconds) =>
-            onRowChange({ ...row, delaySchedule: schedule, delay_seconds: delaySeconds })
-          }
-        />
-      </div>
-      <p className="gro-action-row__params">
-        <label>
-          <strong>{t(cfg, 'paramsJson', 'params (JSON object)')}</strong>
-          <textarea
-            rows={4}
-            className="large-text code"
-            value={row.paramsJson}
-            onChange={(ev) => onRowChange({ ...row, paramsJson: ev.target.value })}
+    <div className="gro-action-form">
+      <section className="gro-action-form__section">
+        <h3 className="gro-action-form__heading">{t(cfg, 'actionsHeading', 'Actions')}</h3>
+        <div className="gro-action-form__body">
+          {React.createElement(window.wp.components.SelectControl, {
+            label: t(cfg, 'actionType', 'Type'),
+            value: at.includes(row.type) ? row.type : at[0],
+            options: at.map((x) => ({ label: slugLabel(cfg.actionTypeLabels, x), value: x })),
+            onChange: (type: string) => onRowChange({ ...row, type }),
+            __nextHasNoMarginBottom: true,
+            __next40pxDefaultSize: true,
+          })}
+          {renderTemplateField(row, onRowChange)}
+        </div>
+      </section>
+      <section className="gro-action-form__section">
+        <h3 className="gro-action-form__heading">{t(cfg, 'delayLabel', 'Delay')}</h3>
+        <div className="gro-action-form__body">
+          <ActionDelayField
+            schedule={row.delaySchedule ?? defaultDelaySchedule()}
+            onChange={(schedule, delaySeconds) =>
+              onRowChange({ ...row, delaySchedule: schedule, delay_seconds: delaySeconds })
+            }
           />
-        </label>
-      </p>
+        </div>
+      </section>
+      <section className="gro-action-form__section">
+        <h3 className="gro-action-form__heading">{t(cfg, 'paramsJson', 'params (JSON object)')}</h3>
+        <div className="gro-action-form__body">
+          {React.createElement(window.wp.components.TextareaControl, {
+            label: t(cfg, 'paramsJson', 'params (JSON object)'),
+            hideLabelFromVision: true,
+            rows: 5,
+            value: row.paramsJson,
+            onChange: (paramsJson: string) => onRowChange({ ...row, paramsJson }),
+            __nextHasNoMarginBottom: true,
+          })}
+        </div>
+      </section>
     </div>
   );
 
@@ -248,11 +239,6 @@ export function ActionItem({ ruleIndex, idx, row: a, editable: e, onChange }: Ac
         title={`${t(cfg, 'actionsHeading', 'Actions')} #${numHuman}`}
         isOpen={isOpen}
         onClose={applyAndClose}
-        footer={
-          <GroButton variant="primary" size="md" icon="save" onClick={applyAndClose}>
-            {t(cfg, 'modalClose', 'Close')}
-          </GroButton>
-        }
       >
         {draft ? renderForm(draft, setDraft) : null}
       </Modal>

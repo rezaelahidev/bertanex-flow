@@ -1,6 +1,5 @@
 import React from 'react';
 
-/** WordPress dashicons (available on admin screens). */
 export type GroIconName =
   | 'add'
   | 'delete'
@@ -16,20 +15,20 @@ export type GroIconName =
   | 'clock'
   | 'settings';
 
-const DASHICON_CLASS: Record<GroIconName, string> = {
-  add: 'dashicons-plus-alt2',
-  delete: 'dashicons-trash',
-  edit: 'dashicons-visibility',
-  duplicate: 'dashicons-admin-page',
-  up: 'dashicons-arrow-up-alt2',
-  down: 'dashicons-arrow-down-alt2',
-  save: 'dashicons-saved',
-  close: 'dashicons-no-alt',
-  condition: 'dashicons-filter',
-  action: 'dashicons-controls-play',
-  trigger: 'dashicons-calendar-alt',
-  clock: 'dashicons-clock',
-  settings: 'dashicons-admin-generic',
+const ICONS: Record<GroIconName, string> = {
+  add: 'plus',
+  delete: 'trash',
+  edit: 'edit',
+  duplicate: 'admin-page',
+  up: 'arrow-up-alt2',
+  down: 'arrow-down-alt2',
+  save: 'saved',
+  close: 'no-alt',
+  condition: 'filter',
+  action: 'controls-play',
+  trigger: 'calendar-alt',
+  clock: 'clock',
+  settings: 'admin-generic',
 };
 
 export interface GroIconProps {
@@ -37,6 +36,7 @@ export interface GroIconProps {
   className?: string;
 }
 
-export function GroIcon({ name, className = '' }: GroIconProps): React.ReactElement {
-  return <span className={`gro-icon dashicons ${DASHICON_CLASS[name]} ${className}`.trim()} aria-hidden="true" />;
+export function GroIcon({ name }: GroIconProps): React.ReactElement {
+  const Icon = window.wp.components.Icon;
+  return <Icon icon={ICONS[name]} />;
 }

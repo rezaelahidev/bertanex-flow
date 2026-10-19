@@ -25,6 +25,7 @@ export interface SmsTemplateChoice {
 export interface GroRulesEditorConfig {
   saveAjaxUrl?: string;
   saveAction?: string;
+  panelAction?: string;
   saveNonce?: string;
   panelConfig?: RulesPanelConfig;
   /** SMS templates from Configuration tab (id, label, resolved body). */

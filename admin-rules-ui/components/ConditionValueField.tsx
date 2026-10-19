@@ -19,6 +19,8 @@ export interface ConditionValueFieldProps {
 
 export function ConditionValueField({ row, suggestedFields, onRowChange }: ConditionValueFieldProps): React.ReactElement | null {
   const cfg = useCfg();
+  const TextareaControl = window.wp.components.TextareaControl;
+  const SelectControl = window.wp.components.SelectControl;
 
   const fieldDef = useMemo(() => findConditionField(suggestedFields, row.field), [row.field, suggestedFields]);
   const usePresets = fieldHasPresetValues(fieldDef, row.op);
@@ -44,17 +46,14 @@ export function ConditionValueField({ row, suggestedFields, onRowChange }: Condi
 
   if (!usePresets) {
     return (
-      <div className="gro-nested-field gro-nested-field--full">
-        <label>
-          <strong>{t(cfg, 'valueCol', 'Value (JSON)')}</strong>
-          <textarea
-            rows={3}
-            value={row.valueJson}
-            placeholder={t(cfg, 'valueJsonPlaceholder', 'Examples: true, false, 3, "text", []')}
-            onChange={(ev) => onRowChange({ ...row, valueJson: ev.target.value })}
-          />
-        </label>
-      </div>
+      <TextareaControl
+        label={t(cfg, 'valueCol', 'Value (JSON)')}
+        rows={3}
+        value={row.valueJson}
+        placeholder={t(cfg, 'valueJsonPlaceholder', 'Examples: true, false, 3, "text", []')}
+        onChange={(valueJson: string) => onRowChange({ ...row, valueJson })}
+        __nextHasNoMarginBottom
+      />
     );
   }
 
@@ -62,42 +61,37 @@ export function ConditionValueField({ row, suggestedFields, onRowChange }: Condi
   const selectValue = customMode ? '__custom__' : matchedChoice ? valueJsonForChoice(matchedChoice) : '';
 
   return (
-    <div className="gro-nested-field gro-nested-field--full">
-      <label>
-        <strong>{t(cfg, 'valueColShort', 'Value')}</strong>
-        <select
-          value={selectValue}
-          onChange={(ev) => {
-            const v = ev.target.value;
-            if (v === '__custom__') {
-              setCustomMode(true);
-              return;
-            }
-            setCustomMode(false);
-            onRowChange({ ...row, valueJson: v });
-          }}
-        >
-          <option value="" disabled>
-            {t(cfg, 'valueSelectPlaceholder', 'Select a value…')}
-          </option>
-          {choices.map((choice) => (
-            <option key={valueJsonForChoice(choice)} value={valueJsonForChoice(choice)}>
-              {choice.label}
-            </option>
-          ))}
-          <option value="__custom__">{t(cfg, 'customValue', 'Custom value (JSON)…')}</option>
-        </select>
-      </label>
+    <>
+      <SelectControl
+        label={t(cfg, 'valueColShort', 'Value')}
+        value={selectValue}
+        options={[
+          { label: t(cfg, 'valueSelectPlaceholder', 'Select a value…'), value: '', disabled: true },
+          ...choices.map((choice) => ({ label: choice.label, value: valueJsonForChoice(choice) })),
+          { label: t(cfg, 'customValue', 'Custom value (JSON)…'), value: '__custom__' },
+        ]}
+        onChange={(value: string) => {
+          if (value === '__custom__') {
+            setCustomMode(true);
+            return;
+          }
+          setCustomMode(false);
+          onRowChange({ ...row, valueJson: value });
+        }}
+        __nextHasNoMarginBottom
+        __next40pxDefaultSize
+      />
       {customMode ? (
-        <textarea
+        <TextareaControl
+          label={t(cfg, 'customValue', 'Custom value (JSON)…')}
           rows={3}
-          className="gro-condition-custom-value"
           value={row.valueJson}
           placeholder={t(cfg, 'valueJsonPlaceholder', 'Examples: true, false, 3, "text", []')}
-          onChange={(ev) => onRowChange({ ...row, valueJson: ev.target.value })}
+          onChange={(valueJson: string) => onRowChange({ ...row, valueJson })}
+          __nextHasNoMarginBottom
         />
       ) : null}
-    </div>
+    </>
   );
 }
 

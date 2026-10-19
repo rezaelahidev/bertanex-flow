@@ -7,7 +7,6 @@ import {
   type ActionDelayTimeMode,
 } from '../delaySchedule';
 import { DateInput } from './DateInput';
-import { GroIcon } from './GroIcon';
 import { t, useCfg } from './ConfigContext';
 import React, { useMemo } from 'react';
 
@@ -39,23 +38,16 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
   };
 
   return (
-    <div className="gro-action-delay">
-      <div className="gro-action-delay__mode" role="group" aria-label={t(cfg, 'delayLabel', 'Delay')}>
+    <div className="gro-action-delay" role="group" aria-label={t(cfg, 'delayLabel', 'Delay')}>
+      <div className="gro-action-delay__mode">
         <button
           type="button"
           className={`gro-action-delay__mode-btn${!schedule.active ? ' is-active' : ''}`}
           aria-pressed={!schedule.active}
           onClick={() => setActive(false)}
         >
-          <span className="gro-action-delay__mode-icon" aria-hidden>
-            <GroIcon name="action" />
-          </span>
-          <span className="gro-action-delay__mode-text">
-            <span className="gro-action-delay__mode-title">{t(cfg, 'delayImmediateShort', 'Immediate')}</span>
-            <span className="gro-action-delay__mode-desc">
-              {t(cfg, 'delayModeImmediateHint', 'When the rule matches')}
-            </span>
-          </span>
+          <span className="gro-action-delay__mode-title">{t(cfg, 'delayImmediateShort', 'Immediate')}</span>
+          <span className="gro-action-delay__mode-desc">{t(cfg, 'delayModeImmediateHint', 'When the rule matches')}</span>
         </button>
         <button
           type="button"
@@ -63,15 +55,8 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
           aria-pressed={schedule.active}
           onClick={() => setActive(true)}
         >
-          <span className="gro-action-delay__mode-icon" aria-hidden>
-            <GroIcon name="trigger" />
-          </span>
-          <span className="gro-action-delay__mode-text">
-            <span className="gro-action-delay__mode-title">{t(cfg, 'delayModeSchedule', 'Schedule')}</span>
-            <span className="gro-action-delay__mode-desc">
-              {t(cfg, 'delayModeScheduleHint', 'Pick date and time after now')}
-            </span>
-          </span>
+          <span className="gro-action-delay__mode-title">{t(cfg, 'delayModeSchedule', 'Schedule')}</span>
+          <span className="gro-action-delay__mode-desc">{t(cfg, 'delayModeScheduleHint', 'Pick date and time after now')}</span>
         </button>
       </div>
 
@@ -80,7 +65,6 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
           <div className="gro-action-delay__panels">
             <section className="gro-action-delay__panel" aria-labelledby="gro-delay-date-heading">
               <header className="gro-action-delay__panel-head" id="gro-delay-date-heading">
-                <GroIcon name="trigger" className="gro-action-delay__panel-icon" />
                 <span>{t(cfg, 'delayDateLegend', 'Date')}</span>
               </header>
               <div className="gro-action-delay__chips" role="group" aria-label={t(cfg, 'delayDateLegend', 'Date')}>
@@ -109,20 +93,16 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
                 </DelayChip>
               </div>
               {schedule.dateMode === 'days' ? (
-                <div className="gro-action-delay__detail">
-                  <label className="gro-action-delay__detail-label">
-                    <span>{t(cfg, 'delayDateInDays', 'In')}</span>
-                    <input
-                      type="number"
-                      className="gro-action-delay__stepper"
-                      min={1}
-                      max={365}
-                      value={schedule.days}
-                      onChange={(ev) => patch({ dateMode: 'days', days: parseInt(ev.target.value, 10) || 1 })}
-                    />
-                    <span>{t(cfg, 'delayDateDaysLabel', 'days')}</span>
-                  </label>
-                </div>
+                React.createElement(window.wp.components.TextControl, {
+                  label: `${t(cfg, 'delayDateInDays', 'In')} ${t(cfg, 'delayDateDaysLabel', 'days')}`,
+                  type: 'number',
+                  min: 1,
+                  max: 365,
+                  value: String(schedule.days),
+                  onChange: (value: string) => patch({ dateMode: 'days', days: parseInt(value, 10) || 1 }),
+                  __nextHasNoMarginBottom: true,
+                  __next40pxDefaultSize: true,
+                })
               ) : null}
               {schedule.dateMode === 'custom' ? (
                 <div className="gro-action-delay__detail">
@@ -162,7 +142,6 @@ export function ActionDelayField({ schedule, onChange }: ActionDelayFieldProps):
 
             <section className="gro-action-delay__panel" aria-labelledby="gro-delay-time-heading">
               <header className="gro-action-delay__panel-head" id="gro-delay-time-heading">
-                <GroIcon name="clock" className="gro-action-delay__panel-icon" />
                 <span>{t(cfg, 'delayTimeLegend', 'Time')}</span>
               </header>
               <p className="gro-action-delay__panel-note description">
@@ -229,10 +208,16 @@ function DelayChip({
   onClick: () => void;
   children: React.ReactNode;
 }): React.ReactElement {
+  const Button = window.wp.components.Button;
   return (
-    <button type="button" className={`gro-delay-chip${selected ? ' is-selected' : ''}`} aria-pressed={selected} onClick={onClick}>
+    <Button
+      variant="secondary"
+      className={`gro-delay-chip${selected ? ' is-selected' : ''}`}
+      aria-pressed={selected}
+      onClick={onClick}
+    >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -255,18 +240,14 @@ function RelativeTimeDetail({
         : t(cfg, 'delayTimeSeconds', 'seconds');
   const max = mode === 'hours' ? 168 : mode === 'minutes' ? 10080 : 86400;
 
-  return (
-    <label className="gro-action-delay__detail-label">
-      <span>+</span>
-      <input
-        type="number"
-        className="gro-action-delay__stepper"
-        min={1}
-        max={max}
-        value={amount > 0 ? amount : 1}
-        onChange={(ev) => onAmount(parseInt(ev.target.value, 10) || 1)}
-      />
-      <span>{unit}</span>
-    </label>
-  );
+  return React.createElement(window.wp.components.TextControl, {
+    label: `+ ${unit}`,
+    type: 'number',
+    min: 1,
+    max,
+    value: String(amount > 0 ? amount : 1),
+    onChange: (value: string) => onAmount(parseInt(value, 10) || 1),
+    __nextHasNoMarginBottom: true,
+    __next40pxDefaultSize: true,
+  });
 }

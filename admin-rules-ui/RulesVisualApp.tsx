@@ -8,6 +8,7 @@ import {
 } from './ruleModel';
 import { AdvancedRuleCard } from './components/AdvancedRuleCard';
 import { CfgContext, gridColsClass, normalizeConfig, t } from './components/ConfigContext';
+import { ConfirmDialog } from './components/ConfirmDialog';
 import { GroButton } from './components/GroButton';
 import { SimpleRuleCard } from './components/SimpleRuleCard';
 import { documentJson, useRulesPersistence } from './hooks/useRulesPersistence';
@@ -41,7 +42,7 @@ export interface RulesVisualAppProps {
   textareaId?: string;
 }
 
-type RulesWorkspaceTab = 'visual' | 'config' | 'patterns';
+type RulesWorkspaceTab = 'visual' | 'config' | 'reset' | 'patterns' | 'email' | 'runs';
 
 export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualAppProps): React.ReactElement {
   const cfg = useMemo(() => normalizeConfig(window.groRulesEditor), []);
@@ -50,6 +51,7 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
   const [version, setVersion] = useState(init.version);
   const [uiRules, setUiRules] = useState<UiRule[]>(init.rules);
   const [parseError, setParseError] = useState<string | null>(init.bootstrapError);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const { setSavedSnapshot, isSaving, saveNotice, hasUnsavedChanges, persistDocument } = useRulesPersistence(cfg);
 
@@ -83,41 +85,42 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
   }, [cfg, getTextarea]);
 
   const syncPanelsForTab = useCallback((tab: RulesWorkspaceTab): void => {
-    const tabV = document.querySelector<HTMLElement>('[data-gro-tab="visual"]');
-    const tabP = document.querySelector<HTMLElement>('[data-gro-tab="patterns"]');
-    const tabC = document.querySelector<HTMLElement>('[data-gro-tab="config"]');
     const tabActiveClass = 'gro-tabs__tab--active';
-    const panelVisual = document.getElementById('gro-rules-panel-visual');
-    const panelPatterns = document.getElementById('gro-rules-panel-patterns');
-    const panelConfig = document.getElementById('gro-rules-panel-config');
+    document.querySelectorAll<HTMLElement>('[data-gro-tab]').forEach((el) => {
+      const on = el.getAttribute('data-gro-tab') === tab;
+      el.classList.toggle(tabActiveClass, on);
+      el.classList.remove('is-primary', 'is-secondary');
+      if (on) {
+        el.setAttribute('aria-current', 'true');
+      } else {
+        el.removeAttribute('aria-current');
+      }
+      el.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.querySelectorAll<HTMLElement>('[data-gro-panel]').forEach((panel) => {
+      const on = panel.getAttribute('data-gro-panel') === tab;
+      panel.hidden = !on;
+      panel.toggleAttribute('hidden', !on);
+      panel.setAttribute('aria-hidden', on ? 'false' : 'true');
+    });
+    const panelUrl = cfg.saveAjaxUrl;
+    const panelAction = cfg.panelAction;
+    const panelNonce = cfg.saveNonce;
+    if (panelUrl && panelAction && panelNonce) {
+      const body = new URLSearchParams();
+      body.set('action', panelAction);
+      body.set('nonce', panelNonce);
+      body.set('tab', tab);
+      void fetch(panelUrl, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: body.toString(),
+      });
+    }
     const editorForm = document.getElementById('gro-rules-editor-form');
-    const isVisual = tab === 'visual';
-    const isPatterns = tab === 'patterns';
-    const isConfig = tab === 'config';
-    const hideEditor = isConfig || isPatterns;
-
-    tabV?.classList.toggle(tabActiveClass, isVisual);
-    tabV?.setAttribute('aria-selected', isVisual ? 'true' : 'false');
-    tabP?.classList.toggle(tabActiveClass, isPatterns);
-    tabP?.setAttribute('aria-selected', isPatterns ? 'true' : 'false');
-    tabC?.classList.toggle(tabActiveClass, isConfig);
-    tabC?.setAttribute('aria-selected', isConfig ? 'true' : 'false');
-
-    if (panelVisual) {
-      panelVisual.hidden = !isVisual;
-      panelVisual.setAttribute('aria-hidden', isVisual ? 'false' : 'true');
-    }
-    if (panelPatterns) {
-      panelPatterns.hidden = !isPatterns;
-      panelPatterns.toggleAttribute('hidden', !isPatterns);
-      panelPatterns.setAttribute('aria-hidden', isPatterns ? 'false' : 'true');
-    }
-    if (panelConfig) {
-      panelConfig.hidden = !isConfig;
-      panelConfig.toggleAttribute('hidden', !isConfig);
-      panelConfig.setAttribute('aria-hidden', isConfig ? 'false' : 'true');
-    }
     if (editorForm) {
+      const hideEditor = tab !== 'visual';
       editorForm.hidden = hideEditor;
       editorForm.toggleAttribute('hidden', hideEditor);
     }
@@ -127,7 +130,7 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     (next: RulesWorkspaceTab): void => {
       activeTabRef.current = next;
 
-      if (next === 'config' || next === 'patterns') {
+      if (next !== 'visual') {
         syncPanelsForTab(next);
         return;
       }
@@ -155,49 +158,31 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     flushToTextarea();
     const result = await persistDocument(versionRef.current, uiRulesRef.current);
     if (!result.ok) {
-      window.alert(result.message);
+      setSaveError(result.message);
     }
-  }, [flushToTextarea, persistDocument]);
-
-  const handleSaveRule = useCallback(async (): Promise<boolean> => {
-    flushToTextarea();
-    const result = await persistDocument(versionRef.current, uiRulesRef.current);
-    if (!result.ok) {
-      window.alert(result.message);
-      return false;
-    }
-    return true;
   }, [flushToTextarea, persistDocument]);
 
   useEffect(() => {
-    const btn = document.getElementById('gro-rules-save-all') as HTMLButtonElement | null;
-    if (!btn) return;
-    const tab = activeTabRef.current;
-    const hideSaveAll = tab === 'config' || tab === 'patterns';
-    btn.hidden = hideSaveAll;
-    btn.toggleAttribute('hidden', hideSaveAll);
-    btn.disabled = parseError !== null || !dirty || isSaving;
-    btn.textContent = isSaving ? t(cfg, 'saving', 'Saving…') : t(cfg, 'saveAll', 'Save all');
-  }, [cfg, dirty, isSaving, parseError]);
+    document.dispatchEvent(
+      new CustomEvent('gro-rules-state', {
+        detail: { dirty: dirty && parseError === null, saving: isSaving },
+      }),
+    );
+  }, [dirty, isSaving, parseError]);
 
   useLayoutEffect(() => {
     const ta = getTextarea();
     const form = ta?.form ?? null;
-    const saveAllBtn = document.getElementById('gro-rules-save-all');
 
-    const onVisualClick = (): void => {
-      revealTabRef.current('visual');
+    const tabList = document.querySelector('.gro-tabs');
+    const onTabClick = (ev: Event): void => {
+      const button = (ev.target as HTMLElement | null)?.closest<HTMLElement>('[data-gro-tab]');
+      const next = button?.getAttribute('data-gro-tab');
+      if (next === 'visual' || next === 'patterns' || next === 'email' || next === 'runs' || next === 'config' || next === 'reset') {
+        revealTabRef.current(next);
+      }
     };
-    const onPatternsClick = (): void => {
-      revealTabRef.current('patterns');
-    };
-    const onConfigClick = (): void => {
-      revealTabRef.current('config');
-    };
-
-    document.querySelector<HTMLButtonElement>('[data-gro-tab="visual"]')?.addEventListener('click', onVisualClick);
-    document.querySelector<HTMLButtonElement>('[data-gro-tab="patterns"]')?.addEventListener('click', onPatternsClick);
-    document.querySelector<HTMLButtonElement>('[data-gro-tab="config"]')?.addEventListener('click', onConfigClick);
+    tabList?.addEventListener('click', onTabClick);
 
     const onSubmit = (ev: SubmitEvent): void => {
       if (activeTabRef.current !== 'visual') return;
@@ -205,20 +190,19 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
       void handleSaveAll();
     };
 
-    const onSaveAllClick = (ev: MouseEvent): void => {
+    const onSidebarSave = (): void => {
       if (activeTabRef.current !== 'visual') return;
-      ev.preventDefault();
       void handleSaveAll();
     };
 
     form?.addEventListener('submit', onSubmit);
-    saveAllBtn?.addEventListener('click', onSaveAllClick);
+    document.addEventListener('gro-sidebar-save', onSidebarSave);
 
     activeTabRef.current = null;
 
     const openTab = document.documentElement.dataset.groOpenRulesTab;
-    if (openTab === 'config' || openTab === 'patterns') {
-      delete document.documentElement.dataset.groOpenRulesTab;
+    delete document.documentElement.dataset.groOpenRulesTab;
+    if (openTab === 'config' || openTab === 'reset' || openTab === 'patterns' || openTab === 'email' || openTab === 'runs' || openTab === 'visual') {
       revealTabRef.current(openTab);
     } else {
       revealTabRef.current('visual');
@@ -239,11 +223,9 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     }
 
     return () => {
-      document.querySelector<HTMLButtonElement>('[data-gro-tab="visual"]')?.removeEventListener('click', onVisualClick);
-      document.querySelector<HTMLButtonElement>('[data-gro-tab="patterns"]')?.removeEventListener('click', onPatternsClick);
-      document.querySelector<HTMLButtonElement>('[data-gro-tab="config"]')?.removeEventListener('click', onConfigClick);
+      tabList?.removeEventListener('click', onTabClick);
       form?.removeEventListener('submit', onSubmit);
-      saveAllBtn?.removeEventListener('click', onSaveAllClick);
+      document.removeEventListener('gro-sidebar-save', onSidebarSave);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps -- one-time bootstrap wiring to PHP tabs / form
   }, []);
@@ -291,31 +273,48 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
     });
   }, []);
 
+  const Notice = window.wp.components.Notice;
+  const enabledCount = parseError === null
+    ? uiRules.filter((rule) => (rule.type === 'simple' ? rule.editable.enabled : rule.snapshot.enabled !== false)).length
+    : 0;
+
   return (
     <CfgContext.Provider value={cfg}>
       <div className="gro-rules-visual-inner">
+        <header className="gro-page-header">
+          <div className="gro-page-header__titles">
+            <h1 className="gro-page-header__title">{t(cfg, 'automationsTitle', 'Automation Rules')}</h1>
+            <p className="gro-page-header__lede">{t(cfg, 'automationsLede', 'Build automations, then manage SMS patterns, email templates, and delivery settings separately.')}</p>
+          </div>
+          {parseError === null ? (
+            <dl className="gro-page-stats" aria-label={t(cfg, 'rulesSummary', 'Rules summary')}>
+              <div className="gro-page-stats__item">
+                <dt>{t(cfg, 'totalRules', 'Total rules')}</dt>
+                <dd>{uiRules.length}</dd>
+              </div>
+              <div className="gro-page-stats__item gro-page-stats__item--accent">
+                <dt>{t(cfg, 'enabledRules', 'Enabled')}</dt>
+                <dd>{enabledCount}</dd>
+              </div>
+            </dl>
+          ) : null}
+        </header>
         <div className="gro-rules-visual__toolbar">
           <div className="gro-rules-visual__toolbar-primary">
             <GroButton variant="primary" size="lg" icon="add" className="gro-btn-add-rule" onClick={addRule} disabled={parseError !== null}>
               {t(cfg, 'addRule', 'Add rule')}
             </GroButton>
           </div>
-          <div className="gro-rules-visual__version">
-            <label htmlFor="gro_rules_doc_version">{t(cfg, 'versionLabel', 'Format version')}</label>
-            <input
-              id="gro_rules_doc_version"
-              type="text"
-              value={version}
-              onChange={(ev) => setVersion(ev.target.value)}
-              disabled={parseError !== null}
-            />
-          </div>
         </div>
-        {parseError !== null ? <div className="gro-banner gro-banner--error">{parseError}</div> : null}
+        {parseError !== null ? (
+          <Notice status="error" isDismissible={false}>
+            {parseError}
+          </Notice>
+        ) : null}
         {saveNotice !== null && parseError === null ? (
-          <div className="gro-banner gro-banner--success" role="status">
-            <p>{saveNotice}</p>
-          </div>
+          <Notice status="success" isDismissible={false}>
+            {saveNotice}
+          </Notice>
         ) : null}
         {parseError === null && uiRules.length === 0 ? (
           <p className="description gro-rules-visual__empty-hint">{t(cfg, 'noRules', 'No rules yet. Add your first automation.')}</p>
@@ -345,15 +344,19 @@ export function RulesVisualApp({ textareaId = 'gro_rules_json' }: RulesVisualApp
                     onDuplicate={() => duplicateAt(ri)}
                     onMove={(d) => moveRule(ri, d)}
                     onRemove={() => setUiRules((prev) => prev.filter((_, i) => i !== ri))}
-                    onSave={handleSaveRule}
-                    isSaving={isSaving}
-                    hasDocumentChanges={dirty}
                   />
                 )}
               </li>
             ))}
           </ul>
         ) : null}
+        <ConfirmDialog
+          isOpen={saveError !== null}
+          message={saveError ?? ''}
+          confirmLabel={t(cfg, 'modalClose', 'OK')}
+          onConfirm={() => setSaveError(null)}
+          onCancel={() => setSaveError(null)}
+        />
       </div>
     </CfgContext.Provider>
   );

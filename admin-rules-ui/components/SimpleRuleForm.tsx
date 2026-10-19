@@ -24,58 +24,65 @@ export function SimpleRuleForm({
   onRemove,
 }: SimpleRuleFormProps): React.ReactElement {
   const cfg = useCfg();
+  const TextControl = window.wp.components.TextControl;
+  const CheckboxControl = window.wp.components.CheckboxControl;
 
   return (
-    <>
-      <header className="gro-rule-modal__head">
-        <h4 className="gro-rule-modal__heading">{t(cfg, 'ruleDetailsHeading', 'Edit rule')}</h4>
-        <input
-          type="text"
-          className="regular-text gro-rule-modal__label-input"
-          placeholder={t(cfg, 'placeholderLabel', 'Label (optional)')}
-          value={e.label}
-          onChange={(ev) => onChange({ ...e, label: ev.target.value })}
-        />
-        <span className="gro-rule-card__meta">
-          <label>
-            <input type="checkbox" checked={e.enabled} onChange={(ev) => onChange({ ...e, enabled: ev.target.checked })} />{' '}
-            {t(cfg, 'enabledLabel', 'Enabled')}
-          </label>
-          <label>
-            {t(cfg, 'priorityLabel', 'Priority')}{' '}
-            <input
+    <div className="gro-action-form">
+      <section className="gro-action-form__section">
+        <h3 className="gro-action-form__heading">{t(cfg, 'ruleSection', 'Rule')}</h3>
+        <div className="gro-action-form__body">
+          <TextControl
+            className="gro-editor-modal__label"
+            label={t(cfg, 'placeholderLabel', 'Label (optional)')}
+            value={e.label}
+            onChange={(label: string) => onChange({ ...e, label })}
+            __nextHasNoMarginBottom
+            __next40pxDefaultSize
+          />
+          <div className="gro-rule-fields">
+            <TextControl
+              label={t(cfg, 'priorityLabel', 'Priority')}
               type="number"
-              step={1}
-              style={{ width: '5em' }}
-              value={e.priority}
-              onChange={(ev) => onChange({ ...e, priority: parseInt(ev.target.value, 10) || 10 })}
+              value={String(e.priority)}
+              onChange={(value: string) => onChange({ ...e, priority: parseInt(value, 10) || 10 })}
+              __nextHasNoMarginBottom
+              __next40pxDefaultSize
             />
-          </label>
-          <label>
-            {t(cfg, 'ruleIdShort', 'id')}{' '}
-            <input type="text" className="code" style={{ width: '16em' }} value={e.id} onChange={(ev) => onChange({ ...e, id: ev.target.value })} />
-          </label>
-        </span>
-        <div className="gro-rule-card__actions-row">
-          <GroButton size="sm" icon="duplicate" onClick={onDuplicate}>
-            {t(cfg, 'dupRule', 'Duplicate')}
-          </GroButton>
-          <GroButton size="sm" icon="up" onClick={() => onMove(-1)}>
-            {t(cfg, 'up', 'Move up')}
-          </GroButton>
-          <GroButton size="sm" icon="down" onClick={() => onMove(1)}>
-            {t(cfg, 'down', 'Move down')}
-          </GroButton>
-          <GroButton size="sm" variant="danger" icon="delete" onClick={onRemove}>
-            {t(cfg, 'removeRule', 'Remove')}
-          </GroButton>
+            <TextControl
+              label={t(cfg, 'ruleIdShort', 'id')}
+              value={e.id}
+              onChange={(id: string) => onChange({ ...e, id })}
+              __nextHasNoMarginBottom
+              __next40pxDefaultSize
+            />
+          </div>
+          <CheckboxControl
+            className="gro-editor-modal__enabled"
+            label={t(cfg, 'enabledLabel', 'Enabled')}
+            checked={e.enabled}
+            onChange={(enabled: boolean) => onChange({ ...e, enabled })}
+            __nextHasNoMarginBottom
+          />
+          <div className="gro-editor-modal__toolbar">
+            <GroButton size="sm" icon="duplicate" onClick={onDuplicate}>
+              {t(cfg, 'dupRule', 'Duplicate')}
+            </GroButton>
+            <GroButton size="sm" icon="up" onClick={() => onMove(-1)}>
+              {t(cfg, 'up', 'Move up')}
+            </GroButton>
+            <GroButton size="sm" icon="down" onClick={() => onMove(1)}>
+              {t(cfg, 'down', 'Move down')}
+            </GroButton>
+            <GroButton size="sm" variant="danger" icon="delete" onClick={onRemove}>
+              {t(cfg, 'removeRule', 'Remove')}
+            </GroButton>
+          </div>
         </div>
-      </header>
-      <div className="gro-rule-modal__body">
-        <TriggersBlock ruleIndex={ruleIndex} editable={e.trigger} onChange={(trigger) => onChange({ ...e, trigger })} />
-        <ConditionsBlock ruleIndex={ruleIndex} editable={e} onChange={onChange} />
-        <ActionsBlock ruleIndex={ruleIndex} editable={e} onChange={onChange} />
-      </div>
-    </>
+      </section>
+      <TriggersBlock ruleIndex={ruleIndex} editable={e.trigger} onChange={(trigger) => onChange({ ...e, trigger })} />
+      <ConditionsBlock ruleIndex={ruleIndex} editable={e} onChange={onChange} />
+      <ActionsBlock ruleIndex={ruleIndex} editable={e} onChange={onChange} />
+    </div>
   );
 }

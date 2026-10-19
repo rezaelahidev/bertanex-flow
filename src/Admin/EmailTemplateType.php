@@ -135,6 +135,8 @@ final class EmailTemplateType
 
     public function registerBlockTemplates(): void
     {
+        $this->repairTemplateSlugs();
+
         if (! function_exists('register_block_template')) {
             return;
         }
@@ -447,7 +449,7 @@ final class EmailTemplateType
                 'id' => (string) $post->post_name,
                 'title' => $post->post_title !== '' ? $post->post_title : (string) $post->post_name,
                 'subject' => $renderer->render($subject !== '' ? $subject : (string) $post->post_title, $samples),
-                'previewHtml' => $renderer->render(do_blocks((string) $post->post_content), $samples),
+                'previewHtml' => $renderer->render(self::renderTemplate((string) $post->post_name), $samples),
                 'designUrl' => self::editorUrl((string) $post->post_name),
                 'postId' => (int) $post->ID,
             ];
@@ -487,16 +489,7 @@ final class EmailTemplateType
         if ($title === '') {
             $title = __('Email template', 'bertanex-flow');
         }
-        $base = sanitize_title($title);
-        if ($base === '' || $base === 'email') {
-            $base = 'message';
-        }
-        $slug = 'email-' . $base;
-        $suffix = 2;
-        while ($this->findBySlug($slug) instanceof \WP_Post) {
-            $slug = 'email-' . $base . '-' . $suffix;
-            $suffix++;
-        }
+        $slug = $this->allocateSlug('message');
 
         $created = wp_insert_post(
             [
@@ -564,6 +557,48 @@ final class EmailTemplateType
         return admin_url('site-editor.php?p=/wp_template/' . $encoded . '&canvas=edit');
     }
 
+    /**
+     * Block markup for a designed template. Site Editor customizations win over the stored post.
+     */
+    public static function templateMarkup(string $slug): string
+    {
+        if (! preg_match('/^[a-z0-9_\-]+$/', $slug) || $slug === self::WORDPRESS_TEMPLATE) {
+            return '';
+        }
+
+        if (function_exists('get_block_template')) {
+            $block = get_block_template(get_stylesheet() . '//' . $slug, 'wp_template');
+            if ($block instanceof \WP_Block_Template && is_string($block->content) && $block->content !== '') {
+                return $block->content;
+            }
+        }
+
+        $posts = get_posts(
+            [
+                'post_type' => self::POST_TYPE,
+                'name' => $slug,
+                'post_status' => 'publish',
+                'posts_per_page' => 1,
+            ]
+        );
+        $post = $posts[0] ?? null;
+
+        return $post instanceof \WP_Post ? (string) $post->post_content : '';
+    }
+
+    /**
+     * HTML produced by rendering the template blocks.
+     */
+    public static function renderTemplate(string $slug): string
+    {
+        $markup = self::templateMarkup($slug);
+        if ($markup === '') {
+            return '';
+        }
+
+        return do_blocks($markup);
+    }
+
     public static function starterContent(): string
     {
         $copy = __('Write the message here. Placeholders such as {name} and {site_name} are replaced when the email is sent.', 'bertanex-flow');
@@ -590,6 +625,70 @@ final class EmailTemplateType
         );
 
         return array_values(array_filter($posts, static fn ($post): bool => $post instanceof \WP_Post));
+    }
+
+    /**
+     * Site Editor only registers template ids that are ASCII slugs. A translated title
+     * such as «قالب ایمیل» becomes a percent-encoded post_name, and opening it returns
+     * rest_template_not_found.
+     */
+    private function repairTemplateSlugs(): void
+    {
+        foreach ($this->publishedTemplates() as $post) {
+            $slug = (string) $post->post_name;
+            if (preg_match('/^[a-z0-9_\-]+$/', $slug)) {
+                continue;
+            }
+            $next = $this->allocateSlug('message');
+            $updated = wp_update_post(
+                [
+                    'ID' => $post->ID,
+                    'post_name' => $next,
+                ],
+                true
+            );
+            if (is_wp_error($updated)) {
+                continue;
+            }
+            $active = get_option(self::ACTIVE_OPTION, self::WORDPRESS_TEMPLATE);
+            if ($active === $slug) {
+                update_option(self::ACTIVE_OPTION, $next, false);
+            }
+            $customized = get_posts(
+                [
+                    'post_type' => 'wp_template',
+                    'name' => $slug,
+                    'post_status' => 'any',
+                    'posts_per_page' => 5,
+                ]
+            );
+            foreach ($customized as $template) {
+                if ($template instanceof \WP_Post) {
+                    wp_update_post(
+                        [
+                            'ID' => $template->ID,
+                            'post_name' => $next,
+                        ]
+                    );
+                }
+            }
+        }
+    }
+
+    private function allocateSlug(string $base): string
+    {
+        $base = sanitize_title($base);
+        if ($base === '' || ! preg_match('/^[a-z0-9_\-]+$/', $base) || $base === 'email') {
+            $base = 'message';
+        }
+        $slug = 'email-' . $base;
+        $suffix = 2;
+        while ($this->findBySlug($slug) instanceof \WP_Post) {
+            $slug = 'email-' . $base . '-' . $suffix;
+            $suffix++;
+        }
+
+        return $slug;
     }
 
     private function findBySlug(string $slug): ?\WP_Post

@@ -30,10 +30,12 @@ final class SelectedEmailMailer
 
         $vars = $this->variables($user, $action->params());
         $renderer = new SmsTemplateRenderer();
-        $active = EmailTemplateType::activeSlug();
-        $template = $active === EmailTemplateType::WORDPRESS_TEMPLATE ? null : $this->find($active);
+        $template = $this->chosenTemplate($action);
+        $rendered = $template instanceof \WP_Post
+            ? $renderer->render(EmailTemplateType::renderTemplate((string) $template->post_name), $vars)
+            : '';
 
-        if (! $template instanceof \WP_Post) {
+        if (! $template instanceof \WP_Post || $rendered === '') {
             $subject = $this->paramString($action, 'subject', sprintf('[%s] %s', $vars['site_name'], __('Notification', 'bertanex-flow')));
             wp_mail($to, $renderer->render($subject, $vars), $renderer->render($this->plainBody($action), $vars));
 
@@ -44,11 +46,32 @@ final class SelectedEmailMailer
         if ($subject === '') {
             $subject = $template->post_title !== '' ? $template->post_title : $template->post_name;
         }
-        $html = $renderer->render(do_blocks((string) $template->post_content), $vars);
         $htmlType = static fn (): string => 'text/html';
         add_filter('wp_mail_content_type', $htmlType);
-        wp_mail($to, $renderer->render($subject, $vars), $html);
+        wp_mail($to, $renderer->render($subject, $vars), $rendered);
         remove_filter('wp_mail_content_type', $htmlType);
+    }
+
+    private function chosenTemplate(OutboundAction $action): ?\WP_Post
+    {
+        $fromAction = strtolower($action->templateId());
+        if (
+            $fromAction !== ''
+            && $fromAction !== EmailTemplateType::WORDPRESS_TEMPLATE
+            && preg_match('/^[a-z0-9_\-]+$/', $fromAction)
+        ) {
+            $chosen = $this->find($fromAction);
+            if ($chosen instanceof \WP_Post) {
+                return $chosen;
+            }
+        }
+
+        $active = EmailTemplateType::activeSlug();
+        if ($active === EmailTemplateType::WORDPRESS_TEMPLATE) {
+            return null;
+        }
+
+        return $this->find($active);
     }
 
     /**

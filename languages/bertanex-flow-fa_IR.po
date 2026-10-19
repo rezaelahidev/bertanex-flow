@@ -4,9 +4,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bertanex Flow 0.1.0\n"
-"Report-Msgid-Bugs-To:\n"
-"POT-Creation-Date: 2026-05-07 12:00+0000\n"
-"PO-Revision-Date: 2026-05-22 12:00+0000\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/bertanex-flow\n"
+"POT-Creation-Date: 2026-10-18T22:53:52+00:00\n"
+"PO-Revision-Date: 2026-10-19 02:30+0330\n"
 "Last-Translator:\n"
 "Language-Team: Persian (Iran)\n"
 "Language: fa_IR\n"
@@ -15,694 +15,1543 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid "Rules"
-msgstr "ویرایشگر اتوماسیون"
+#. Plugin Name of the plugin
+#: bertanex-flow.php
+msgid "Bertanex Flow"
+msgstr "برتانکس فلو"
 
-msgid "Automation Rules"
-msgstr "ویرایشگر اتوماسیون"
+#. Plugin URI of the plugin
+#: bertanex-flow.php
+msgid "https://github.com/rezaelahidev/bertanex-flow"
+msgstr "https://github.com/rezaelahidev/bertanex-flow"
 
-msgid "Design IF / THEN automations, manage SMS delivery, and tune automations from one workspace."
-msgstr "اتوماسیون‌های IF / THEN بسازید، ارسال پیامک را مدیریت کنید و اتوماسیون‌ها را از یک فضای کاری تنظیم کنید."
+#. Description of the plugin
+#: bertanex-flow.php
+msgid "Send SMS and email automatically for WordPress and WooCommerce, and edit every flow yourself."
+msgstr "پیامک و ایمیل وردپرس و ووکامرس را خودکار می‌فرستد و هر فلو را خودتان ویرایش می‌کنید."
 
-msgid "Bertanex Flow — SMS"
-msgstr "هماهنگ‌ساز رشد — پیامک"
+#. Author of the plugin
+#: bertanex-flow.php
+msgid "Bertanex"
+msgstr "برتانکس"
 
-msgid "Rules saved."
-msgstr "اتوماسیون‌ها ذخیره شد."
+#: bertanex-flow.php:35
+msgid "Bertanex Flow requires PHP 8.1 through 8.4."
+msgstr "برتانکس فلو به PHP نسخه ۸.۱ تا ۸.۴ نیاز دارد."
 
-msgid "Save SMS settings"
-msgstr "ذخیره تنظیمات پیامک"
+#: src/Admin/ActivityPanel.php:51
+msgid "You do not have permission to replay executions."
+msgstr "اجازه اجرای دوباره را ندارید."
 
-msgid "You do not have permission to access this page."
-msgstr "شما مجوز دسترسی به این صفحه را ندارید."
+#: src/Admin/ActivityPanel.php:83
+msgid "Runs and compatibility"
+msgstr "اجراها و سازگاری"
 
+#: src/Admin/ActivityPanel.php:84
+msgid ""
+"Automations are built in the Automations tab. This view shows whether each "
+"run finished, and which integrations Flow can use."
+msgstr "فلوها را در بخش اتوماسیون‌ها می‌سازید. اینجا می‌بینید هر بار ارسال انجام شده یا نه، و فلو به کدام سرویس‌ها وصل است."
+
+#: src/Admin/ActivityPanel.php:87
+msgid "Replay started."
+msgstr "اجرای دوباره آغاز شد."
+
+#: src/Admin/ActivityPanel.php:90 src/Admin/DiagnosticsPage.php:51
+msgid "Compatibility"
+msgstr "سازگاری"
+
+#: src/Admin/ActivityPanel.php:91 src/Admin/DiagnosticsPage.php:52
+msgid "Integration"
+msgstr "اتصال"
+
+#: src/Admin/ActivityPanel.php:91 src/Admin/ActivityPanel.php:100
+#: src/Admin/ActivityPanel.php:142 src/Admin/ActivityPanel.php:153
+#: src/Admin/Controllers/RulesController.php:428
+#: src/Admin/DiagnosticsPage.php:52 src/Admin/DiagnosticsPage.php:62
+msgid "Status"
+msgstr "وضعیت"
+
+#: src/Admin/ActivityPanel.php:91 src/Admin/DiagnosticsPage.php:52
+msgid "Detail"
+msgstr "جزئیات"
+
+#: src/Admin/ActivityPanel.php:97 src/Admin/DiagnosticsPage.php:58
+msgid "Recent executions"
+msgstr "اجراهای اخیر"
+
+#: src/Admin/ActivityPanel.php:100 src/Admin/ActivityPanel.php:140
+#: src/Admin/DiagnosticsPage.php:62
+msgid "Workflow"
+msgstr "فلو"
+
+#: src/Admin/ActivityPanel.php:100 src/Admin/ActivityPanel.php:141
+#: src/Admin/DiagnosticsPage.php:62
+msgid "Event"
+msgstr "رویداد"
+
+#: src/Admin/ActivityPanel.php:100 src/Admin/ActivityPanel.php:143
+#: src/Admin/DiagnosticsPage.php:62
+msgid "Attempt"
+msgstr "تلاش"
+
+#: src/Admin/ActivityPanel.php:100
+msgid "View"
+msgstr "مشاهده"
+
+#: src/Admin/ActivityPanel.php:103 src/Admin/DiagnosticsPage.php:60
+msgid "No workflow executions have been recorded yet."
+msgstr "هنوز اجرایی ثبت نشده است."
+
+#: src/Admin/ActivityPanel.php:118
+msgid "Details"
+msgstr "جزئیات"
+
+#: src/Admin/ActivityPanel.php:132
+msgid "Back to runs"
+msgstr "بازگشت به اجراها"
+
+#: src/Admin/ActivityPanel.php:134 src/REST/RestRegistrar.php:151
+msgid "Execution was not found."
+msgstr "اجرا پیدا نشد."
+
+#: src/Admin/ActivityPanel.php:144 src/Admin/DiagnosticsPage.php:62
+msgid "Error"
+msgstr "خطا"
+
+#: src/Admin/ActivityPanel.php:145
+msgid "Started"
+msgstr "شروع"
+
+#: src/Admin/ActivityPanel.php:146
+msgid "Completed"
+msgstr "پایان"
+
+#: src/Admin/ActivityPanel.php:152
+msgid "Steps"
+msgstr "گام‌ها"
+
+#: src/Admin/ActivityPanel.php:153
+msgid "Step"
+msgstr "گام"
+
+#: src/Admin/ActivityPanel.php:153 src/Admin/Models/EmailTemplatesModel.php:210
+msgid "Message"
+msgstr "پیام"
+
+#: src/Admin/ActivityPanel.php:156
+msgid "No steps were recorded."
+msgstr "گامی ثبت نشده است."
+
+#: src/Admin/ActivityPanel.php:167
+msgid "Replay execution"
+msgstr "اجرای دوباره"
+
+#: src/Admin/Controllers/RulesController.php:60
+msgid "You do not have permission to reset plugin settings."
+msgstr "شما اجازهٔ بازنشانی تنظیمات افزونه را ندارید."
+
+#: src/Admin/Controllers/RulesController.php:182
+#: src/Admin/Controllers/RulesController.php:232
 msgid "You do not have permission to save rules."
 msgstr "شما مجوز ذخیره اتوماسیون‌ها را ندارید."
 
 #. translators: %s: parser or persistence error message
+#: src/Admin/Controllers/RulesController.php:199
+#: src/Admin/Controllers/RulesController.php:427
+#, php-format
 msgid "Rules could not be saved: %s"
 msgstr "اتوماسیون‌ها ذخیره نشدند: %s"
 
-msgid "Rules template missing."
-msgstr "الگوی صفحه اتوماسیون یافت نشد."
+#: src/Admin/Controllers/RulesController.php:250
+#: src/Admin/Controllers/RulesController.php:426
+#: src/Admin/Views/templates/rules-page.php:36
+msgid "Rules saved."
+msgstr "اتوماسیون‌ها ذخیره شد."
 
-msgid "SMS settings template missing."
-msgstr "الگوی صفحه تنظیمات پیامک یافت نشد."
+#: src/Admin/Controllers/RulesController.php:257
+msgid "You do not have permission to save this panel."
+msgstr "شما مجوز ذخیره این بخش را ندارید."
 
-msgid "Rules database table missing or could not be created."
-msgstr "جدول پایگاه‌داده اتوماسیون وجود ندارد یا ساخته نشد."
+#: src/Admin/Controllers/RulesController.php:264
+msgid "Unknown panel."
+msgstr "بخش ناشناخته است."
 
-msgid "Failed to persist rules to the database."
-msgstr "ذخیره اتوماسیون‌ها در پایگاه‌داده ناموفق بود."
-
-msgid "JSON error (preview only; saved value unchanged):"
-msgstr "خطای JSON (فقط پیش‌نمایش؛ مقدار ذخیره‌شده بدون تغییر است):"
-
-msgid "Use Reset to defaults on the Configuration tab, or restore valid rules another way."
-msgstr "در زبانه پیکربندی «بازگردانی به پیش‌فرض» را بزنید، یا قوانین معتبر را به روش دیگری بازیابی کنید."
-
-msgid "Rules summary"
-msgstr "خلاصه اتوماسیون‌ها"
-
-msgid "Total rules"
-msgstr "تعداد اتوماسیون‌ها"
-
-msgid "ID"
-msgstr "شناسه"
-
-msgid "Label"
-msgstr "عنوان"
-
-msgid "Enabled"
-msgstr "فعال"
-
-msgid "Priority"
-msgstr "اولویت"
-
-msgid "Rule editor"
-msgstr "ویرایشگر اتوماسیون"
-
-msgid "Rules editor mode"
-msgstr "حالت ویرایشگر اتوماسیون"
-
-msgid "Automations"
-msgstr "اتوماسیون‌ها"
-
-msgid "Configuration"
-msgstr "پیکربندی"
-
-msgid "Enable JavaScript to use the automations editor."
-msgstr "برای استفاده از ویرایشگر اتوماسیون‌ها، JavaScript را فعال کنید."
-
+#: src/Admin/Controllers/RulesController.php:397
 msgid "JSON must be an object with a \"rules\" array."
 msgstr "JSON باید یک شیء با آرایه «rules» باشد."
 
+#: src/Admin/Controllers/RulesController.php:398
 msgid "No rules yet. Add your first automation."
 msgstr "هنوز اتوماسیونی نیست. اولین اتوماسیون را اضافه کنید."
 
+#: src/Admin/Controllers/RulesController.php:399
+#: src/Admin/Controllers/RulesController.php:739
+msgid "Automation Rules"
+msgstr "فلو"
+
+#: src/Admin/Controllers/RulesController.php:400
+msgid ""
+"Build automations, then manage SMS patterns, email templates, and delivery "
+"settings separately."
+msgstr "اتوماسیون بسازید، سپس الگوهای پیامک، قالب‌های ایمیل و تنظیمات ارسال را جداگانه مدیریت کنید."
+
+#: src/Admin/Controllers/RulesController.php:401
+msgid "Total rules"
+msgstr "تعداد اتوماسیون‌ها"
+
+#: src/Admin/Controllers/RulesController.php:402
+#: src/Admin/Controllers/RulesController.php:411
+msgid "Enabled"
+msgstr "فعال"
+
+#: src/Admin/Controllers/RulesController.php:403
+msgid "Rules summary"
+msgstr "خلاصه اتوماسیون‌ها"
+
+#: src/Admin/Controllers/RulesController.php:404
 msgid "Add rule"
 msgstr "افزودن اتوماسیون"
 
+#: src/Admin/Controllers/RulesController.php:405
 msgid "Format version"
 msgstr "نسخه قالب"
 
+#: src/Admin/Controllers/RulesController.php:406
 msgid "Advanced"
 msgstr "پیشرفته"
 
-msgid "This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored."
-msgstr "این اتوماسیون از محرک‌ها یا شرط‌های تو در تو استفاده می‌کند که این ویرایشگر نمی‌تواند آن‌ها را تغییر دهد. فقط خواندنی می‌ماند و همان‌طور که ذخیره شده اجرا می‌شود."
+#: src/Admin/Controllers/RulesController.php:407
+msgid ""
+"This rule uses triggers or nested conditions this editor cannot change. It "
+"stays read-only and runs as stored."
+msgstr ""
+"این فلو شرط یا زمان‌بندی پیچیده‌ای دارد که از این صفحه قابل ویرایش نیست. "
+"همان‌طور که ذخیره شده اجرا می‌شود."
 
+#: src/Admin/Controllers/RulesController.php:408
 msgid "Label (optional)"
 msgstr "عنوان (اختیاری)"
 
+#: src/Admin/Controllers/RulesController.php:409
 msgid "Untitled rule"
 msgstr "اتوماسیون بدون عنوان"
 
+#: src/Admin/Controllers/RulesController.php:410
 msgid "Edit rule"
 msgstr "ویرایش اتوماسیون"
 
-msgid "Edit rule %s"
-msgstr "ویرایش اتوماسیون %s"
+#: src/Admin/Controllers/RulesController.php:412
+msgid "Priority"
+msgstr "اولویت"
 
-msgid "Edit condition %s"
-msgstr "ویرایش شرط %s"
-
-msgid "Edit action %s"
-msgstr "ویرایش اقدام %s"
-
+#: src/Admin/Controllers/RulesController.php:413
 msgid "id"
 msgstr "شناسه"
 
+#: src/Admin/Controllers/RulesController.php:414
 msgid "Duplicate"
 msgstr "رونوشت"
 
+#: src/Admin/Controllers/RulesController.php:415
 msgid "Move up"
 msgstr "جابه‌جایی به بالا"
 
+#: src/Admin/Controllers/RulesController.php:416
 msgid "Move down"
 msgstr "جابه‌جایی به پایین"
 
+#: src/Admin/Controllers/RulesController.php:417
 msgid "Remove rule"
-msgstr "حذف اتوماسیون"
+msgstr "حذف فلو"
 
+#: src/Admin/Controllers/RulesController.php:418
+#: src/Admin/Controllers/RulesController.php:462
 msgid "Remove"
 msgstr "حذف"
 
+#: src/Admin/Controllers/RulesController.php:419
+#, php-format
+msgid "Edit rule %s"
+msgstr "ویرایش فلو %s"
+
+#: src/Admin/Controllers/RulesController.php:420
+#, php-format
+msgid "Edit condition %s"
+msgstr "ویرایش شرط %s"
+
+#: src/Admin/Controllers/RulesController.php:421
+#, php-format
+msgid "Edit action %s"
+msgstr "ویرایش عملیات %s"
+
+#: src/Admin/Controllers/RulesController.php:422
 msgid "Close"
 msgstr "بستن"
 
+#: src/Admin/Controllers/RulesController.php:423
 msgid "Save rule"
-msgstr "ذخیره اتوماسیون"
+msgstr "ذخیره فلو"
 
+#: src/Admin/Controllers/RulesController.php:424
 msgid "Save all"
 msgstr "ذخیره همه"
 
-msgid "Save all rules"
-msgstr "ذخیره همه اتوماسیون‌ها"
-
+#: src/Admin/Controllers/RulesController.php:425
 msgid "Saving…"
 msgstr "در حال ذخیره…"
 
-msgid "Status"
-msgstr "وضعیت"
+#: src/Admin/Controllers/RulesController.php:429
+msgid "Label"
+msgstr "عنوان"
 
+#: src/Admin/Controllers/RulesController.php:430
+msgid "ID"
+msgstr "شناسه"
+
+#: src/Admin/Controllers/RulesController.php:431
+#, php-format
+msgid "Remove condition %s from this rule"
+msgstr "حذف شرط %s از این فلو"
+
+#: src/Admin/Controllers/RulesController.php:432
+#, php-format
+msgid "Remove action %s from this rule"
+msgstr "حذف عملیات %s از این فلو"
+
+#: src/Admin/Controllers/RulesController.php:433
+#, php-format
 msgid "Remove %s permanently from this list"
-msgstr "حذف دائمی %s از این فهرست"
+msgstr "حذف همیشگی %s از این فهرست"
 
+#: src/Admin/Controllers/RulesController.php:434
 msgid "Configured rules"
-msgstr "اتوماسیون‌های پیکربندی‌شده"
+msgstr "فلوهای ساخته‌شده"
 
+#: src/Admin/Controllers/RulesController.php:435
 msgid "Disabled"
 msgstr "غیرفعال"
 
+#: src/Admin/Controllers/RulesController.php:436
 msgid "Rule ID:"
-msgstr "شناسه اتوماسیون:"
+msgstr "شناسه فلو:"
 
+#: src/Admin/Controllers/RulesController.php:437
 msgid "Priority:"
 msgstr "اولویت:"
 
+#: src/Admin/Controllers/RulesController.php:438
 msgid "Remove this rule?"
-msgstr "این اتوماسیون حذف شود؟"
+msgstr "این فلو حذف شود؟"
 
+#: src/Admin/Controllers/RulesController.php:439
 msgid "Remove this rule from the document?"
-msgstr "این اتوماسیون از سند حذف شود؟"
+msgstr "این فلو از فهرست حذف شود؟"
 
+#: src/Admin/Controllers/RulesController.php:440
 msgid "When to run"
-msgstr "زمان اجرا"
+msgstr "کی اجرا شود"
+
+msgid "Rule"
+msgstr "فلو"
 
 msgid "Evaluate without event filter"
-msgstr "بدون فیلتر رویداد"
+msgstr "بدون محدود کردن به یک رویداد"
+
+msgid "Runs whenever rules are checked"
+msgstr "هر بار که فلوها بررسی می‌شوند، این مورد هم اجرا می‌شود"
 
 msgid "On automation events"
-msgstr "رویدادها"
+msgstr "با رویدادهای سایت"
 
 msgid "On a schedule (cron)"
-msgstr "زمان‌بندی (cron)"
+msgstr "با زمان‌بندی وردپرس"
 
+msgid "WordPress cron recurrence"
+msgstr "هر چند وقت یک‌بار"
+
+#: src/Admin/Controllers/RulesController.php:444
 msgid "Additional event names (comma-separated)"
-msgstr "نام رویدادهای دیگر (با ویرگول)"
+msgstr "نام رویدادهای دیگر، با ویرگول جدا شود"
 
-#. translators: %1$s: selected count, %2$s: total count
+#: src/Admin/Controllers/RulesController.php:445
+#, php-format
 msgid "%1$s of %2$s events selected"
 msgstr "%1$s از %2$s رویداد انتخاب شده"
 
+#: src/Admin/Controllers/RulesController.php:446
 msgid "Rule runs when any selected event fires."
-msgstr "اتوماسیون هنگام رخ دادن هر رویداد انتخاب‌شده اجرا می‌شود."
+msgstr "فلو با رخ دادن هر کدام از رویدادهای انتخاب‌شده اجرا می‌شود."
 
+#: src/Admin/Controllers/RulesController.php:447
 msgid "Select at least one event or add custom names below."
-msgstr "حداقل یک رویداد انتخاب کنید یا نام‌های سفارشی را در پایین وارد کنید."
+msgstr "دست‌کم یک رویداد را انتخاب کنید، یا نام رویداد را پایین بنویسید."
 
+#: src/Admin/Controllers/RulesController.php:448
 msgid "Select all"
 msgstr "انتخاب همه"
 
+#: src/Admin/Controllers/RulesController.php:449
 msgid "Clear"
 msgstr "پاک کردن"
 
+#: src/Admin/Controllers/RulesController.php:450
 msgid "Automation events"
-msgstr "رویدادهای اتوماسیون"
+msgstr "رویدادهای سایت"
 
+#: src/Admin/Controllers/RulesController.php:451
 msgid "No automation events are registered yet. Add custom event names below."
-msgstr "هنوز رویداد اتوماسیونی ثبت نشده است. نام رویدادهای سفارشی را در پایین وارد کنید."
+msgstr ""
+"هنوز رویداد اتوماسیونی ثبت نشده است. نام رویدادهای سفارشی را در پایین وارد "
+"کنید."
 
+#: src/Admin/Controllers/RulesController.php:452
 msgid "Cron hook"
-msgstr "قلاب cron"
+msgstr "نام زمان‌بندی"
 
+#: src/Admin/Controllers/RulesController.php:453
 msgid "Recurrence"
-msgstr "تکرار"
+msgstr "بازه تکرار"
 
+#: src/Admin/Controllers/RulesController.php:454
 msgid "Conditions (all must match)"
-msgstr "شرط‌ها (همه باید برقرار باشند)"
+msgstr "شرط‌ها (همه باید درست باشند)"
 
+#: src/Admin/Controllers/RulesController.php:455
 msgid "Field"
-msgstr "فیلد"
+msgstr "مورد"
 
+#: src/Admin/Controllers/RulesController.php:456
 msgid "Operator"
-msgstr "عملگر"
+msgstr "مقایسه"
 
+#: src/Admin/Controllers/RulesController.php:457
 msgid "Pattern (regex)"
-msgstr "الگو (عبارت منظم)"
+msgstr "الگوی متن"
 
+#: src/Admin/Controllers/RulesController.php:458
 msgid "Value (JSON)"
-msgstr "مقدار (JSON)"
+msgstr "مقدار"
 
-msgid "Select a value…"
-msgstr "انتخاب مقدار…"
-
-msgid "Custom value (JSON)…"
-msgstr "مقدار سفارشی (JSON)…"
-
-msgid "Custom…"
-msgstr "سفارشی…"
-
-msgid "State field key"
-msgstr "کلید فیلد وضعیت"
-
-msgid "Add condition"
-msgstr "افزودن شرط"
-
-msgid "Maximum number of conditions reached (%s)."
-msgstr "به حداکثر تعداد شرط (%s) رسیدید."
-
-msgid "Actions"
-msgstr "اقدام‌ها"
-
-msgid "Type"
-msgstr "نوع"
-
-msgid "template_id"
-msgstr "شناسه الگو"
-
-msgid "delay_seconds"
-msgstr "تأخیر (ثانیه)"
-
-msgid "Delay"
-msgstr "تأخیر"
-
-msgid "Run immediately when the rule matches"
-msgstr "بلافاصله پس از تطابق اتوماسیون اجرا شود"
-
-msgid "When the rule matches"
-msgstr "هنگام تطابق اتوماسیون"
-
-msgid "Schedule"
-msgstr "زمان‌بندی"
-
-msgid "Pick date and time after now"
-msgstr "انتخاب تاریخ و زمان بعد از الان"
-
-msgid "No extra delay"
-msgstr "بدون تأخیر اضافه"
-
-msgid "At time on that day"
-msgstr "در ساعت مشخص همان روز"
-
-msgid "Combine with the date above — e.g. in 1 day at 11:00"
-msgstr "همراه با تاریخ بالا — مثلاً تا ۱ روز دیگر ساعت ۱۱:۰۰"
-
-msgid "Optional extra wait after the date and clock time above."
-msgstr "تأخیر اختیاری پس از تاریخ و ساعت بالا."
-
-msgid "after the rule matches"
-msgstr "پس از تطابق اتوماسیون"
-
-msgid "%1$s %2$s"
-msgstr "%1$s %2$s"
-
-msgid "In %1$s at %2$s %3$s"
-msgstr "تا %1$s دیگر ساعت %2$s %3$s"
-
-msgid "In %1$s %2$s"
-msgstr "تا %1$s دیگر %2$s"
-
-msgid "On %1$s at %2$s %3$s"
-msgstr "در %1$s ساعت %2$s %3$s"
-
-msgid "On %1$s %2$s"
-msgstr "در %1$s %2$s"
-
-msgid "On the same day at %1$s %2$s"
-msgstr "همان روز ساعت %1$s %2$s"
-
-msgid "(plus %s more)"
-msgstr "(به‌علاوه %s)"
-
-msgid "In %1$s at %2$s"
-msgstr "تا %1$s دیگر ساعت %2$s"
-
-msgid "At %s"
-msgstr "ساعت %s"
-
-msgid "Day"
-msgstr "روز"
-
-msgid "Month"
-msgstr "ماه"
-
-msgid "Year"
-msgstr "سال"
-
-msgid "Date"
-msgstr "تاریخ"
-
-msgid "Today"
-msgstr "امروز"
-
-msgid "In"
-msgstr "تا"
-
-msgid "days"
-msgstr "روز"
-
-msgid "On"
-msgstr "در"
-
-msgid "Time"
-msgstr "زمان"
-
-msgid "Same time (date offset only)"
-msgstr "همان زمان (فقط جابه‌جایی تاریخ)"
-
-msgid "seconds"
-msgstr "ثانیه"
-
-msgid "minutes"
-msgstr "دقیقه"
-
-msgid "hours"
-msgstr "ساعت"
-
-msgid "At"
-msgstr "در ساعت"
-
-msgid "Immediately when the rule matches"
-msgstr "بلافاصله پس از تطابق اتوماسیون"
-
-msgid "Immediate"
-msgstr "فوری"
-
-msgid "Scheduled at %1$s %2$s (about %3$s from now)"
-msgstr "زمان‌بندی در %1$s %2$s (حدود %3$s از الان)"
-
-msgid "About %s seconds after the rule matches"
-msgstr "حدود %s ثانیه پس از تطابق اتوماسیون"
-
-msgid "About %s after the rule matches"
-msgstr "حدود %s پس از تطابق اتوماسیون"
-
-msgid "%s days"
-msgstr "%s روز"
-
-msgid "1 hour"
-msgstr "۱ ساعت"
-
-msgid "%s hours"
-msgstr "%s ساعت"
-
-msgid "1 minute"
-msgstr "۱ دقیقه"
-
-msgid "%s minutes"
-msgstr "%s دقیقه"
-
-msgid "1 second"
-msgstr "۱ ثانیه"
-
-msgid "%s seconds"
-msgstr "%s ثانیه"
-
-msgid "params (JSON object)"
-msgstr "پارامترها (شیء JSON)"
-
-msgid "Remove action"
-msgstr "حذف اقدام"
-
-msgid "Add action"
-msgstr "افزودن اقدام"
-
-msgid "Maximum number of actions reached (%s)."
-msgstr "به حداکثر تعداد اقدام (%s) رسیدید."
-
-msgid "1 day"
-msgstr "۱ روز"
-
+#: src/Admin/Controllers/RulesController.php:459
 msgid "Value"
 msgstr "مقدار"
 
-msgid "List limits and column layout"
-msgstr "محدودیت تعداد و چیدمان ستون‌ها"
-
-msgid "Limits and layout for the visual rule builder lists."
-msgstr "محدودیت و چیدمان فهرست‌های سازندهٔ بصری اتوماسیون."
-
-msgid "Max conditions per rule"
-msgstr "حداکثر شرط در هر اتوماسیون"
-
-msgid "Max actions per rule"
-msgstr "حداکثر اقدام در هر اتوماسیون"
-
-msgid "Display columns"
-msgstr "تعداد ستون‌ها"
-
-msgid "1 column"
-msgstr "۱ ستون"
-
-msgid "2 columns"
-msgstr "۲ ستون"
-
-msgid "Applies to the rules list and condition/action lists inside each rule."
-msgstr "برای فهرست اتوماسیون‌ها و فهرست شرط/اقدام در هر اتوماسیون اعمال می‌شود."
-
-msgid "SMS delivery"
-msgstr "ارسال پیامک"
-
-msgid "Provider and Melipayamak credentials"
-msgstr "ارائه‌دهنده و اعتبارنامه ملی‌پیامک"
-
-msgid "Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, otherwise the logging driver."
-msgstr "ارائه‌دهنده ارسال پیامک‌های در صف را انتخاب کنید. حالت خودکار در صورت پیکربندی بودن ملی‌پیامک از آن استفاده می‌کند؛ در غیر این صورت از درایور ثبت در گزارش."
-
-msgid "Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, then Twilio, otherwise the logging driver."
-msgstr "ارائه‌دهنده ارسال پیامک‌های در صف را انتخاب کنید. حالت خودکار در صورت پیکربندی بودن ملی‌پیامک از آن استفاده می‌کند، سپس Twilio، و در غیر این صورت از درایور ثبت در گزارش."
-
-msgid "Credentials for rest.payamak-panel.com SendSMS. Use wp-config constants or leave password empty to keep the saved value."
-msgstr "اعتبارنامه rest.payamak-panel.com SendSMS. از ثابت‌های wp-config استفاده کنید یا برای حفظ مقدار ذخیره‌شده رمز را خالی بگذارید."
-
-msgid "Save configuration"
-msgstr "ذخیره پیکربندی"
-
-msgid "Reset to defaults"
-msgstr "بازگردانی به پیش‌فرض"
-
-msgid "Remove all saved customizations and restore the plugin’s original state."
-msgstr "همهٔ سفارشی‌سازی‌های ذخیره‌شده حذف و وضعیت اولیهٔ افزونه بازگردانده می‌شود."
-
-msgid "This will reset automation rules, SMS message patterns, automation list limits, column layout, and Melipayamak settings stored in this panel. Credentials defined in wp-config or filters are not changed."
-msgstr "ویرایشگر اتوماسیون، الگوهای پیامک، محدودیت‌های فهرست اتوماسیون، چیدمان ستون‌ها و تنظیمات ملی‌پیامک ذخیره‌شده در این پنل بازنشانی می‌شوند. اعتبارنامه‌های تعریف‌شده در wp-config یا فیلترها تغییر نمی‌کنند."
-
-msgid "Reset all to defaults"
-msgstr "بازنشانی همه به پیش‌فرض"
-
-msgid "Reset all Bertanex Flow customizations to defaults? This cannot be undone."
-msgstr "همهٔ سفارشی‌سازی‌های Bertanex Flow به پیش‌فرض بازگردانده شود؟ این کار قابل بازگشت نیست."
-
-msgid "All customizations were reset to plugin defaults. Rules, message patterns, panel layout, and SMS settings were restored."
-msgstr "همهٔ سفارشی‌سازی‌ها به پیش‌فرض افزونه بازگردانده شد. قوانین، الگوهای پیام، چیدمان پنل و تنظیمات پیامک بازیابی شدند."
-
-msgid "Could not reset to defaults. Check that the default rules file exists and try again."
-msgstr "بازنشانی به پیش‌فرض ممکن نشد. وجود فایل قوانین پیش‌فرض را بررسی و دوباره تلاش کنید."
-
-msgid "No default rules are registered by integrated consumers."
-msgstr "هیچ اتوماسیون پیش‌فرضی توسط مصرف‌کننده‌های یکپارچه ثبت نشده است."
-
-msgid "You do not have permission to reset plugin settings."
-msgstr "شما اجازهٔ بازنشانی تنظیمات افزونه را ندارید."
-
-msgid "Twilio can also be set via wp-config (BERTANEX_FLOW_TWILIO_*) or the gro_twilio_sms_config filter."
-msgstr "Twilio را می‌توانید از wp-config (BERTANEX_FLOW_TWILIO_*) یا فیلتر gro_twilio_sms_config نیز تنظیم کنید."
-
-msgid "Provider"
-msgstr "ارائه‌دهنده"
-
-msgid "Melipayamak uses the REST endpoint rest.payamak-panel.com (SendSMS) with sslverify enabled."
-msgstr "ملی‌پیامک از آدرس REST rest.payamak-panel.com (SendSMS) با sslverify فعال استفاده می‌کند."
-
-msgid "Username"
-msgstr "نام کاربری"
-
-msgid "Password"
-msgstr "رمز عبور"
-
-msgid "Sender line (from)"
-msgstr "خط فرستنده (from)"
-
-msgid "Automatic"
-msgstr "خودکار"
-
-msgid "Melipayamak"
-msgstr "ملی‌پیامک"
-
-msgid "Twilio"
-msgstr "Twilio"
-
-msgid "Logging only (development)"
-msgstr "فقط ثبت در گزارش (توسعه)"
-
-msgid "Leave blank to keep the current password"
-msgstr "برای حفظ رمز فعلی خالی بگذارید"
-
-msgid "e.g. short line number from panel"
-msgstr "مثلاً شماره خط کوتاه از پنل"
-
-msgid "/^...$/"
-msgstr "/^...$/"
-
-msgid "Examples: true, false, 3, \"text\", []"
-msgstr "نمونه: true، false، 3، «متن»، []"
-
-msgid "Equals"
-msgstr "برابر"
-
-msgid "Not equals"
-msgstr "نابرابر"
-
-msgid "Greater than"
-msgstr "بزرگ‌تر از"
-
-msgid "Greater than or equal"
-msgstr "بزرگ‌تر یا مساوی"
-
-msgid "Less than"
-msgstr "کوچک‌تر از"
-
-msgid "Less than or equal"
-msgstr "کوچک‌تر یا مساوی"
-
-msgid "In list"
-msgstr "عضو فهرست"
-
-msgid "Not in list"
-msgstr "غیرعضو فهرست"
-
-msgid "Is empty"
-msgstr "خالی است"
-
-msgid "Is not empty"
-msgstr "خالی نیست"
-
-msgid "Is truthy"
-msgstr "مقدار درست"
-
-msgid "Is falsy"
-msgstr "مقدار نادرست"
-
-msgid "Matches regex"
-msgstr "منطبق بر عبارت منظم"
-
-msgid "Starts with"
-msgstr "شروع با"
-
-msgid "Ends with"
-msgstr "پایان با"
-
-msgid "Contains"
-msgstr "شامل"
-
-msgid "Send SMS"
-msgstr "ارسال پیامک"
-
-msgid "Send email"
-msgstr "ارسال ایمیل"
-
-msgid "Send discount"
-msgstr "ارسال تخفیف"
-
-msgid "Webhook"
-msgstr "وب‌هوک"
-
-msgid "Log"
-msgstr "ثبت در گزارش"
-
-msgid "Hourly"
-msgstr "ساعتی"
-
-msgid "Twice daily"
-msgstr "دوبار در روز"
-
-msgid "Daily"
-msgstr "روزانه"
-
-msgid "Weekly"
-msgstr "هفتگی"
-
-msgid "Remove condition %s from this rule"
-msgstr "حذف شرط %s از این اتوماسیون"
-
-msgid "Remove action %s from this rule"
-msgstr "حذف اقدام %s از این اتوماسیون"
-
-msgid "SMS template"
-msgstr "الگوی پیامک"
-
-msgid "Custom template ID…"
-msgstr "شناسه الگوی سفارشی…"
-
+#: src/Admin/Controllers/RulesController.php:460
+msgid "Custom…"
+msgstr "سفارشی…"
+
+#: src/Admin/Controllers/RulesController.php:461
+msgid "State field key"
+msgstr "نام مورد"
+
+#: src/Admin/Controllers/RulesController.php:463
+msgid "Add condition"
+msgstr "افزودن شرط"
+
+#: src/Admin/Controllers/RulesController.php:464
+msgid "Actions"
+msgstr "عملیات‌ها"
+
+#: src/Admin/Controllers/RulesController.php:465
+msgid "Type"
+msgstr "نوع"
+
+#: src/Admin/Controllers/RulesController.php:466
+msgid "template_id"
+msgstr "شناسه الگو"
+
+#: src/Admin/Controllers/RulesController.php:467
+msgid "delay_seconds"
+msgstr "تأخیر (ثانیه)"
+
+#: src/Admin/Controllers/RulesController.php:468
+msgid "Delay"
+msgstr "تأخیر"
+
+#: src/Admin/Controllers/RulesController.php:469
+msgid "Run immediately when the rule matches"
+msgstr "به محض درست شدن شرط انجام شود"
+
+#: src/Admin/Controllers/RulesController.php:470
+msgid "When the rule matches"
+msgstr "به محض درست شدن شرط"
+
+#: src/Admin/Controllers/RulesController.php:471
+msgid "Schedule"
+msgstr "زمان‌بندی"
+
+#: src/Admin/Controllers/RulesController.php:472
+msgid "Pick date and time after now"
+msgstr "تاریخ و ساعتی بعد از الآن انتخاب کنید"
+
+#: src/Admin/Controllers/RulesController.php:473
+msgid "No extra delay"
+msgstr "بدون تأخیر اضافه"
+
+#: src/Admin/Controllers/RulesController.php:474
+msgid "At time on that day"
+msgstr "در ساعت مشخص همان روز"
+
+#: src/Admin/Controllers/RulesController.php:475
+msgid "Combine with the date above — e.g. in 1 day at 11:00"
+msgstr "همراه با تاریخ بالا — مثلاً تا ۱ روز دیگر ساعت ۱۱:۰۰"
+
+#: src/Admin/Controllers/RulesController.php:476
+msgid "Optional extra wait after the date and clock time above."
+msgstr "تأخیر اختیاری پس از تاریخ و ساعت بالا."
+
+#: src/Admin/Controllers/RulesController.php:477
+msgid "after the rule matches"
+msgstr "بعد از درست شدن شرط"
+
+#: src/Admin/Controllers/RulesController.php:478
+#, php-format
+msgid "%1$s %2$s"
+msgstr "%1$s %2$s"
+
+#: src/Admin/Controllers/RulesController.php:479
+#, php-format
+msgid "In %1$s at %2$s %3$s"
+msgstr "تا %1$s دیگر ساعت %2$s %3$s"
+
+#: src/Admin/Controllers/RulesController.php:480
+#, php-format
+msgid "In %1$s %2$s"
+msgstr "تا %1$s دیگر %2$s"
+
+#: src/Admin/Controllers/RulesController.php:481
+#, php-format
+msgid "On %1$s at %2$s %3$s"
+msgstr "در %1$s ساعت %2$s %3$s"
+
+#: src/Admin/Controllers/RulesController.php:482
+#, php-format
+msgid "On %1$s %2$s"
+msgstr "در %1$s %2$s"
+
+#: src/Admin/Controllers/RulesController.php:483
+#, php-format
+msgid "On the same day at %1$s %2$s"
+msgstr "همان روز ساعت %1$s %2$s"
+
+#: src/Admin/Controllers/RulesController.php:484
+#, php-format
+msgid "(plus %s more)"
+msgstr "(به‌علاوه %s)"
+
+#: src/Admin/Controllers/RulesController.php:485
+#, php-format
+msgid "In %1$s at %2$s"
+msgstr "تا %1$s دیگر ساعت %2$s"
+
+#: src/Admin/Controllers/RulesController.php:486
+#, php-format
+msgid "At %s"
+msgstr "ساعت %s"
+
+#: src/Admin/Controllers/RulesController.php:487
+msgid "Date"
+msgstr "تاریخ"
+
+#: src/Admin/Controllers/RulesController.php:488
+msgid "Today"
+msgstr "امروز"
+
+#: src/Admin/Controllers/RulesController.php:489
+msgid "In"
+msgstr "تا"
+
+#: src/Admin/Controllers/RulesController.php:490
+msgid "days"
+msgstr "روز"
+
+#: src/Admin/Controllers/RulesController.php:491
+msgid "On"
+msgstr "در"
+
+#: src/Admin/Controllers/RulesController.php:492
+msgid "Time"
+msgstr "زمان"
+
+#: src/Admin/Controllers/RulesController.php:493
+msgid "Same time (date offset only)"
+msgstr "همان زمان (فقط جابه‌جایی تاریخ)"
+
+#: src/Admin/Controllers/RulesController.php:494
+msgid "seconds"
+msgstr "ثانیه"
+
+#: src/Admin/Controllers/RulesController.php:495
+msgid "minutes"
+msgstr "دقیقه"
+
+#: src/Admin/Controllers/RulesController.php:496
+msgid "hours"
+msgstr "ساعت"
+
+#: src/Admin/Controllers/RulesController.php:497
+msgid "At"
+msgstr "در ساعت"
+
+#: src/Admin/Controllers/RulesController.php:498
+#: src/Admin/Controllers/RulesController.php:526
 msgid "Preview:"
 msgstr "پیش‌نمایش:"
 
-msgid "Message patterns"
-msgstr "الگوهای پیام"
+#: src/Admin/Controllers/RulesController.php:499
+msgid "Immediately when the rule matches"
+msgstr "به محض درست شدن شرط"
 
-msgid "SMS message patterns"
-msgstr "الگوهای پیامک"
+#: src/Admin/Controllers/RulesController.php:500
+msgid "Immediate"
+msgstr "فوری"
 
-msgid "Save patterns"
-msgstr "ذخیره الگوها"
+#: src/Admin/Controllers/RulesController.php:501
+#, php-format
+msgid "Scheduled at %1$s %2$s (about %3$s from now)"
+msgstr "زمان‌بندی در %1$s %2$s (حدود %3$s از الان)"
 
-msgid "Default"
-msgstr "پیش‌فرض"
+#: src/Admin/Controllers/RulesController.php:502
+#, php-format
+msgid "About %s seconds after the rule matches"
+msgstr "حدود %s ثانیه بعد از درست شدن شرط"
 
-msgid "Custom"
-msgstr "سفارشی"
+#: src/Admin/Controllers/RulesController.php:503
+#, php-format
+msgid "About %s after the rule matches"
+msgstr "حدود %s بعد از درست شدن شرط"
 
+#: src/Admin/Controllers/RulesController.php:504
+msgid "1 day"
+msgstr "۱ روز"
+
+#: src/Admin/Controllers/RulesController.php:505
+#, php-format
+msgid "%s days"
+msgstr "%s روز"
+
+#: src/Admin/Controllers/RulesController.php:506
+msgid "1 hour"
+msgstr "۱ ساعت"
+
+#: src/Admin/Controllers/RulesController.php:507
+#, php-format
+msgid "%s hours"
+msgstr "%s ساعت"
+
+#: src/Admin/Controllers/RulesController.php:508
+msgid "1 minute"
+msgstr "۱ دقیقه"
+
+#: src/Admin/Controllers/RulesController.php:509
+#, php-format
+msgid "%s minutes"
+msgstr "%s دقیقه"
+
+#: src/Admin/Controllers/RulesController.php:510
+msgid "1 second"
+msgstr "۱ ثانیه"
+
+#: src/Admin/Controllers/RulesController.php:511
+#, php-format
+msgid "%s seconds"
+msgstr "%s ثانیه"
+
+#: src/Admin/Controllers/RulesController.php:512
+msgid "Day"
+msgstr "روز"
+
+#: src/Admin/Controllers/RulesController.php:513
+msgid "Month"
+msgstr "ماه"
+
+#: src/Admin/Controllers/RulesController.php:514
+msgid "Year"
+msgstr "سال"
+
+#: src/Admin/Controllers/RulesController.php:515
+msgid "params (JSON object)"
+msgstr "تنظیمات اضافی"
+
+#: src/Admin/Controllers/RulesController.php:516
+msgid "Remove action"
+msgstr "حذف عملیات"
+
+#: src/Admin/Controllers/RulesController.php:517
+msgid "Add action"
+msgstr "افزودن عملیات"
+
+#: src/Admin/Controllers/RulesController.php:518
+msgid "/^...$/"
+msgstr "/^...$/"
+
+#: src/Admin/Controllers/RulesController.php:519
+msgid "Examples: true, false, 3, \"text\", []"
+msgstr "نمونه: درست، نادرست، ۳، «متن»"
+
+#: src/Admin/Controllers/RulesController.php:520
+msgid "Select a value…"
+msgstr "انتخاب مقدار…"
+
+#: src/Admin/Controllers/RulesController.php:521
+msgid "Custom value (JSON)…"
+msgstr "مقدار سفارشی (JSON)…"
+
+#: src/Admin/Controllers/RulesController.php:522
+#, php-format
+msgid "Maximum number of conditions reached (%s)."
+msgstr "به حداکثر تعداد شرط (%s) رسیدید."
+
+#: src/Admin/Controllers/RulesController.php:523
+#, php-format
+msgid "Maximum number of actions reached (%s)."
+msgstr "به حداکثر تعداد اقدام (%s) رسیدید."
+
+#: src/Admin/Controllers/RulesController.php:524
+msgid "SMS template"
+msgstr "الگوی پیامک"
+
+#: src/Admin/Controllers/RulesController.php:525
+msgid "Custom template ID…"
+msgstr "شناسه الگوی سفارشی…"
+
+#: src/Admin/Controllers/RulesController.php:527
 msgid "Edit message text under Message patterns."
 msgstr "ویرایش متن پیام در زبانه الگوهای پیام."
 
-msgid "Build automations, edit message patterns, and configure layout and SMS delivery."
-msgstr "اتوماسیون بسازید، الگوهای پیام را ویرایش کنید، و چیدمان و ارسال پیامک را پیکربندی کنید."
+#: src/Admin/Controllers/RulesController.php:634
+msgid "Equals"
+msgstr "برابر"
 
-msgid "Persian texts sent to customers via Melipayamak. Each pattern matches a template_id in your automation rules."
-msgstr "متن‌های فارسی ارسالی به مشتریان از طریق ملی‌پیامک. هر الگو با شناسه template_id در ویرایشگر اتوماسیون شما جفت می‌شود."
+#: src/Admin/Controllers/RulesController.php:635
+msgid "Not equals"
+msgstr "نابرابر"
 
-msgid "Write messages in Persian. Keep placeholders like {name} and {site_name} exactly as shown — they are replaced when the SMS is sent."
-msgstr "پیام‌ها را به فارسی بنویسید. جای‌نگهدارهایی مثل {name} و {site_name} را دقیقاً همان‌طور که نمایش داده شده نگه دارید — هنگام ارسال پیامک جایگزین می‌شوند."
+#: src/Admin/Controllers/RulesController.php:636
+msgid "Greater than"
+msgstr "بزرگ‌تر از"
 
-msgid "Placeholders"
-msgstr "جای‌نگهدارها"
+#: src/Admin/Controllers/RulesController.php:637
+msgid "Greater than or equal"
+msgstr "بزرگ‌تر یا مساوی"
 
-msgid "Click to copy"
-msgstr "برای کپی کلیک کنید"
+#: src/Admin/Controllers/RulesController.php:638
+msgid "Less than"
+msgstr "کوچک‌تر از"
 
-msgid "Copied"
-msgstr "کپی شد"
+#: src/Admin/Controllers/RulesController.php:639
+msgid "Less than or equal"
+msgstr "کوچک‌تر یا مساوی"
 
-msgid "Add pattern"
-msgstr "افزودن الگو"
+#: src/Admin/Controllers/RulesController.php:640
+msgid "In list"
+msgstr "عضو فهرست"
 
-msgid "Pattern ID"
-msgstr "شناسه الگو"
+#: src/Admin/Controllers/RulesController.php:641
+msgid "Not in list"
+msgstr "غیرعضو فهرست"
 
+#: src/Admin/Controllers/RulesController.php:642
+msgid "Is empty"
+msgstr "خالی است"
+
+#: src/Admin/Controllers/RulesController.php:643
+msgid "Is not empty"
+msgstr "خالی نیست"
+
+#: src/Admin/Controllers/RulesController.php:644
+msgid "Is truthy"
+msgstr "مقدار درست"
+
+#: src/Admin/Controllers/RulesController.php:645
+msgid "Is falsy"
+msgstr "مقدار نادرست"
+
+#: src/Admin/Controllers/RulesController.php:646
+msgid "Matches regex"
+msgstr "منطبق بر عبارت منظم"
+
+#: src/Admin/Controllers/RulesController.php:647
+msgid "Starts with"
+msgstr "شروع با"
+
+#: src/Admin/Controllers/RulesController.php:648
+msgid "Ends with"
+msgstr "پایان با"
+
+#: src/Admin/Controllers/RulesController.php:649
+msgid "Contains"
+msgstr "شامل"
+
+#: src/Admin/Controllers/RulesController.php:674
+msgid "Send SMS"
+msgstr "ارسال پیامک"
+
+#: src/Admin/Controllers/RulesController.php:675
+msgid "Send email"
+msgstr "ارسال ایمیل"
+
+#: src/Admin/Controllers/RulesController.php:676
+msgid "Send discount"
+msgstr "ارسال تخفیف"
+
+#: src/Admin/Controllers/RulesController.php:677
+msgid "Webhook"
+msgstr "وب‌هوک"
+
+#: src/Admin/Controllers/RulesController.php:678
+msgid "Log"
+msgstr "ثبت در گزارش"
+
+#: src/Admin/Controllers/RulesController.php:726
+msgid "Hourly"
+msgstr "ساعتی"
+
+#: src/Admin/Controllers/RulesController.php:727
+msgid "Twice daily"
+msgstr "دوبار در روز"
+
+#: src/Admin/Controllers/RulesController.php:728
+msgid "Daily"
+msgstr "روزانه"
+
+#: src/Admin/Controllers/RulesController.php:729
+msgid "Weekly"
+msgstr "هفتگی"
+
+#: src/Admin/Controllers/RulesController.php:740
+#: src/Admin/Views/templates/rules-page.php:69
+msgid "Rules"
+msgstr "فلو"
+
+#: src/Admin/Controllers/RulesController.php:754
+msgid "You do not have permission to access this page."
+msgstr "شما مجوز دسترسی به این صفحه را ندارید."
+
+#: src/Admin/DiagnosticsPage.php:30
+msgid "Flow Diagnostics"
+msgstr "عیب‌یابی فلو"
+
+#: src/Admin/DiagnosticsPage.php:31
+msgid "Diagnostics"
+msgstr "عیب‌یابی"
+
+#: src/Admin/DiagnosticsPage.php:41
+msgid "You do not have permission to view Flow diagnostics."
+msgstr "شما مجوز مشاهده عیب‌یابی فلو را ندارید."
+
+#: src/Admin/DiagnosticsPage.php:48
+msgid "Bertanex Flow diagnostics"
+msgstr "عیب‌یابی برتانکس فلو"
+
+#: src/Admin/DiagnosticsPage.php:49
+msgid ""
+"Flow connects events from WordPress and other plugins to versioned "
+"workflows. The existing Rules screen still controls SMS automations."
+msgstr "فلو رویدادهای وردپرس و افزونه‌های دیگر را به گردش‌کارهای نسخه‌دار وصل می‌کند. صفحه قوانین همچنان اتوماسیون‌های پیامک را کنترل می‌کند."
+
+#: src/Admin/EmailTemplateType.php:48 src/Admin/EmailTemplateType.php:465
+#: src/Admin/Models/EmailTemplatesModel.php:39
+#: src/Admin/Views/templates/rules-page.php:76
+msgid "Email templates"
+msgstr "قالب‌های ایمیل"
+
+#: src/Admin/EmailTemplateType.php:49 src/Admin/EmailTemplateType.php:145
+#: src/Admin/EmailTemplateType.php:488 src/Admin/Onboarding.php:117
+msgid "Email template"
+msgstr "قالب ایمیل"
+
+#: src/Admin/EmailTemplateType.php:146
+msgid "A message about 600px wide. Placeholders use {name} tokens."
+msgstr "پیامی با عرض حدود ۶۰۰ پیکسل. جای‌نگهدارها با نشانه‌هایی مثل {name} نوشته می‌شوند."
+
+#: src/Admin/EmailTemplateType.php:161
+msgid "Email message designed in the Site Editor."
+msgstr "پیام ایمیل طراحی‌شده در ویرایشگر سایت."
+
+#: src/Admin/EmailTemplateType.php:172
+msgid "You do not have permission to add email templates."
+msgstr "شما مجوز افزودن قالب ایمیل را ندارید."
+
+#: src/Admin/EmailTemplateType.php:189
+msgid "You do not have permission to delete email templates."
+msgstr "شما مجوز حذف قالب ایمیل را ندارید."
+
+#: src/Admin/EmailTemplateType.php:354
+msgid "Email template not found."
+msgstr "قالب ایمیل پیدا نشد."
+
+#: src/Admin/EmailTemplateType.php:388 src/Admin/EmailTemplateType.php:391
+msgid "Choose the WordPress default or a template from this list."
+msgstr "پیش‌فرض وردپرس یا یکی از قالب‌های این فهرست را انتخاب کنید."
+
+#: src/Admin/EmailTemplateType.php:435 src/Admin/Onboarding.php:79
+msgid "WordPress default"
+msgstr "پیش‌فرض وردپرس"
+
+#: src/Admin/EmailTemplateType.php:436 src/Email/SelectedEmailMailer.php:37
+msgid "Notification"
+msgstr "اعلان"
+
+#: src/Admin/EmailTemplateType.php:466
+msgid ""
+"Flow sends the WordPress default email until you choose a designed template. "
+"Click a card to use that layout."
+msgstr "تا وقتی قالب طراحی‌شده‌ای انتخاب نکنید، فلو ایمیل پیش‌فرض وردپرس را می‌فرستد. برای استفاده از یک چیدمان روی کارت آن کلیک کنید."
+
+#: src/Admin/EmailTemplateType.php:467
+#: src/Admin/Models/EmailTemplatesModel.php:94
+msgid "Add email template"
+msgstr "افزودن قالب ایمیل"
+
+#: src/Admin/EmailTemplateType.php:468
+msgid "Use this template"
+msgstr "استفاده از این قالب"
+
+#: src/Admin/EmailTemplateType.php:469
+msgid "In use"
+msgstr "در حال استفاده"
+
+#: src/Admin/EmailTemplateType.php:470
+msgid "Selected"
+msgstr "انتخاب‌شده"
+
+#: src/Admin/EmailTemplateType.php:471
+msgid "Design"
+msgstr "طراحی"
+
+#: src/Admin/EmailTemplateType.php:472
+msgid "Delete"
+msgstr "حذف"
+
+#: src/Admin/EmailTemplateType.php:473
+msgid "Delete this email template?"
+msgstr "این قالب ایمیل حذف شود؟"
+
+#: src/Admin/EmailTemplateType.php:474
+msgid "Could not save the template choice."
+msgstr "انتخاب قالب ذخیره نشد."
+
+#: src/Admin/EmailTemplateType.php:475
+msgid "Could not add the template."
+msgstr "قالب افزوده نشد."
+
+#: src/Admin/EmailTemplateType.php:476
+msgid "Could not delete the template."
+msgstr "قالب حذف نشد."
+
+#: src/Admin/EmailTemplateType.php:524 src/Email/SelectedEmailMailer.php:90
+msgid "You have a new notification."
+msgstr "یک اعلان جدید دارید."
+
+#: src/Admin/EmailTemplateType.php:569
+msgid ""
+"Write the message here. Placeholders such as {name} and {site_name} are "
+"replaced when the email is sent."
+msgstr "پیام را اینجا بنویسید. جای‌نگهدارهایی مثل {name} و {site_name} هنگام ارسال ایمیل جایگزین می‌شوند."
+
+#: src/Admin/Models/EmailTemplatesModel.php:40
+msgid ""
+"Create, edit, and remove the emails automations can send. Insert a "
+"placeholder into the subject or message at the cursor."
+msgstr "ایمیل‌هایی را که اتوماسیون‌ها می‌فرستند بسازید، ویرایش کنید و حذف کنید. جای‌نگهدار را در محل مکان‌نما، در موضوع یا پیام، درج کنید."
+
+#: src/Admin/Models/EmailTemplatesModel.php:75
+msgid "Inserted"
+msgstr "درج‌شده"
+
+#: src/Admin/Models/EmailTemplatesModel.php:76
+#: src/Admin/Models/EmailTemplatesModel.php:78
+msgid "Ready"
+msgstr "آماده"
+
+#: src/Admin/Models/EmailTemplatesModel.php:77
+msgid "Empty"
+msgstr "خالی"
+
+#: src/Admin/Models/EmailTemplatesModel.php:81
+msgid "Search email templates"
+msgstr "جستجوی قالب‌های ایمیل"
+
+#: src/Admin/Models/EmailTemplatesModel.php:82
+msgid "Search templates"
+msgstr "جستجوی قالب‌ها"
+
+#: src/Admin/Models/EmailTemplatesModel.php:90
+msgid ""
+"No email templates yet. Add one, then insert the values the message should "
+"include."
+msgstr "هنوز قالب ایمیلی نیست. یکی اضافه کنید، سپس مقدارهایی را که پیام باید داشته باشد درج کنید."
+
+#: src/Admin/Models/EmailTemplatesModel.php:182
+msgid "New email template"
+msgstr "قالب ایمیل جدید"
+
+#: src/Admin/Models/EmailTemplatesModel.php:193
+msgid "Remove this email template?"
+msgstr "این قالب ایمیل حذف شود؟"
+
+#: src/Admin/Models/EmailTemplatesModel.php:193
+msgid "Remove email template"
+msgstr "حذف قالب ایمیل"
+
+#: src/Admin/Models/EmailTemplatesModel.php:200
+msgid "Template ID"
+msgstr "شناسه قالب"
+
+#: src/Admin/Models/EmailTemplatesModel.php:204
+#: src/Admin/Models/SmsTemplatesModel.php:239
 msgid "Title"
 msgstr "عنوان"
 
-msgid "New pattern"
-msgstr "الگوی جدید"
+#: src/Admin/Models/EmailTemplatesModel.php:208
+msgid "Subject"
+msgstr "موضوع"
 
-msgid "pattern_id"
-msgstr "شناسه_الگو"
+#: src/Admin/Models/EmailTemplatesModel.php:212
+#: src/Admin/Models/SmsTemplatesModel.php:242
+msgid "Preview with sample values"
+msgstr "پیش‌نمایش با مقدارهای نمونه"
 
-msgid "Short title for this pattern"
-msgstr "عنوان کوتاه برای این الگو"
+#: src/Admin/Models/EmailTemplatesModel.php:221
+msgid "Insert value"
+msgstr "درج مقدار"
 
-msgid "Remove pattern"
-msgstr "حذف الگو"
+#: src/Admin/Models/RulesDocumentModel.php:78
+msgid "Rules database table missing or could not be created."
+msgstr "جدول پایگاه‌داده اتوماسیون وجود ندارد یا ساخته نشد."
 
-msgid "Remove this pattern?"
-msgstr "این الگو حذف شود؟"
+#: src/Admin/Models/RulesDocumentModel.php:90
+msgid "Failed to persist rules to the database."
+msgstr "ذخیره اتوماسیون‌ها در پایگاه‌داده ناموفق بود."
 
+#: src/Admin/Models/RulesEditorSettingsModel.php:50
+msgid "1 column"
+msgstr "۱ ستون"
+
+#: src/Admin/Models/RulesEditorSettingsModel.php:51
+msgid "2 columns"
+msgstr "۲ ستون"
+
+#: src/Admin/Models/RulesEditorSettingsModel.php:54
+msgid "Applies to the rules list and condition/action lists inside each rule."
+msgstr "برای فهرست فلوها و شرط‌ها و عملیات هر فلو به کار می‌رود."
+
+#: src/Admin/Models/SmsSettingsModel.php:76
+msgid ""
+"Choose which transport delivers queued SMS. Automatic uses Melipayamak when "
+"configured, then Twilio, otherwise the logging driver."
+msgstr ""
+"انتخاب کنید پیامک‌های در صف با کدام سرویس بروند. حالت خودکار اگر ملی‌پیامک "
+"تنظیم شده باشد از آن استفاده می‌کند، بعد Twilio، و اگر هیچ‌کدام نباشد فقط در "
+"گزارش ثبت می‌کند."
+
+#: src/Admin/Models/SmsSettingsModel.php:80
+msgid ""
+"Choose which transport delivers queued SMS. Automatic uses Melipayamak when "
+"configured, otherwise the logging driver."
+msgstr ""
+"انتخاب کنید پیامک‌های در صف با کدام سرویس بروند. حالت خودکار اگر ملی‌پیامک "
+"تنظیم شده باشد از آن استفاده می‌کند؛ وگرنه فقط در گزارش ثبت می‌کند."
+
+#: src/Admin/Models/SmsSettingsModel.php:91 src/Admin/Onboarding.php:112
+msgid "Provider"
+msgstr "سرویس پیامک"
+
+#: src/Admin/Models/SmsSettingsModel.php:103
+msgid ""
+"Credentials for rest.payamak-panel.com SendSMS. Use wp-config constants or "
+"leave password empty to keep the saved value."
+msgstr ""
+"نام کاربری و رمز پنل ملی‌پیامک. اگر رمز را خالی بگذارید، رمز قبلی می‌ماند."
+
+#: src/Admin/Models/SmsSettingsModel.php:114 src/Admin/Onboarding.php:113
+msgid "Username"
+msgstr "نام کاربری"
+
+#: src/Admin/Models/SmsSettingsModel.php:123 src/Admin/Onboarding.php:114
+msgid "Password"
+msgstr "رمز عبور"
+
+#: src/Admin/Models/SmsSettingsModel.php:132 src/Admin/Onboarding.php:116
+msgid "Sender line (from)"
+msgstr "شماره خط ارسال"
+
+#: src/Admin/Models/SmsSettingsModel.php:160 src/Admin/Onboarding.php:70
+msgid "Automatic"
+msgstr "خودکار"
+
+#: src/Admin/Models/SmsSettingsModel.php:161 src/Admin/Onboarding.php:71
+msgid "Melipayamak"
+msgstr "ملی‌پیامک"
+
+#: src/Admin/Models/SmsSettingsModel.php:163 src/Admin/Onboarding.php:75
+msgid "Twilio"
+msgstr "Twilio"
+
+#: src/Admin/Models/SmsSettingsModel.php:165 src/Admin/Onboarding.php:72
+msgid "Logging only (development)"
+msgstr "فقط ثبت در گزارش (توسعه)"
+
+#: src/Admin/Models/SmsSettingsModel.php:193
+msgid "Leave blank to keep the current password"
+msgstr "برای حفظ رمز فعلی خالی بگذارید"
+
+#: src/Admin/Models/SmsSettingsModel.php:207
+msgid "e.g. short line number from panel"
+msgstr "مثلاً شماره خط کوتاه از پنل"
+
+#: src/Admin/Models/SmsTemplatesModel.php:234
+msgid "SMS message patterns"
+msgstr "الگوهای پیامک"
+
+#: src/Admin/Models/SmsTemplatesModel.php:235
+msgid ""
+"Persian texts sent to customers via Melipayamak. Each pattern matches a "
+"template_id in your automation rules."
+msgstr ""
+"متن‌های فارسی ارسالی به مشتریان از طریق ملی‌پیامک. هر الگو با شناسه "
+"template_id در ویرایشگر اتوماسیون شما جفت می‌شود."
+
+#: src/Admin/Models/SmsTemplatesModel.php:236
+msgid "Search patterns"
+msgstr "جستجوی الگوها"
+
+#: src/Admin/Models/SmsTemplatesModel.php:237
+msgid "Add pattern"
+msgstr "افزودن الگو"
+
+#: src/Admin/Models/SmsTemplatesModel.php:238
+msgid "Pattern ID"
+msgstr "شناسه الگو"
+
+#: src/Admin/Models/SmsTemplatesModel.php:240
 msgid "Your message (override)"
 msgstr "پیام شما (سفارشی)"
 
-msgid "Leave empty to use the built-in Persian default for this pattern."
-msgstr "برای استفاده از متن پیش‌فرض فارسی این الگو خالی بگذارید."
-
+#: src/Admin/Models/SmsTemplatesModel.php:241
 msgid "Empty field = default text"
 msgstr "فیلد خالی = متن پیش‌فرض"
 
+#: src/Admin/Models/SmsTemplatesModel.php:243
+msgid "Remove pattern"
+msgstr "حذف الگو"
+
+#: src/Admin/Models/SmsTemplatesModel.php:244
+msgid "Remove this pattern?"
+msgstr "این الگو حذف شود؟"
+
+#: src/Admin/Models/SmsTemplatesModel.php:245
+msgid "Placeholders"
+msgstr "جای‌نگهدارها"
+
+#: src/Admin/Models/SmsTemplatesModel.php:246
+msgid "Default"
+msgstr "پیش‌فرض"
+
+#: src/Admin/Models/SmsTemplatesModel.php:247
+msgid "Custom"
+msgstr "سفارشی"
+
+#: src/Admin/Models/SmsTemplatesModel.php:248
+msgid "Not set"
+msgstr "تنظیم نشده"
+
+#: src/Admin/Models/SmsTemplatesModel.php:249
+#, php-format
 msgid "%1$d / %2$d characters"
 msgstr "%1$d / %2$d کاراکتر"
 
-msgid "Current value (sent to user)"
-msgstr "مقدار فعلی (ارسال به کاربر)"
+#: src/Admin/Onboarding.php:109
+msgid "Set up Flow"
+msgstr "راه‌اندازی فلو"
 
-msgid "Not set"
-msgstr "تنظیم نشده"
+msgid "Welcome to Bertanex Flow"
+msgstr "به برتانکس فلو خوش آمدید"
+
+msgid "Welcome"
+msgstr "خوش آمدید"
+
+msgid "Choose the provider, username, and sender line."
+msgstr "سرویس پیامک، نام کاربری و شماره خط ارسال را وارد کنید."
+
+msgid "Choose the layout used for automation emails."
+msgstr "ظاهر ایمیل‌هایی را که فلو می‌فرستد انتخاب کنید."
+
+msgid "Back"
+msgstr "بازگشت"
+
+#: src/Admin/Onboarding.php:110
+msgid ""
+"Set how messages are delivered. You can change these later in Configuration "
+"and Email templates."
+msgstr "مشخص کنید پیام‌ها چطور فرستاده شوند. بعداً هم از بخش تنظیمات و قالب‌های ایمیل می‌توانید عوضشان کنید."
+
+#: src/Admin/Onboarding.php:111 src/Admin/Views/templates/rules-page.php:175
+msgid "SMS delivery"
+msgstr "ارسال پیامک"
+
+#: src/Admin/Onboarding.php:115
+msgid "Leave blank to keep the current password."
+msgstr "برای حفظ رمز فعلی خالی بگذارید."
+
+#: src/Admin/Onboarding.php:118
+msgid "WordPress plain email is used unless you choose a designed template."
+msgstr "اگر قالب طراحی‌شده انتخاب نکنید، ایمیل ساده وردپرس فرستاده می‌شود."
+
+#: src/Admin/Onboarding.php:119
+msgid "Template"
+msgstr "قالب"
+
+#: src/Admin/Onboarding.php:120
+msgid "Skip"
+msgstr "رد شدن"
+
+#: src/Admin/Onboarding.php:121
+msgid "Next"
+msgstr "بعدی"
+
+#: src/Admin/Onboarding.php:122
+msgid "Finish"
+msgstr "پایان"
+
+#: src/Admin/Onboarding.php:123
+msgid "Could not save the setup."
+msgstr "راه‌اندازی ذخیره نشد."
+
+#: src/Admin/Onboarding.php:135
+msgid "You do not have permission to save this setup."
+msgstr "شما مجوز ذخیره این راه‌اندازی را ندارید."
+
+#: src/Admin/PluginDefaultsReset.php:53
+msgid "No default rules are registered by integrated consumers."
+msgstr "هیچ اتوماسیون پیش‌فرضی توسط مصرف‌کننده‌های یکپارچه ثبت نشده است."
+
+#: src/Admin/Views/RulesPageView.php:19
+msgid "Rules template missing."
+msgstr "الگوی صفحه اتوماسیون یافت نشد."
+
+#: src/Admin/Views/SmsSettingsPageView.php:19
+msgid "SMS settings template missing."
+msgstr "الگوی صفحه تنظیمات پیامک یافت نشد."
+
+#: src/Admin/Views/templates/rules-page.php:42
+msgid ""
+"All customizations were reset to plugin defaults. Rules, message patterns, "
+"panel layout, and SMS settings were restored."
+msgstr ""
+"همهٔ سفارشی‌سازی‌ها به پیش‌فرض افزونه بازگردانده شد. قوانین، الگوهای پیام، "
+"چیدمان پنل و تنظیمات پیامک بازیابی شدند."
+
+#: src/Admin/Views/templates/rules-page.php:51
+msgid ""
+"Could not reset to defaults. Check that the default rules file exists and "
+"try again."
+msgstr ""
+"بازنشانی به پیش‌فرض ممکن نشد. وجود فایل قوانین پیش‌فرض را بررسی و دوباره تلاش "
+"کنید."
+
+#: src/Admin/Views/templates/rules-page.php:71
+msgid "Rules editor mode"
+msgstr "بخش‌های فلو"
+
+#: src/Admin/Views/templates/rules-page.php:74
+msgid "Automations"
+msgstr "اتوماسیون‌ها"
+
+#: src/Admin/Views/templates/rules-page.php:75
+msgid "SMS patterns"
+msgstr "الگوهای پیامک"
+
+#: src/Admin/Views/templates/rules-page.php:77
+msgid "Runs"
+msgstr "اجراها"
+
+#: src/Admin/Views/templates/rules-page.php:78
+#: src/Admin/Views/templates/rules-page.php:167
+msgid "Configuration"
+msgstr "تنظیمات"
+
+#: src/Admin/Views/templates/rules-page.php:97
+msgid "JSON error (preview only; saved value unchanged):"
+msgstr "خطای JSON (فقط پیش‌نمایش؛ مقدار ذخیره‌شده بدون تغییر است):"
+
+#: src/Admin/Views/templates/rules-page.php:100
+msgid ""
+"Use Reset to defaults on the Configuration tab, or restore valid rules "
+"another way."
+msgstr ""
+"از بخش تنظیمات، «بازگشت به حالت اولیه» را بزنید، یا فلوهای درست را دوباره وارد کنید."
+
+#: src/Admin/Views/templates/rules-page.php:126
+msgid "Save patterns"
+msgstr "ذخیره الگوها"
+
+#: src/Admin/Views/templates/rules-page.php:168
+msgid "SMS delivery and a reset back to the original plugin settings."
+msgstr "ارسال پیامک و بازگردانی به تنظیمات اولیه افزونه."
+
+#: src/Admin/Views/templates/rules-page.php:176
+msgid "Provider and Melipayamak credentials"
+msgstr "سرویس پیامک و اطلاعات ورود ملی‌پیامک"
+
+#: src/Admin/Views/templates/rules-page.php:185
+msgid "Save configuration"
+msgstr "ذخیره تنظیمات"
+
+#: src/Admin/Views/templates/rules-page.php:188
+msgid ""
+"Twilio can also be set via wp-config (BERTANEX_FLOW_TWILIO_*) or the "
+"gro_twilio_sms_config filter."
+msgstr ""
+"Twilio را می‌توانید از wp-config (BERTANEX_FLOW_TWILIO_*) یا فیلتر "
+"gro_twilio_sms_config نیز تنظیم کنید."
+
+#: src/Admin/Views/templates/rules-page.php:199
+msgid "Reset to defaults"
+msgstr "بازگشت به حالت اولیه"
+
+#: src/Admin/Views/templates/rules-page.php:202
+msgid ""
+"Remove all saved customizations and restore the plugin’s original state."
+msgstr "هر چه ذخیره کرده‌اید پاک می‌شود و افزونه به حالت اول برمی‌گردد."
+
+#: src/Admin/Views/templates/rules-page.php:209
+msgid ""
+"This will reset automation rules, SMS message patterns, automation list "
+"limits, column layout, and Melipayamak settings stored in this panel. "
+"Credentials defined in wp-config or filters are not changed."
+msgstr ""
+"ویرایشگر اتوماسیون، الگوهای پیامک، محدودیت‌های فهرست اتوماسیون، چیدمان ستون‌ها "
+"و تنظیمات ملی‌پیامک ذخیره‌شده در این پنل بازنشانی می‌شوند. اعتبارنامه‌های "
+"تعریف‌شده در wp-config یا فیلترها تغییر نمی‌کنند."
+
+#: src/Admin/Views/templates/rules-page.php:218
+msgid ""
+"Reset all Bertanex Flow customizations to defaults? This cannot be "
+"undone."
+msgstr ""
+"همه تنظیم‌های برتانکس فلو به حالت اول برگردد؟ این کار برگشت ندارد."
+
+#: src/Admin/Views/templates/rules-page.php:222
+#: src/Admin/Views/templates/rules-page.php:228
+msgid "Reset all to defaults"
+msgstr "بازنشانی همه به پیش‌فرض"
+
+#: src/Admin/Views/templates/rules-page.php:245
+msgid "Enable JavaScript to use the automations editor."
+msgstr "برای کار با فلو، جاوااسکریپت مرورگر را روشن کنید."
+
+#: src/Admin/Views/templates/rules-page.php:260
+msgid "Save all rules"
+msgstr "ذخیره همه فلوها"
+
+#: src/Admin/Views/templates/sms-settings-page.php:13
+msgid "Bertanex Flow — SMS"
+msgstr "برتانکس فلو — پیامک"
+
+#: src/Admin/Views/templates/sms-settings-page.php:19
+msgid "Save SMS settings"
+msgstr "ذخیره تنظیمات پیامک"
+
+#: src/Admin/Views/templates/sms-settings-page.php:26
+msgid ""
+"Twilio remains configurable via wp-config constants (BERTANEX_FLOW_TWILIO_*) "
+"or the gro_twilio_sms_config filter when that provider is selected. "
+"Melipayamak uses the REST endpoint rest.payamak-panel.com (SendSMS) with "
+"sslverify enabled."
+msgstr "Twilio همچنان از طریق ثابت‌های wp-config (BERTANEX_FLOW_TWILIO_*) یا فیلتر gro_twilio_sms_config، وقتی آن ارائه‌دهنده انتخاب شده باشد، قابل پیکربندی است. ملی‌پیامک از نقطه پایانی REST به نشانی rest.payamak-panel.com (SendSMS) با sslverify فعال استفاده می‌کند."
+
+#: src/Admin/Views/templates/sms-settings-page.php:32
+msgid ""
+"Melipayamak uses the REST endpoint rest.payamak-panel.com (SendSMS) with "
+"sslverify enabled."
+msgstr ""
+"ملی‌پیامک از نشانی امن rest.payamak-panel.com پیام را می‌فرستد."
+
+#: src/REST/RestRegistrar.php:118
+msgid "Workflow was not found."
+msgstr "فلو پیدا نشد."
+
+#: src/REST/RestRegistrar.php:128
+msgid "Workflow document must be a JSON object."
+msgstr "اطلاعات فلو باید به‌صورت JSON باشد."
+
+#~ msgid ""
+#~ "Design IF / THEN automations, manage SMS delivery, and tune automations "
+#~ "from one workspace."
+#~ msgstr ""
+#~ "اتوماسیون‌های IF / THEN بسازید، ارسال پیامک را مدیریت کنید و اتوماسیون‌ها "
+#~ "را از یک فضای کاری تنظیم کنید."
+
+#~ msgid "Rule editor"
+#~ msgstr "فلو"
+
+#~ msgid "List limits and column layout"
+#~ msgstr "محدودیت تعداد و چیدمان ستون‌ها"
+
+#~ msgid "Limits and layout for the visual rule builder lists."
+#~ msgstr "محدودیت و چیدمان فهرست‌های سازندهٔ بصری اتوماسیون."
+
+#~ msgid "Max conditions per rule"
+#~ msgstr "حداکثر شرط در هر اتوماسیون"
+
+#~ msgid "Max actions per rule"
+#~ msgstr "حداکثر اقدام در هر اتوماسیون"
+
+#~ msgid "Display columns"
+#~ msgstr "تعداد ستون‌ها"
+
+#~ msgid "Click to copy"
+#~ msgstr "برای کپی کلیک کنید"
+
+#~ msgid "Copied"
+#~ msgstr "کپی شد"
+
+#~ msgid "New pattern"
+#~ msgstr "الگوی جدید"
+
+#~ msgid "pattern_id"
+#~ msgstr "شناسه_الگو"
+
+#~ msgid "Short title for this pattern"
+#~ msgstr "عنوان کوتاه برای این الگو"
+
+#~ msgid "Leave empty to use the built-in Persian default for this pattern."
+#~ msgstr "برای استفاده از متن پیش‌فرض فارسی این الگو خالی بگذارید."
+
+#~ msgid "Current value (sent to user)"
+#~ msgstr "مقدار فعلی (ارسال به کاربر)"
+
+msgid "Reset"
+msgstr "بازنشانی"
+
+msgid "Save"
+msgstr "ذخیره"
+
+msgid "Saved"
+msgstr "ذخیره شد"
+
+msgid "Type reset-all to confirm."
+msgstr "برای تأیید، reset-all را بنویسید."
+
+msgid "Flow"
+msgstr "فلو"
+
+msgid "Comment posted"
+msgstr "دیدگاه ثبت شد"
+
+msgid "Post published"
+msgstr "نوشته منتشر شد"
+
+msgid "Password changed"
+msgstr "گذرواژه تغییر کرد"
+
+msgid "Order completed"
+msgstr "سفارش تکمیل شد"
+
+msgid "Order status changed"
+msgstr "وضعیت سفارش تغییر کرد"
+
+msgid "Order paid"
+msgstr "سفارش پرداخت شد"
+
+msgid "Customer created"
+msgstr "مشتری ساخته شد"
+
+msgid "Refund created"
+msgstr "بازپرداخت ساخته شد"
+
+msgid "User ID"
+msgstr "شناسه کاربر"
+
+msgid "User role"
+msgstr "نقش کاربر"
+
+msgid "User email"
+msgstr "ایمیل کاربر"
+
+msgid "Order status"
+msgstr "وضعیت سفارش"
+
+msgid "Post status"
+msgstr "وضعیت نوشته"
+
+msgid "Order count"
+msgstr "تعداد سفارش"
+
+msgid "Administrator"
+msgstr "مدیر کل"
+
+msgid "Editor"
+msgstr "ویرایشگر"
+
+msgid "Author"
+msgstr "نویسنده"
+
+msgid "Contributor"
+msgstr "مشارکت‌کننده"
+
+msgid "Subscriber"
+msgstr "مشترک"
+
+msgid "Customer"
+msgstr "مشتری"
+
+msgid "Shop manager"
+msgstr "مدیر فروشگاه"
+
+msgid "Pending"
+msgstr "در انتظار"
+
+msgid "Processing"
+msgstr "در حال پردازش"
+
+msgid "On hold"
+msgstr "معلق"
+
+msgid "Cancelled"
+msgstr "لغو شده"
+
+msgid "Refunded"
+msgstr "بازپرداخت‌شده"
+
+msgid "Failed"
+msgstr "ناموفق"
+
+msgid "Welcome a new WordPress user"
+msgstr "خوش‌آمد به کاربر تازه وردپرس"
+
+msgid "Email the comment author"
+msgstr "ایمیل به نویسنده دیدگاه"
+
+msgid "Email the author when a post is published"
+msgstr "ایمیل به نویسنده هنگام انتشار نوشته"
+
+msgid "Email the user after a password change"
+msgstr "ایمیل به کاربر پس از تغییر گذرواژه"
+
+msgid "Thank the customer when an order is completed"
+msgstr "تشکر از مشتری هنگام تکمیل سفارش"
+
+msgid "Email the customer when an order is processing"
+msgstr "ایمیل به مشتری هنگام پردازش سفارش"
+
+msgid "Email the customer when an order is paid"
+msgstr "ایمیل به مشتری هنگام پرداخت سفارش"
+
+msgid "Welcome a new WooCommerce customer"
+msgstr "خوش‌آمد به مشتری تازه ووکامرس"
+
+msgid "Email the customer when an order is refunded"
+msgstr "ایمیل به مشتری هنگام بازپرداخت سفارش"
+
+msgid "SMS delivery settings for queued messages."
+msgstr "تنظیمات ارسال پیامک برای پیام‌های صف‌شده."
+
+msgid "Use Reset to defaults on the Reset tab, or restore valid rules another way."
+msgstr "در زبانه بازنشانی «بازگردانی به پیش‌فرض» را بزنید، یا قوانین معتبر را به روش دیگری بازیابی کنید."
+
+msgid "This will reset automation rules, SMS message patterns, automation list limits, column layout, and Melipayamak settings. Credentials defined in wp-config or filters are not changed."
+msgstr "قوانین اتوماسیون، الگوهای پیامک، محدودیت‌های فهرست، چیدمان ستون‌ها و تنظیمات ملی‌پیامک بازنشانی می‌شوند. اعتبارنامه‌های تعریف‌شده در wp-config یا فیلترها تغییر نمی‌کنند."

@@ -1,13 +1,14 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": {
+    "title": "Bertanex Flow",
+    "description": "Loads the latest commit from the default branch."
+  },
   "landingPage": "/wp-admin/admin.php?page=bertanex-flow",
   "login": true,
   "preferredVersions": {
     "php": "8.3",
-    "wp": "latest"
-  },
-  "features": {
-    "networking": true
+    "wp": "7.1"
   },
   "steps": [
     {
@@ -35,8 +36,7 @@
       "pluginData": {
         "resource": "git:directory",
         "url": "https://github.com/rezaelahidev/bertanex-flow",
-        "ref": "main",
-        "refType": "branch"
+        "ref": "HEAD"
       },
       "options": {
         "activate": true,

@@ -6,6 +6,8 @@
 
 دموی زنده در مرورگر، بدون نصب روی هاست:
 
-[باز کردن دموی Bertanex Flow](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Frezaelahidev%2Fbertanex-flow%2Fmain%2Fblueprint.json)
+[باز کردن دموی Bertanex Flow](https://playground.wordpress.net/?storage=temp&blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Frezaelahidev%2Fbertanex-flow%2Fmain%2Fblueprint.json)
 
-وردپرس و ووکامرس در همین صفحه بالا می‌آیند، افزونه فعال می‌شود، و پیشخوان فارسی فلو باز می‌شود. ورود به‌صورت خودکار با کاربر مدیر انجام می‌شود.
+وردپرس ۷.۱ و ووکامرس در همین صفحه بالا می‌آیند، افزونه فعال می‌شود، و پیشخوان فارسی فلو باز می‌شود. ورود به‌صورت خودکار با کاربر مدیر انجام می‌شود.
+
+هر پوش به شاخهٔ پیش‌فرض `main` همان نسخه‌ای است که این لینک بارگذاری می‌کند. نیازی به ساختن لینک تازه نیست.

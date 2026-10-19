@@ -3,7 +3,7 @@
   "rules": [
     {
       "id": "wp_welcome_user",
-      "label": "Welcome a new WordPress user",
+      "label": "خوش‌آمد به کاربر تازه وردپرس",
       "enabled": true,
       "priority": 10,
       "trigger": { "events": ["USER_REGISTERED"] },
@@ -13,15 +13,15 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "Welcome to {site_name}",
-            "message": "Your account is ready. You can sign in any time."
+            "subject": "به {site_name} خوش آمدید",
+            "message": "حساب شما آماده است. هر زمان می‌توانید وارد شوید."
           }
         }
       ]
     },
     {
       "id": "wp_comment_author",
-      "label": "Email the comment author",
+      "label": "ایمیل به نویسنده دیدگاه",
       "enabled": false,
       "priority": 20,
       "trigger": { "events": ["COMMENT_POSTED"] },
@@ -31,15 +31,15 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "We received your comment",
-            "message": "Thanks for commenting on {site_name}."
+            "subject": "دیدگاه شما دریافت شد",
+            "message": "از دیدگاه شما در {site_name} سپاسگزاریم."
           }
         }
       ]
     },
     {
       "id": "wp_post_published",
-      "label": "Email the author when a post is published",
+      "label": "ایمیل به نویسنده هنگام انتشار نوشته",
       "enabled": false,
       "priority": 30,
       "trigger": { "events": ["POST_PUBLISHED"] },
@@ -49,15 +49,15 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "Your post is published",
-            "message": "A post you wrote is now public on {site_name}."
+            "subject": "نوشته شما منتشر شد",
+            "message": "نوشته شما اکنون در {site_name} منتشر شده است."
           }
         }
       ]
     },
     {
       "id": "wp_password_changed",
-      "label": "Email the user after a password change",
+      "label": "ایمیل به کاربر پس از تغییر گذرواژه",
       "enabled": false,
       "priority": 40,
       "trigger": { "events": ["PASSWORD_CHANGED"] },
@@ -67,15 +67,15 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "Your password was changed",
-            "message": "The password for your {site_name} account was changed. If this was not you, reset it."
+            "subject": "گذرواژه شما تغییر کرد",
+            "message": "گذرواژه حساب {site_name} شما تغییر کرد. اگر این کار را شما نکرده‌اید، آن را بازنشانی کنید."
           }
         }
       ]
     },
     {
       "id": "woo_order_completed",
-      "label": "Thank the customer when an order is completed",
+      "label": "تشکر از مشتری هنگام تکمیل سفارش",
       "enabled": true,
       "priority": 50,
       "trigger": { "events": ["woocommerce.order.completed"] },
@@ -85,15 +85,15 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "Your order is complete",
-            "message": "Thanks for your order. It is now complete."
+            "subject": "سفارش شما تکمیل شد",
+            "message": "از سفارش شما سپاسگزاریم. سفارش اکنون تکمیل شده است."
           }
         }
       ]
     },
     {
       "id": "woo_order_processing",
-      "label": "Email the customer when an order is processing",
+      "label": "ایمیل به مشتری هنگام پردازش سفارش",
       "enabled": false,
       "priority": 60,
       "trigger": { "events": ["woocommerce.order.status_changed"] },
@@ -103,15 +103,15 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "Your order is being processed",
-            "message": "We are preparing your order."
+            "subject": "سفارش شما در حال پردازش است",
+            "message": "در حال آماده‌سازی سفارش شما هستیم."
           }
         }
       ]
     },
     {
       "id": "woo_order_paid",
-      "label": "Email the customer when an order is paid",
+      "label": "ایمیل به مشتری هنگام پرداخت سفارش",
       "enabled": false,
       "priority": 70,
       "trigger": { "events": ["woocommerce.order.paid"] },
@@ -121,15 +121,15 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "Payment received",
-            "message": "We received your payment. Thank you."
+            "subject": "پرداخت دریافت شد",
+            "message": "پرداخت شما دریافت شد. سپاسگزاریم."
           }
         }
       ]
     },
     {
       "id": "woo_customer_created",
-      "label": "Welcome a new WooCommerce customer",
+      "label": "خوش‌آمد به مشتری تازه ووکامرس",
       "enabled": false,
       "priority": 80,
       "trigger": { "events": ["woocommerce.customer.created"] },
@@ -139,15 +139,15 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "Welcome to {site_name}",
-            "message": "Your customer account is ready."
+            "subject": "به {site_name} خوش آمدید",
+            "message": "حساب مشتری شما آماده است."
           }
         }
       ]
     },
     {
       "id": "woo_order_refunded",
-      "label": "Email the customer when an order is refunded",
+      "label": "ایمیل به مشتری هنگام بازپرداخت سفارش",
       "enabled": true,
       "priority": 90,
       "trigger": { "events": ["woocommerce.refund.created"] },
@@ -157,8 +157,8 @@
           "type": "send_email",
           "template_id": "wordpress",
           "params": {
-            "subject": "Your refund",
-            "message": "A refund was created for your order."
+            "subject": "بازپرداخت شما",
+            "message": "برای سفارش شما بازپرداخت ثبت شد."
           }
         }
       ]

@@ -39,7 +39,7 @@ final class FilterUserStateProvider implements UserStateProviderInterface
 
         $this->resolved = $provider instanceof UserStateProviderInterface
             ? $provider
-            : new NullUserStateProvider();
+            : new WordPressUserStateProvider();
 
         return $this->resolved;
     }

@@ -1,4 +1,167 @@
 {
   "version": "1.0.0",
-  "rules": []
+  "rules": [
+    {
+      "id": "wp_welcome_user",
+      "label": "Welcome a new WordPress user",
+      "enabled": true,
+      "priority": 10,
+      "trigger": { "events": ["USER_REGISTERED"] },
+      "conditions": { "all": [{ "field": "user_id", "op": "gte", "value": 1 }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "Welcome to {site_name}",
+            "message": "Your account is ready. You can sign in any time."
+          }
+        }
+      ]
+    },
+    {
+      "id": "wp_comment_author",
+      "label": "Email the comment author",
+      "enabled": false,
+      "priority": 20,
+      "trigger": { "events": ["COMMENT_POSTED"] },
+      "conditions": { "all": [{ "field": "user_id", "op": "gte", "value": 1 }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "We received your comment",
+            "message": "Thanks for commenting on {site_name}."
+          }
+        }
+      ]
+    },
+    {
+      "id": "wp_post_published",
+      "label": "Email the author when a post is published",
+      "enabled": false,
+      "priority": 30,
+      "trigger": { "events": ["POST_PUBLISHED"] },
+      "conditions": { "all": [{ "field": "post_status", "op": "eq", "value": "publish" }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "Your post is published",
+            "message": "A post you wrote is now public on {site_name}."
+          }
+        }
+      ]
+    },
+    {
+      "id": "wp_password_changed",
+      "label": "Email the user after a password change",
+      "enabled": false,
+      "priority": 40,
+      "trigger": { "events": ["PASSWORD_CHANGED"] },
+      "conditions": { "all": [{ "field": "user_id", "op": "gte", "value": 1 }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "Your password was changed",
+            "message": "The password for your {site_name} account was changed. If this was not you, reset it."
+          }
+        }
+      ]
+    },
+    {
+      "id": "woo_order_completed",
+      "label": "Thank the customer when an order is completed",
+      "enabled": true,
+      "priority": 50,
+      "trigger": { "events": ["woocommerce.order.completed"] },
+      "conditions": { "all": [{ "field": "order.status", "op": "eq", "value": "completed" }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "Your order is complete",
+            "message": "Thanks for your order. It is now complete."
+          }
+        }
+      ]
+    },
+    {
+      "id": "woo_order_processing",
+      "label": "Email the customer when an order is processing",
+      "enabled": false,
+      "priority": 60,
+      "trigger": { "events": ["woocommerce.order.status_changed"] },
+      "conditions": { "all": [{ "field": "order.status", "op": "eq", "value": "processing" }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "Your order is being processed",
+            "message": "We are preparing your order."
+          }
+        }
+      ]
+    },
+    {
+      "id": "woo_order_paid",
+      "label": "Email the customer when an order is paid",
+      "enabled": false,
+      "priority": 70,
+      "trigger": { "events": ["woocommerce.order.paid"] },
+      "conditions": { "all": [{ "field": "user_id", "op": "gte", "value": 1 }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "Payment received",
+            "message": "We received your payment. Thank you."
+          }
+        }
+      ]
+    },
+    {
+      "id": "woo_customer_created",
+      "label": "Welcome a new WooCommerce customer",
+      "enabled": false,
+      "priority": 80,
+      "trigger": { "events": ["woocommerce.customer.created"] },
+      "conditions": { "all": [{ "field": "user_role", "op": "eq", "value": "customer" }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "Welcome to {site_name}",
+            "message": "Your customer account is ready."
+          }
+        }
+      ]
+    },
+    {
+      "id": "woo_order_refunded",
+      "label": "Email the customer when an order is refunded",
+      "enabled": true,
+      "priority": 90,
+      "trigger": { "events": ["woocommerce.refund.created"] },
+      "conditions": { "all": [{ "field": "user_id", "op": "gte", "value": 1 }] },
+      "actions": [
+        {
+          "type": "send_email",
+          "template_id": "wordpress",
+          "params": {
+            "subject": "Your refund",
+            "message": "A refund was created for your order."
+          }
+        }
+      ]
+    }
+  ]
 }

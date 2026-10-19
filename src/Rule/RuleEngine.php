@@ -47,9 +47,12 @@ final class RuleEngine
             static fn (RuleDefinition $a, RuleDefinition $b): int => $a->priority <=> $b->priority
         );
 
-        $state       = $this->userState->getStateForUser($userId);
-        $eventName   = $event->name();
         $rawPayload  = $event->payload();
+        $state       = array_merge(
+            $this->userState->getStateForUser($userId),
+            $this->eventConditionFields($rawPayload)
+        );
+        $eventName   = $event->name();
 
         foreach ($definitions as $rule) {
             if (! $rule->enabled) {
@@ -81,5 +84,39 @@ final class RuleEngine
 
             $this->executor->execute($userId, $rule->actions, $rule->id, $eventName, $rawPayload);
         }
+    }
+
+    /**
+     * Flatten event payload scalars so conditions can use keys such as order.status.
+     *
+     * @param array<string, mixed> $payload
+     * @return array<string, mixed>
+     */
+    private function eventConditionFields(array $payload, string $prefix = ''): array
+    {
+        $fields = [];
+
+        foreach ($payload as $key => $value) {
+            if (! is_string($key) && ! is_int($key)) {
+                continue;
+            }
+
+            if ($key === '_gro_skip') {
+                continue;
+            }
+
+            $path = $prefix === '' ? (string) $key : $prefix . '.' . $key;
+
+            if (is_array($value)) {
+                $fields = array_merge($fields, $this->eventConditionFields($value, $path));
+                continue;
+            }
+
+            if (is_scalar($value) || $value === null) {
+                $fields[$path] = $value;
+            }
+        }
+
+        return $fields;
     }
 }

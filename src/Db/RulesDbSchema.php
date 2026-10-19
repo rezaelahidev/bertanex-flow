@@ -58,6 +58,54 @@ final class RulesDbSchema
     /**
      * Idempotent install / upgrade ({@see dbDelta()}).
      */
+    /**
+     * Move stored options, user meta, and the rules table off the previous name.
+     */
+    public static function migrateLegacyNames(): void
+    {
+        if (get_option('bertanex_flow_legacy_names_migrated') === '1') {
+            return;
+        }
+
+        global $wpdb;
+
+        $oldTable = $wpdb->prefix . 'growth_orchestrator_rules';
+        $newTable = $wpdb->prefix . 'bertanex_flow_rules';
+        $oldExists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($oldTable)));
+        $newExists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($newTable)));
+        if ($oldExists === $oldTable && $newExists !== $newTable) {
+            $wpdb->query("RENAME TABLE `{$oldTable}` TO `{$newTable}`");
+        }
+
+        $like = '%' . $wpdb->esc_like('growth_orchestrator') . '%';
+        $names = $wpdb->get_col($wpdb->prepare("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s", $like));
+        if (is_array($names)) {
+            foreach ($names as $oldName) {
+                if (! is_string($oldName) || ! str_contains($oldName, 'growth_orchestrator')) {
+                    continue;
+                }
+                $newName = str_replace('growth_orchestrator', 'bertanex_flow', $oldName);
+                $taken = $wpdb->get_var($wpdb->prepare("SELECT option_id FROM {$wpdb->options} WHERE option_name = %s LIMIT 1", $newName));
+                if ($taken) {
+                    $wpdb->delete($wpdb->options, ['option_name' => $oldName]);
+                    continue;
+                }
+                $wpdb->update($wpdb->options, ['option_name' => $newName], ['option_name' => $oldName]);
+            }
+        }
+
+        $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$wpdb->usermeta} SET meta_key = REPLACE(meta_key, %s, %s) WHERE meta_key LIKE %s",
+                'growth_orchestrator',
+                'bertanex_flow',
+                $like
+            )
+        );
+
+        update_option('bertanex_flow_legacy_names_migrated', '1', true);
+    }
+
     public static function upgradeIfNeeded(): void
     {
         if ((string) get_option(self::SCHEMA_VERSION_OPTION, '') === self::SCHEMA_VERSION) {

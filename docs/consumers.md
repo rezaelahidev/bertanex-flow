@@ -1,6 +1,6 @@
 # Integrated consumers
 
-Bertanex Flow ships without domain-specific rules, SMS patterns, condition fields, or event catalogs. Integrated themes and plugins register a `ConsumerDefinition` on:
+Bertanex Flow ships editable WordPress and WooCommerce rules, events, and condition fields (`PlatformConsumer`, `rules/default.rules.json`). SMS patterns stay empty until a consumer provides them. Themes and plugins can add more by registering a `ConsumerDefinition` on:
 
 ```php
 do_action('gro_register_orchestrator_consumers', ConsumerRegistry $registry);
@@ -23,6 +23,7 @@ At runtime the orchestrator merges all registered consumer defaults for hydratio
 
 ## Current consumers
 
+- **WordPress and WooCommerce** — bundled account, content, and order flows. Administrators edit them in Automations. Reset restores `rules/default.rules.json`.
 - **OMDBOX theme** — profile/product/subscription SMS patterns, onboarding rules, and user-state condition fields.
 - **Growth Subscriptions** — subscription lifecycle rules and subscription condition fields.
 

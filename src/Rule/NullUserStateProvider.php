@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 /**
  * No-op user state provider used when no consumer registers {@see 'gro_user_state_provider'}.

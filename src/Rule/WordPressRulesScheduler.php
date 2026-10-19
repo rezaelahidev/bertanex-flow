@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
-use GrowthOrchestrator\Loader\HooksLoader;
+use BertanexFlow\Loader\HooksLoader;
 
 /**
  * Registers WP-Cron events and hook listeners for rules that declare {@code trigger.schedule}.

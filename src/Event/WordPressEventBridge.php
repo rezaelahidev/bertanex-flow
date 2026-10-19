@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Event;
+namespace BertanexFlow\Event;
 
-use GrowthOrchestrator\Loader\HooksLoader;
+use BertanexFlow\Loader\HooksLoader;
 
 /**
  * Maps WordPress core/plugin actions to automation events and exposes a small DSL for more mappings.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 /**
  * Loads rules from a JSON file; path override via {@see 'gro_rules_json_path'}.
@@ -48,9 +48,9 @@ final class JsonFileRulesRepository implements RulesRepositoryInterface
             }
         }
 
-        if (class_exists(\GrowthOrchestrator\Consumer\ConsumerRegistry::class)) {
-            $resolver = new \GrowthOrchestrator\Consumer\ConsumerDefaultsResolver(
-                \GrowthOrchestrator\Consumer\ConsumerRegistry::instance()
+        if (class_exists(\BertanexFlow\Consumer\ConsumerRegistry::class)) {
+            $resolver = new \BertanexFlow\Consumer\ConsumerDefaultsResolver(
+                \BertanexFlow\Consumer\ConsumerRegistry::instance()
             );
             $merged = $resolver->mergedRulesDocumentJson();
             if (trim($merged) !== '') {

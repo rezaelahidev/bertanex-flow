@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin\Models;
+namespace BertanexFlow\Admin\Models;
 
 /**
  * Settings API groups for the Rules admin workspace.
@@ -13,8 +13,8 @@ namespace GrowthOrchestrator\Admin\Models;
 final class RulesAdminConfig
 {
     /** Configuration tab: panel layout + SMS delivery credentials. */
-    public const SETTINGS_GROUP = 'growth_orchestrator_admin_config';
+    public const SETTINGS_GROUP = 'bertanex_flow_admin_config';
 
     /** Message patterns tab: editable SMS template bodies. */
-    public const PATTERNS_SETTINGS_GROUP = 'growth_orchestrator_admin_patterns';
+    public const PATTERNS_SETTINGS_GROUP = 'bertanex_flow_admin_patterns';
 }

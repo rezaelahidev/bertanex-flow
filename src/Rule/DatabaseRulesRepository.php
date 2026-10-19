@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
-use GrowthOrchestrator\Db\RulesDbSchema;
+use BertanexFlow\Db\RulesDbSchema;
 
 /**
- * Canonical runtime source when `{prefix}growth_orchestrator_rules` has rows.
+ * Canonical runtime source when `{prefix}bertanex_flow_rules` has rows.
  */
 final class DatabaseRulesRepository implements RulesRepositoryInterface
 {
-    public const COMPILED_OPTION = 'growth_orchestrator_rules_compiled_v1';
+    public const COMPILED_OPTION = 'bertanex_flow_rules_compiled_v1';
 
-    private const OBJECT_CACHE_GROUP = 'growth_orchestrator';
+    private const OBJECT_CACHE_GROUP = 'bertanex_flow';
 
     private const OBJECT_CACHE_KEY = 'rules_compiled_v1';
 
@@ -181,7 +181,7 @@ final class DatabaseRulesRepository implements RulesRepositoryInterface
             } catch (\Throwable) {
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     error_log(
-                        '[Growth Orchestrator] Skipped invalid persisted rule definition: '
+                        '[Bertanex Flow] Skipped invalid persisted rule definition: '
                         . (string) ($row['id'] ?? '')
                     );
                 }

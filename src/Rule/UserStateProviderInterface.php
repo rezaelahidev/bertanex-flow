@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 /**
  * Snapshot of user fields used by the rule engine (see docs/user-states.md).

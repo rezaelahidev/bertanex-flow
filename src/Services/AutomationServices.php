@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Services;
+namespace BertanexFlow\Services;
 
 /**
  * Registry of pluggable automation backends (SMS, email, CRM push, etc.).
  *
- * Services are plain objects; contracts live in their own namespaces (e.g. {@see \GrowthOrchestrator\Sms\SmsServiceInterface}).
+ * Services are plain objects; contracts live in their own namespaces (e.g. {@see \BertanexFlow\Sms\SmsServiceInterface}).
  * Third-party code typically runs on {@see 'gro_register_automation_services'} to {@see replace()} defaults.
  */
 final class AutomationServices

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Consumer;
+namespace BertanexFlow\Consumer;
 
 /**
  * Collects integrated consumers via {@see 'gro_register_orchestrator_consumers'}.

@@ -1,9 +1,9 @@
-# Persian (Iran) translation for Growth Orchestrator
+# Persian (Iran) translation for Bertanex Flow
 # Copyright (C) 2026
 # This file is distributed under the same license as the plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Growth Orchestrator 0.1.0\n"
+"Project-Id-Version: Bertanex Flow 0.1.0\n"
 "Report-Msgid-Bugs-To:\n"
 "POT-Creation-Date: 2026-05-07 12:00+0000\n"
 "PO-Revision-Date: 2026-05-22 12:00+0000\n"
@@ -24,7 +24,7 @@ msgstr "ویرایشگر اتوماسیون"
 msgid "Design IF / THEN automations, manage SMS delivery, and tune automations from one workspace."
 msgstr "اتوماسیون‌های IF / THEN بسازید، ارسال پیامک را مدیریت کنید و اتوماسیون‌ها را از یک فضای کاری تنظیم کنید."
 
-msgid "Growth Orchestrator — SMS"
+msgid "Bertanex Flow — SMS"
 msgstr "هماهنگ‌ساز رشد — پیامک"
 
 msgid "Rules saved."
@@ -482,8 +482,8 @@ msgstr "ویرایشگر اتوماسیون، الگوهای پیامک، محد
 msgid "Reset all to defaults"
 msgstr "بازنشانی همه به پیش‌فرض"
 
-msgid "Reset all Growth Orchestrator customizations to defaults? This cannot be undone."
-msgstr "همهٔ سفارشی‌سازی‌های Growth Orchestrator به پیش‌فرض بازگردانده شود؟ این کار قابل بازگشت نیست."
+msgid "Reset all Bertanex Flow customizations to defaults? This cannot be undone."
+msgstr "همهٔ سفارشی‌سازی‌های Bertanex Flow به پیش‌فرض بازگردانده شود؟ این کار قابل بازگشت نیست."
 
 msgid "All customizations were reset to plugin defaults. Rules, message patterns, panel layout, and SMS settings were restored."
 msgstr "همهٔ سفارشی‌سازی‌ها به پیش‌فرض افزونه بازگردانده شد. قوانین، الگوهای پیام، چیدمان پنل و تنظیمات پیامک بازیابی شدند."
@@ -497,8 +497,8 @@ msgstr "هیچ اتوماسیون پیش‌فرضی توسط مصرف‌کنند
 msgid "You do not have permission to reset plugin settings."
 msgstr "شما اجازهٔ بازنشانی تنظیمات افزونه را ندارید."
 
-msgid "Twilio can also be set via wp-config (GROWTH_ORCH_TWILIO_*) or the gro_twilio_sms_config filter."
-msgstr "Twilio را می‌توانید از wp-config (GROWTH_ORCH_TWILIO_*) یا فیلتر gro_twilio_sms_config نیز تنظیم کنید."
+msgid "Twilio can also be set via wp-config (BERTANEX_FLOW_TWILIO_*) or the gro_twilio_sms_config filter."
+msgstr "Twilio را می‌توانید از wp-config (BERTANEX_FLOW_TWILIO_*) یا فیلتر gro_twilio_sms_config نیز تنظیم کنید."
 
 msgid "Provider"
 msgstr "ارائه‌دهنده"

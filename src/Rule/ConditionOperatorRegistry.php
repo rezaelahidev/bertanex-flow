@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 /**
  * Operators are completely data-driven: merge {@see BuiltinConditionOperators} with hooks.

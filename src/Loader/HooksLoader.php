@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Loader;
+namespace BertanexFlow\Loader;
 
 /**
  * Registers WordPress actions and filters from a queue, then flushes on {@see register()}.

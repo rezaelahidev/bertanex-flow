@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
 /**
  * Fixed window per user: max sends per hour (site-local hour bucket via {@see wp_date}).
@@ -18,7 +18,7 @@ final class SmsRateLimiter
         $max = max(1, (int) apply_filters('gro_sms_rate_limit_per_user_per_hour', 10, $userId));
 
         $bucket = wp_date('Y-m-d-H');
-        $key    = 'growth_orchestrator_sms_rl_' . $userId . '_' . $bucket;
+        $key    = 'bertanex_flow_sms_rl_' . $userId . '_' . $bucket;
 
         $count = (int) get_transient($key);
 

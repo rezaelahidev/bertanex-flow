@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 /**
  * Resolves {@see UserStateProviderInterface} from {@see 'gro_user_state_provider'} on first use

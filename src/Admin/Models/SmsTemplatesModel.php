@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin\Models;
+namespace BertanexFlow\Admin\Models;
 
-use GrowthOrchestrator\Consumer\ConsumerDefaultsResolver;
-use GrowthOrchestrator\Consumer\ConsumerRegistry;
+use BertanexFlow\Consumer\ConsumerDefaultsResolver;
+use BertanexFlow\Consumer\ConsumerRegistry;
 
 /**
  * User-editable SMS template bodies (Settings API + runtime resolution).
@@ -16,7 +16,7 @@ final class SmsTemplatesModel
 {
     public const SETTINGS_GROUP = RulesAdminConfig::PATTERNS_SETTINGS_GROUP;
 
-    public const OPTION = 'growth_orchestrator_sms_templates';
+    public const OPTION = 'bertanex_flow_sms_templates';
 
     private const MAX_TEMPLATES = 50;
 
@@ -44,12 +44,12 @@ final class SmsTemplatesModel
                 echo '</div>';
                 echo '<div class="gro-patterns-hero__text">';
                 echo '<h3 class="gro-patterns-hero__title">' .
-                    esc_html__('SMS message patterns', 'growth-orchestrator') .
+                    esc_html__('SMS message patterns', 'bertanex-flow') .
                     '</h3>';
                 echo '<p class="gro-patterns-hero__lede">' .
                     esc_html__(
                         'Persian texts sent to customers via Melipayamak. Each pattern matches a template_id in your automation rules.',
-                        'growth-orchestrator'
+                        'bertanex-flow'
                     ) .
                     '</p>';
                 echo '</div>';
@@ -58,20 +58,20 @@ final class SmsTemplatesModel
                 echo '<p class="gro-patterns-tip">' .
                     esc_html__(
                         'Write messages in Persian. Keep placeholders like {name} and {site_name} exactly as shown — they are replaced when the SMS is sent.',
-                        'growth-orchestrator'
+                        'bertanex-flow'
                     ) .
                     '</p>';
 
                 echo '<div class="gro-patterns-vars">';
                 echo '<span class="gro-patterns-vars__label">' .
-                    esc_html__('Placeholders', 'growth-orchestrator') .
+                    esc_html__('Placeholders', 'bertanex-flow') .
                     '</span>';
                 echo '<ul class="gro-patterns-vars__list" role="list">';
                 foreach (self::variableNames() as $var) {
                     echo '<li role="listitem"><button type="button" class="gro-patterns-var" data-gro-copy-var="{' .
                         esc_attr($var) .
                         '}" title="' .
-                        esc_attr__('Click to copy', 'growth-orchestrator') .
+                        esc_attr__('Click to copy', 'bertanex-flow') .
                         '"><code>{' .
                         esc_html($var) .
                         '}</code></button></li>';
@@ -259,10 +259,10 @@ final class SmsTemplatesModel
         <div
             class="gro-patterns-editor"
             data-gro-sms-templates
-            data-gro-badge-default="<?php echo esc_attr__('Default', 'growth-orchestrator'); ?>"
-            data-gro-badge-custom="<?php echo esc_attr__('Custom', 'growth-orchestrator'); ?>"
-            data-gro-badge-empty="<?php echo esc_attr__('Not set', 'growth-orchestrator'); ?>"
-            data-gro-copied-label="<?php echo esc_attr__('Copied', 'growth-orchestrator'); ?>"
+            data-gro-badge-default="<?php echo esc_attr__('Default', 'bertanex-flow'); ?>"
+            data-gro-badge-custom="<?php echo esc_attr__('Custom', 'bertanex-flow'); ?>"
+            data-gro-badge-empty="<?php echo esc_attr__('Not set', 'bertanex-flow'); ?>"
+            data-gro-copied-label="<?php echo esc_attr__('Copied', 'bertanex-flow'); ?>"
         >
             <ul class="gro-patterns-list" data-gro-sms-templates-rows role="list">
                 <?php foreach ($rows as $index => $row) : ?>
@@ -280,7 +280,7 @@ final class SmsTemplatesModel
             <div class="gro-patterns-editor__footer">
                 <button type="button" class="button gro-patterns-add" data-gro-sms-templates-add>
                     <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
-                    <?php esc_html_e('Add pattern', 'growth-orchestrator'); ?>
+                    <?php esc_html_e('Add pattern', 'bertanex-flow'); ?>
                 </button>
             </div>
             <template id="gro-sms-template-row-blank">
@@ -305,12 +305,12 @@ final class SmsTemplatesModel
         $usesCustom  = $body !== '';
         $statusClass = $usesCustom ? 'gro-pattern-card__status--custom' : ($usesDefault ? 'gro-pattern-card__status--default' : 'gro-pattern-card__status--empty');
         $statusLabel = $usesCustom
-            ? __('Custom', 'growth-orchestrator')
-            : ($usesDefault ? __('Default', 'growth-orchestrator') : __('Not set', 'growth-orchestrator'));
+            ? __('Custom', 'bertanex-flow')
+            : ($usesDefault ? __('Default', 'bertanex-flow') : __('Not set', 'bertanex-flow'));
         $charCount   = function_exists('mb_strlen') ? mb_strlen($body, 'UTF-8') : strlen($body);
         $isOpen      = is_int($index) && $index === 0;
         $panelId     = 'gro-pattern-panel-' . (is_string($index) ? 'new' : sanitize_key($id !== '' ? $id : 'row-' . (string) $index));
-        $displayTitle = $label !== '' ? $label : ($id !== '' ? $id : __('New pattern', 'growth-orchestrator'));
+        $displayTitle = $label !== '' ? $label : ($id !== '' ? $id : __('New pattern', 'bertanex-flow'));
         $snippet     = $currentValue !== '' ? $currentValue : '—';
         if (function_exists('mb_strlen') && mb_strlen($snippet, 'UTF-8') > 72) {
             $snippet = mb_substr($snippet, 0, 72, 'UTF-8') . '…';
@@ -352,8 +352,8 @@ final class SmsTemplatesModel
                             type="button"
                             class="gro-pattern-card__remove"
                             data-gro-sms-templates-remove
-                            data-confirm="<?php echo esc_attr__('Remove this pattern?', 'growth-orchestrator'); ?>"
-                            aria-label="<?php echo esc_attr__('Remove pattern', 'growth-orchestrator'); ?>"
+                            data-confirm="<?php echo esc_attr__('Remove this pattern?', 'bertanex-flow'); ?>"
+                            aria-label="<?php echo esc_attr__('Remove pattern', 'bertanex-flow'); ?>"
                         >
                             <span class="dashicons dashicons-trash" aria-hidden="true"></span>
                         </button>
@@ -375,13 +375,13 @@ final class SmsTemplatesModel
                         <input type="hidden" name="<?php echo esc_attr($name . '[id]'); ?>" value="<?php echo esc_attr($id); ?>" />
                     <?php else : ?>
                         <label class="gro-pattern-card__inline-label">
-                            <span><?php esc_html_e('Pattern ID', 'growth-orchestrator'); ?></span>
+                            <span><?php esc_html_e('Pattern ID', 'bertanex-flow'); ?></span>
                             <input
                                 type="text"
                                 class="gro-pattern-card__id-input"
                                 name="<?php echo esc_attr($name . '[id]'); ?>"
                                 value="<?php echo esc_attr($id); ?>"
-                                placeholder="<?php echo esc_attr__('pattern_id', 'growth-orchestrator'); ?>"
+                                placeholder="<?php echo esc_attr__('pattern_id', 'bertanex-flow'); ?>"
                                 pattern="[a-z][a-z0-9_]*"
                                 dir="ltr"
                                 lang="en"
@@ -392,13 +392,13 @@ final class SmsTemplatesModel
                         </label>
                     <?php endif; ?>
                     <label class="gro-pattern-card__inline-label gro-pattern-card__inline-label--grow">
-                        <span><?php esc_html_e('Title', 'growth-orchestrator'); ?></span>
+                        <span><?php esc_html_e('Title', 'bertanex-flow'); ?></span>
                         <input
                             type="text"
                             class="gro-pattern-card__label-input"
                             name="<?php echo esc_attr($name . '[label]'); ?>"
                             value="<?php echo esc_attr($label); ?>"
-                            placeholder="<?php echo esc_attr__('Short title for this pattern', 'growth-orchestrator'); ?>"
+                            placeholder="<?php echo esc_attr__('Short title for this pattern', 'bertanex-flow'); ?>"
                             dir="auto"
                             data-gro-pattern-label-input
                         />
@@ -407,27 +407,27 @@ final class SmsTemplatesModel
             <div class="gro-pattern-card__grid">
                 <div class="gro-pattern-card__col gro-pattern-card__col--edit">
                     <label class="gro-pattern-card__field-label">
-                        <?php esc_html_e('Your message (override)', 'growth-orchestrator'); ?>
+                        <?php esc_html_e('Your message (override)', 'bertanex-flow'); ?>
                     </label>
                     <textarea
                         name="<?php echo esc_attr($name . '[body]'); ?>"
                         rows="4"
                         class="gro-pattern-card__textarea"
                         maxlength="<?php echo esc_attr((string) self::MAX_BODY_LENGTH); ?>"
-                        placeholder="<?php echo esc_attr__('Leave empty to use the built-in Persian default for this pattern.', 'growth-orchestrator'); ?>"
+                        placeholder="<?php echo esc_attr__('Leave empty to use the built-in Persian default for this pattern.', 'bertanex-flow'); ?>"
                         dir="auto"
                         data-gro-pattern-textarea
                     ><?php echo esc_textarea($body); ?></textarea>
                     <div class="gro-pattern-card__field-foot">
                         <span class="gro-pattern-card__hint">
-                            <?php esc_html_e('Empty field = default text', 'growth-orchestrator'); ?>
+                            <?php esc_html_e('Empty field = default text', 'bertanex-flow'); ?>
                         </span>
                         <span class="gro-pattern-card__chars" data-gro-pattern-chars data-max="<?php echo esc_attr((string) self::MAX_BODY_LENGTH); ?>">
                             <?php
                             echo esc_html(
                                 sprintf(
                                     /* translators: 1: current length, 2: max length */
-                                    __('%1$d / %2$d characters', 'growth-orchestrator'),
+                                    __('%1$d / %2$d characters', 'bertanex-flow'),
                                     $charCount,
                                     self::MAX_BODY_LENGTH
                                 )
@@ -438,7 +438,7 @@ final class SmsTemplatesModel
                 </div>
                 <div class="gro-pattern-card__col gro-pattern-card__col--preview">
                     <label class="gro-pattern-card__field-label">
-                        <?php esc_html_e('Current value (sent to user)', 'growth-orchestrator'); ?>
+                        <?php esc_html_e('Current value (sent to user)', 'bertanex-flow'); ?>
                     </label>
                     <div class="gro-pattern-card__preview" data-gro-sms-current aria-live="polite" dir="auto"><?php echo esc_html($currentValue !== '' ? $currentValue : '—'); ?></div>
                 </div>

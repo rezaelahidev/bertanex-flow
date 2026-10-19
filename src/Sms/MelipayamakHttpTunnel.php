@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
 /**
  * Sends Melipayamak HTTP requests via cURL when WordPress blocks external {@see wp_remote_post()} calls.

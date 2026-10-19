@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Db;
+namespace BertanexFlow\Db;
 
-use GrowthOrchestrator\Rule\DatabaseRulesSync;
-use GrowthOrchestrator\Rule\JsonRulesParser;
-use GrowthOrchestrator\Rule\OptionRulesRepository;
+use BertanexFlow\Rule\DatabaseRulesSync;
+use BertanexFlow\Rule\JsonRulesParser;
+use BertanexFlow\Rule\OptionRulesRepository;
 
 /**
- * DDL and one-time hydration for `{prefix}growth_orchestrator_rules`.
+ * DDL and one-time hydration for `{prefix}bertanex_flow_rules`.
  */
 final class RulesDbSchema
 {
-    public const SCHEMA_VERSION_OPTION = 'growth_orchestrator_rules_schema_version';
+    public const SCHEMA_VERSION_OPTION = 'bertanex_flow_rules_schema_version';
 
     /** Bump when altering DDL so dbDelta detects schema changes reliably. */
     public const SCHEMA_VERSION = '2026-02-06-3';
@@ -24,7 +24,7 @@ final class RulesDbSchema
     {
         global $wpdb;
 
-        return $wpdb->prefix . 'growth_orchestrator_rules';
+        return $wpdb->prefix . 'bertanex_flow_rules';
     }
 
     public static function tableReady(): bool
@@ -105,7 +105,7 @@ SQL;
         self::$tableReadyCache = null;
     }
 
-    public const SOURCES_HYDRATED_OPTION = 'growth_orchestrator_rules_sources_hydrated_v1';
+    public const SOURCES_HYDRATED_OPTION = 'bertanex_flow_rules_sources_hydrated_v1';
 
     /**
      * One-time copy from legacy option JSON or consumer defaults when the table is still empty.

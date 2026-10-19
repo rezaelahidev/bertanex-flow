@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms\Exception;
+namespace BertanexFlow\Sms\Exception;
 
 /**
  * Thrown when an SMS provider API call fails. {@see retrySuggested()} drives default worker retries.

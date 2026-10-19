@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Services;
+namespace BertanexFlow\Services;
 
 /**
  * Normalized outbound step produced by the rule engine (aligns with docs/rule-schema action "type").

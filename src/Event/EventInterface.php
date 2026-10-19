@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Event;
+namespace BertanexFlow\Event;
 
 interface EventInterface
 {

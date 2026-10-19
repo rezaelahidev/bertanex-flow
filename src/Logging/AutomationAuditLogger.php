@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Logging;
+namespace BertanexFlow\Logging;
 
 /**
  * End-to-end audit trail: rule match → queue → SMS result.
@@ -12,7 +12,7 @@ namespace GrowthOrchestrator\Logging;
  */
 final class AutomationAuditLogger
 {
-    private const CHANNEL = 'growth-orchestrator';
+    private const CHANNEL = 'bertanex-flow';
 
     public function register(): void
     {

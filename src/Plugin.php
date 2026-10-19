@@ -2,51 +2,51 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator;
+namespace BertanexFlow;
 
-use GrowthOrchestrator\Rule\RuleEngine;
-use GrowthOrchestrator\Sms\SmsJobQueue;
-use GrowthOrchestrator\Db\RulesDbSchema;
-use GrowthOrchestrator\Loader\HooksLoader;
-use GrowthOrchestrator\Sms\SmsRateLimiter;
-use GrowthOrchestrator\Sms\SmsPhoneResolver;
-use GrowthOrchestrator\Event\AutomationEvent;
-use GrowthOrchestrator\Event\EventDispatcher;
-use GrowthOrchestrator\Sms\SmsDeliveryWorker;
-use GrowthOrchestrator\Rule\ConditionEvaluator;
-use GrowthOrchestrator\Sms\SmsServiceInterface;
-use GrowthOrchestrator\Sms\SmsTemplateRenderer;
-use GrowthOrchestrator\Rule\DelayedActionRunner;
-use GrowthOrchestrator\Rule\RuleActionsExecutor;
-use GrowthOrchestrator\Sms\SmsTransportResolver;
-use GrowthOrchestrator\Admin\PluginDefaultsReset;
-use GrowthOrchestrator\Admin\Views\RulesPageView;
-use GrowthOrchestrator\Services\ActionDispatcher;
-use GrowthOrchestrator\Event\WordPressEventBridge;
-use GrowthOrchestrator\Rule\OptionRulesRepository;
-use GrowthOrchestrator\Rule\DelayedActionScheduler;
-use GrowthOrchestrator\Services\AutomationServices;
-use GrowthOrchestrator\Rule\DatabaseRulesRepository;
-use GrowthOrchestrator\Rule\FilterUserStateProvider;
-use GrowthOrchestrator\Rule\JsonFileRulesRepository;
-use GrowthOrchestrator\Rule\WordPressRulesScheduler;
-use GrowthOrchestrator\Sms\QueuedTemplateSmsService;
-use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
-use GrowthOrchestrator\Logging\AutomationAuditLogger;
-use GrowthOrchestrator\Rule\RulesRepositoryInterface;
-use GrowthOrchestrator\Services\AutomationServiceIds;
-use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
-use GrowthOrchestrator\Rule\ConditionOperatorRegistry;
-use GrowthOrchestrator\Rule\DelegatingRulesRepository;
-use GrowthOrchestrator\Rule\ScheduledRulesCoordinator;
-use GrowthOrchestrator\Sms\DefaultSmsTemplateProvider;
-use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
-use GrowthOrchestrator\Rule\UserStateProviderInterface;
-use GrowthOrchestrator\Sms\SmsTemplateProviderInterface;
-use GrowthOrchestrator\Admin\Controllers\RulesController;
-use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
-use GrowthOrchestrator\Consumer\ConsumerDefaultsResolver;
-use GrowthOrchestrator\Consumer\ConsumerRegistry;
+use BertanexFlow\Rule\RuleEngine;
+use BertanexFlow\Sms\SmsJobQueue;
+use BertanexFlow\Db\RulesDbSchema;
+use BertanexFlow\Loader\HooksLoader;
+use BertanexFlow\Sms\SmsRateLimiter;
+use BertanexFlow\Sms\SmsPhoneResolver;
+use BertanexFlow\Event\AutomationEvent;
+use BertanexFlow\Event\EventDispatcher;
+use BertanexFlow\Sms\SmsDeliveryWorker;
+use BertanexFlow\Rule\ConditionEvaluator;
+use BertanexFlow\Sms\SmsServiceInterface;
+use BertanexFlow\Sms\SmsTemplateRenderer;
+use BertanexFlow\Rule\DelayedActionRunner;
+use BertanexFlow\Rule\RuleActionsExecutor;
+use BertanexFlow\Sms\SmsTransportResolver;
+use BertanexFlow\Admin\PluginDefaultsReset;
+use BertanexFlow\Admin\Views\RulesPageView;
+use BertanexFlow\Services\ActionDispatcher;
+use BertanexFlow\Event\WordPressEventBridge;
+use BertanexFlow\Rule\OptionRulesRepository;
+use BertanexFlow\Rule\DelayedActionScheduler;
+use BertanexFlow\Services\AutomationServices;
+use BertanexFlow\Rule\DatabaseRulesRepository;
+use BertanexFlow\Rule\FilterUserStateProvider;
+use BertanexFlow\Rule\JsonFileRulesRepository;
+use BertanexFlow\Rule\WordPressRulesScheduler;
+use BertanexFlow\Sms\QueuedTemplateSmsService;
+use BertanexFlow\Admin\Models\SmsSettingsModel;
+use BertanexFlow\Logging\AutomationAuditLogger;
+use BertanexFlow\Rule\RulesRepositoryInterface;
+use BertanexFlow\Services\AutomationServiceIds;
+use BertanexFlow\Admin\Models\SmsTemplatesModel;
+use BertanexFlow\Rule\ConditionOperatorRegistry;
+use BertanexFlow\Rule\DelegatingRulesRepository;
+use BertanexFlow\Rule\ScheduledRulesCoordinator;
+use BertanexFlow\Sms\DefaultSmsTemplateProvider;
+use BertanexFlow\Admin\Models\RulesDocumentModel;
+use BertanexFlow\Rule\UserStateProviderInterface;
+use BertanexFlow\Sms\SmsTemplateProviderInterface;
+use BertanexFlow\Admin\Controllers\RulesController;
+use BertanexFlow\Admin\Models\RulesEditorSettingsModel;
+use BertanexFlow\Consumer\ConsumerDefaultsResolver;
+use BertanexFlow\Consumer\ConsumerRegistry;
 
 final class Plugin
 {
@@ -60,7 +60,7 @@ final class Plugin
     {
         $this->registerServices();
 
-        add_action('growth_orchestrator_rules_persisted', [$this, 'flushRulesCache']);
+        add_action('bertanex_flow_rules_persisted', [$this, 'flushRulesCache']);
 
         $this->hooks->add_action($this, 'loadTextdomain', 'plugins_loaded', 0, 0);
         $this->hooks->add_action($this, 'loadTextdomain', 'init', 0, 0);
@@ -243,7 +243,7 @@ final class Plugin
 
         $c->singleton(
             JsonFileRulesRepository::class,
-            static fn () => new JsonFileRulesRepository(\GROWTH_ORCH_PLUGIN_DIR . 'rules/default.rules.json')
+            static fn () => new JsonFileRulesRepository(\BERTANEX_FLOW_PLUGIN_DIR . 'rules/default.rules.json')
         );
 
         $c->singleton(

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 /**
  * Schedules delayed rule actions. Prefers Action Scheduler when loaded; falls back to WP-Cron.
@@ -13,7 +13,7 @@ final class DelayedActionScheduler
     public const HOOK = 'gro_delayed_rule_action';
 
     /** Action Scheduler group for Tools → Scheduled Actions UI. */
-    public const ACTION_SCHEDULER_GROUP = 'growth-orchestrator';
+    public const ACTION_SCHEDULER_GROUP = 'bertanex-flow';
 
     /**
      * @param array<string, mixed> $action Original JSON action row (including type, template_id, params).

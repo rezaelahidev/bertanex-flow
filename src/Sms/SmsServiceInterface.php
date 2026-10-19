@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
 interface SmsServiceInterface
 {

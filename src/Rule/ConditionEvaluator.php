@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 /**
  * Recursive condition groups backed by plug-in operators ({@see ConditionOperatorRegistry}).

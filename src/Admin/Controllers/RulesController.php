@@ -2,30 +2,30 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin\Controllers;
+namespace BertanexFlow\Admin\Controllers;
 
-use GrowthOrchestrator\Admin\RtlAdminTypography;
-use GrowthOrchestrator\Admin\PluginDefaultsReset;
-use GrowthOrchestrator\Admin\Models\RulesAdminConfig;
-use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
-use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
-use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
-use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
-use GrowthOrchestrator\Admin\ViewModels\RulesPageContext;
-use GrowthOrchestrator\Admin\Views\RulesPageView;
-use GrowthOrchestrator\Consumer\ConsumerRegistry;
-use GrowthOrchestrator\Event\EventType;
-use GrowthOrchestrator\I18n;
-use GrowthOrchestrator\Loader\HooksLoader;
-use GrowthOrchestrator\Rule\BuiltinConditionOperators;
-use GrowthOrchestrator\Rule\RuleLabelTranslator;
+use BertanexFlow\Admin\RtlAdminTypography;
+use BertanexFlow\Admin\PluginDefaultsReset;
+use BertanexFlow\Admin\Models\RulesAdminConfig;
+use BertanexFlow\Admin\Models\RulesDocumentModel;
+use BertanexFlow\Admin\Models\RulesEditorSettingsModel;
+use BertanexFlow\Admin\Models\SmsSettingsModel;
+use BertanexFlow\Admin\Models\SmsTemplatesModel;
+use BertanexFlow\Admin\ViewModels\RulesPageContext;
+use BertanexFlow\Admin\Views\RulesPageView;
+use BertanexFlow\Consumer\ConsumerRegistry;
+use BertanexFlow\Event\EventType;
+use BertanexFlow\I18n;
+use BertanexFlow\Loader\HooksLoader;
+use BertanexFlow\Rule\BuiltinConditionOperators;
+use BertanexFlow\Rule\RuleLabelTranslator;
 
 /**
  * Controller: wires WordPress hooks, delegates persistence to {@see RulesDocumentModel}, renders via {@see RulesPageView}.
  */
 final class RulesController
 {
-    public const PAGE_SLUG = 'growth-orchestrator';
+    public const PAGE_SLUG = 'bertanex-flow';
 
     private const DRAFT_TRANSIENT_PREFIX = 'gro_rules_admin_draft_';
 
@@ -53,7 +53,7 @@ final class RulesController
     public function onAdminPostResetDefaults(): void
     {
         if (! current_user_can('manage_options')) {
-            wp_die(esc_html__('You do not have permission to reset plugin settings.', 'growth-orchestrator'));
+            wp_die(esc_html__('You do not have permission to reset plugin settings.', 'bertanex-flow'));
         }
 
         check_admin_referer('gro_reset_defaults');
@@ -173,7 +173,7 @@ final class RulesController
         }
 
         if (! current_user_can('manage_options')) {
-            wp_die(esc_html__('You do not have permission to save rules.', 'growth-orchestrator'));
+            wp_die(esc_html__('You do not have permission to save rules.', 'bertanex-flow'));
         }
 
         check_admin_referer('gro_rules_save');
@@ -190,7 +190,7 @@ final class RulesController
                 $code,
                 sprintf(
                     /* translators: %s: parser or persistence error message */
-                    __('Rules could not be saved: %s', 'growth-orchestrator'),
+                    __('Rules could not be saved: %s', 'bertanex-flow'),
                     esc_html($e->getMessage())
                 ),
                 'error'
@@ -223,7 +223,7 @@ final class RulesController
     {
         if (! current_user_can('manage_options')) {
             wp_send_json_error(
-                ['message' => esc_html__('You do not have permission to save rules.', 'growth-orchestrator')],
+                ['message' => esc_html__('You do not have permission to save rules.', 'bertanex-flow')],
                 403
             );
         }
@@ -241,7 +241,7 @@ final class RulesController
         delete_transient(self::DRAFT_TRANSIENT_PREFIX . get_current_user_id());
 
         wp_send_json_success([
-            'message' => __('Rules saved.', 'growth-orchestrator'),
+            'message' => __('Rules saved.', 'bertanex-flow'),
         ]);
     }
 
@@ -251,13 +251,13 @@ final class RulesController
             return;
         }
 
-        if (! \defined('GROWTH_ORCH_PLUGIN_URL') || ! \defined('GROWTH_ORCH_PLUGIN_DIR')) {
+        if (! \defined('BERTANEX_FLOW_PLUGIN_URL') || ! \defined('BERTANEX_FLOW_PLUGIN_DIR')) {
             return;
         }
 
         I18n::loadTextdomain();
 
-        $base = GROWTH_ORCH_PLUGIN_URL . 'assets/admin/';
+        $base = BERTANEX_FLOW_PLUGIN_URL . 'assets/admin/';
 
         wp_enqueue_style('dashicons');
 
@@ -364,132 +364,132 @@ final class RulesController
                 ),
                 'jalaliMonthNames' => self::jalaliMonthNamesForEditor(),
                 'strings'          => [
-                    'errInvalidRoot'   => __('JSON must be an object with a "rules" array.', 'growth-orchestrator'),
-                    'noRules'          => __('No rules yet. Add your first automation.', 'growth-orchestrator'),
-                    'addRule'          => __('Add rule', 'growth-orchestrator'),
-                    'versionLabel'     => __('Format version', 'growth-orchestrator'),
-                    'advancedBadge'    => __('Advanced', 'growth-orchestrator'),
-                    'advancedDesc'     => __('This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored.', 'growth-orchestrator'),
-                    'placeholderLabel' => __('Label (optional)', 'growth-orchestrator'),
-                    'untitledRuleSummary' => __('Untitled rule', 'growth-orchestrator'),
-                    'ruleDetailsHeading'   => __('Edit rule', 'growth-orchestrator'),
-                    'enabledLabel'     => __('Enabled', 'growth-orchestrator'),
-                    'priorityLabel'    => __('Priority', 'growth-orchestrator'),
-                    'ruleIdShort'      => __('id', 'growth-orchestrator'),
-                    'dupRule'          => __('Duplicate', 'growth-orchestrator'),
-                    'up'               => __('Move up', 'growth-orchestrator'),
-                    'down'             => __('Move down', 'growth-orchestrator'),
-                    'removeRule'       => __('Remove rule', 'growth-orchestrator'),
-                    'removeRuleShort'  => __('Remove', 'growth-orchestrator'),
-                    'openRuleModal'     => __('Edit rule %s', 'growth-orchestrator'),
-                    'openConditionModal' => __('Edit condition %s', 'growth-orchestrator'),
-                    'openActionModal'   => __('Edit action %s', 'growth-orchestrator'),
-                    'modalClose'        => __('Close', 'growth-orchestrator'),
-                    'saveRule'          => __('Save rule', 'growth-orchestrator'),
-                    'saveAll'           => __('Save all', 'growth-orchestrator'),
-                    'saving'            => __('Saving…', 'growth-orchestrator'),
-                    'saveSuccess'       => __('Rules saved.', 'growth-orchestrator'),
-                    'saveFailed'        => __('Rules could not be saved: %s', 'growth-orchestrator'),
-                    'statusLabel'       => __('Status', 'growth-orchestrator'),
-                    'labelCol'          => __('Label', 'growth-orchestrator'),
-                    'idCol'             => __('ID', 'growth-orchestrator'),
-                    'removeConditionAria' => __('Remove condition %s from this rule', 'growth-orchestrator'),
-                    'removeActionAria' => __('Remove action %s from this rule', 'growth-orchestrator'),
-                    'removeRuleCollapsedAria' => __('Remove %s permanently from this list', 'growth-orchestrator'),
-                    'ruleListHeading' => __('Configured rules', 'growth-orchestrator'),
-                    'disabledLabel'   => __('Disabled', 'growth-orchestrator'),
-                    'collapsedIdLabel'      => __('Rule ID:', 'growth-orchestrator'),
-                    'collapsedPriorityLabel' => __('Priority:', 'growth-orchestrator'),
-                    'confirmRemove'    => __('Remove this rule?', 'growth-orchestrator'),
-                    'confirmRemoveAdv' => __('Remove this rule from the document?', 'growth-orchestrator'),
-                    'triggerHeading'   => __('When to run', 'growth-orchestrator'),
-                    'triggerNone'      => __('Evaluate without event filter', 'growth-orchestrator'),
-                    'triggerEvents'    => __('On automation events', 'growth-orchestrator'),
-                    'triggerSchedule'  => __('On a schedule (cron)', 'growth-orchestrator'),
-                    'customEventsLabel'=> __('Additional event names (comma-separated)', 'growth-orchestrator'),
-                    'eventsSelectedCount' => __('%1$s of %2$s events selected', 'growth-orchestrator'),
-                    'eventsSelectedHint' => __('Rule runs when any selected event fires.', 'growth-orchestrator'),
-                    'eventsNoneSelectedHint' => __('Select at least one event or add custom names below.', 'growth-orchestrator'),
-                    'selectAllEvents'  => __('Select all', 'growth-orchestrator'),
-                    'clearEvents'      => __('Clear', 'growth-orchestrator'),
-                    'eventsGridLabel'  => __('Automation events', 'growth-orchestrator'),
-                    'eventsCatalogEmpty' => __('No automation events are registered yet. Add custom event names below.', 'growth-orchestrator'),
-                    'hookLabel'        => __('Cron hook', 'growth-orchestrator'),
-                    'recurrenceLabel'  => __('Recurrence', 'growth-orchestrator'),
-                    'conditionsHeading'=> __('Conditions (all must match)', 'growth-orchestrator'),
-                    'fieldCol'         => __('Field', 'growth-orchestrator'),
-                    'opCol'            => __('Operator', 'growth-orchestrator'),
-                    'patternCol'       => __('Pattern (regex)', 'growth-orchestrator'),
-                    'valueCol'         => __('Value (JSON)', 'growth-orchestrator'),
-                    'valueColShort'    => __('Value', 'growth-orchestrator'),
-                    'customField'      => __('Custom…', 'growth-orchestrator'),
-                    'fieldPlaceholder' => __('State field key', 'growth-orchestrator'),
-                    'removeRow'        => __('Remove', 'growth-orchestrator'),
-                    'addCondition'     => __('Add condition', 'growth-orchestrator'),
-                    'actionsHeading'   => __('Actions', 'growth-orchestrator'),
-                    'actionType'       => __('Type', 'growth-orchestrator'),
-                    'templateId'       => __('template_id', 'growth-orchestrator'),
-                    'delaySeconds'     => __('delay_seconds', 'growth-orchestrator'),
-                    'delayLabel'       => __('Delay', 'growth-orchestrator'),
-                    'delayRunImmediately' => __('Run immediately when the rule matches', 'growth-orchestrator'),
-                    'delayModeImmediateHint' => __('When the rule matches', 'growth-orchestrator'),
-                    'delayModeSchedule'    => __('Schedule', 'growth-orchestrator'),
-                    'delayModeScheduleHint' => __('Pick date and time after now', 'growth-orchestrator'),
-                    'delayTimeNoneShort'   => __('No extra delay', 'growth-orchestrator'),
-                    'delayClockOnDay'      => __('At time on that day', 'growth-orchestrator'),
-                    'delayClockHint'       => __('Combine with the date above — e.g. in 1 day at 11:00', 'growth-orchestrator'),
-                    'delayExtraTimeHint'   => __('Optional extra wait after the date and clock time above.', 'growth-orchestrator'),
-                    'delayAfterMatch'      => __('after the rule matches', 'growth-orchestrator'),
-                    'delayPreviewFromMatch' => __('%1$s %2$s', 'growth-orchestrator'),
-                    'delayPreviewDaysAt'   => __('In %1$s at %2$s %3$s', 'growth-orchestrator'),
-                    'delayPreviewDaysOnly' => __('In %1$s %2$s', 'growth-orchestrator'),
-                    'delayPreviewDateAt'   => __('On %1$s at %2$s %3$s', 'growth-orchestrator'),
-                    'delayPreviewOnDate'   => __('On %1$s %2$s', 'growth-orchestrator'),
-                    'delayPreviewTodayAt'  => __('On the same day at %1$s %2$s', 'growth-orchestrator'),
-                    'delayPreviewPlusExtra' => __('(plus %s more)', 'growth-orchestrator'),
-                    'delaySummaryDaysAt'   => __('In %1$s at %2$s', 'growth-orchestrator'),
-                    'delaySummaryAt'       => __('At %s', 'growth-orchestrator'),
-                    'delayDateLegend'  => __('Date', 'growth-orchestrator'),
-                    'delayDateToday'   => __('Today', 'growth-orchestrator'),
-                    'delayDateInDays'  => __('In', 'growth-orchestrator'),
-                    'delayDateDaysLabel' => __('days', 'growth-orchestrator'),
-                    'delayDateOn'      => __('On', 'growth-orchestrator'),
-                    'delayTimeLegend'  => __('Time', 'growth-orchestrator'),
-                    'delayTimeNone'    => __('Same time (date offset only)', 'growth-orchestrator'),
-                    'delayTimeSeconds' => __('seconds', 'growth-orchestrator'),
-                    'delayTimeMinutes' => __('minutes', 'growth-orchestrator'),
-                    'delayTimeHours'   => __('hours', 'growth-orchestrator'),
-                    'delayTimeAt'      => __('At', 'growth-orchestrator'),
-                    'delayPreviewLabel' => __('Preview:', 'growth-orchestrator'),
-                    'delayImmediate'   => __('Immediately when the rule matches', 'growth-orchestrator'),
-                    'delayImmediateShort' => __('Immediate', 'growth-orchestrator'),
-                    'delayPreviewAt'   => __('Scheduled at %1$s %2$s (about %3$s from now)', 'growth-orchestrator'),
-                    'delayPreviewSeconds' => __('About %s seconds after the rule matches', 'growth-orchestrator'),
-                    'delayPreviewRelative' => __('About %s after the rule matches', 'growth-orchestrator'),
-                    'delayOneDay'      => __('1 day', 'growth-orchestrator'),
-                    'delayDays'        => __('%s days', 'growth-orchestrator'),
-                    'delayOneHour'     => __('1 hour', 'growth-orchestrator'),
-                    'delayHours'       => __('%s hours', 'growth-orchestrator'),
-                    'delayOneMinute'   => __('1 minute', 'growth-orchestrator'),
-                    'delayMinutes'     => __('%s minutes', 'growth-orchestrator'),
-                    'delayOneSecond'   => __('1 second', 'growth-orchestrator'),
-                    'delaySecondsUnit' => __('%s seconds', 'growth-orchestrator'),
-                    'jalaliDay'        => __('Day', 'growth-orchestrator'),
-                    'jalaliMonth'      => __('Month', 'growth-orchestrator'),
-                    'jalaliYear'       => __('Year', 'growth-orchestrator'),
-                    'paramsJson'       => __('params (JSON object)', 'growth-orchestrator'),
-                    'removeAction'     => __('Remove action', 'growth-orchestrator'),
-                    'addAction'        => __('Add action', 'growth-orchestrator'),
-                    'regexPatternPlaceholder' => __('/^...$/', 'growth-orchestrator'),
-                    'valueJsonPlaceholder' => __('Examples: true, false, 3, "text", []', 'growth-orchestrator'),
-                    'valueSelectPlaceholder' => __('Select a value…', 'growth-orchestrator'),
-                    'customValue'          => __('Custom value (JSON)…', 'growth-orchestrator'),
-                    'conditionsLimitReached' => __('Maximum number of conditions reached (%s).', 'growth-orchestrator'),
-                    'actionsLimitReached'    => __('Maximum number of actions reached (%s).', 'growth-orchestrator'),
-                    'templateSelect'         => __('SMS template', 'growth-orchestrator'),
-                    'templateCustom'         => __('Custom template ID…', 'growth-orchestrator'),
-                    'templatePreview'        => __('Preview:', 'growth-orchestrator'),
-                    'templateConfigHint'     => __('Edit message text under Message patterns.', 'growth-orchestrator'),
+                    'errInvalidRoot'   => __('JSON must be an object with a "rules" array.', 'bertanex-flow'),
+                    'noRules'          => __('No rules yet. Add your first automation.', 'bertanex-flow'),
+                    'addRule'          => __('Add rule', 'bertanex-flow'),
+                    'versionLabel'     => __('Format version', 'bertanex-flow'),
+                    'advancedBadge'    => __('Advanced', 'bertanex-flow'),
+                    'advancedDesc'     => __('This rule uses triggers or nested conditions this editor cannot change. It stays read-only and runs as stored.', 'bertanex-flow'),
+                    'placeholderLabel' => __('Label (optional)', 'bertanex-flow'),
+                    'untitledRuleSummary' => __('Untitled rule', 'bertanex-flow'),
+                    'ruleDetailsHeading'   => __('Edit rule', 'bertanex-flow'),
+                    'enabledLabel'     => __('Enabled', 'bertanex-flow'),
+                    'priorityLabel'    => __('Priority', 'bertanex-flow'),
+                    'ruleIdShort'      => __('id', 'bertanex-flow'),
+                    'dupRule'          => __('Duplicate', 'bertanex-flow'),
+                    'up'               => __('Move up', 'bertanex-flow'),
+                    'down'             => __('Move down', 'bertanex-flow'),
+                    'removeRule'       => __('Remove rule', 'bertanex-flow'),
+                    'removeRuleShort'  => __('Remove', 'bertanex-flow'),
+                    'openRuleModal'     => __('Edit rule %s', 'bertanex-flow'),
+                    'openConditionModal' => __('Edit condition %s', 'bertanex-flow'),
+                    'openActionModal'   => __('Edit action %s', 'bertanex-flow'),
+                    'modalClose'        => __('Close', 'bertanex-flow'),
+                    'saveRule'          => __('Save rule', 'bertanex-flow'),
+                    'saveAll'           => __('Save all', 'bertanex-flow'),
+                    'saving'            => __('Saving…', 'bertanex-flow'),
+                    'saveSuccess'       => __('Rules saved.', 'bertanex-flow'),
+                    'saveFailed'        => __('Rules could not be saved: %s', 'bertanex-flow'),
+                    'statusLabel'       => __('Status', 'bertanex-flow'),
+                    'labelCol'          => __('Label', 'bertanex-flow'),
+                    'idCol'             => __('ID', 'bertanex-flow'),
+                    'removeConditionAria' => __('Remove condition %s from this rule', 'bertanex-flow'),
+                    'removeActionAria' => __('Remove action %s from this rule', 'bertanex-flow'),
+                    'removeRuleCollapsedAria' => __('Remove %s permanently from this list', 'bertanex-flow'),
+                    'ruleListHeading' => __('Configured rules', 'bertanex-flow'),
+                    'disabledLabel'   => __('Disabled', 'bertanex-flow'),
+                    'collapsedIdLabel'      => __('Rule ID:', 'bertanex-flow'),
+                    'collapsedPriorityLabel' => __('Priority:', 'bertanex-flow'),
+                    'confirmRemove'    => __('Remove this rule?', 'bertanex-flow'),
+                    'confirmRemoveAdv' => __('Remove this rule from the document?', 'bertanex-flow'),
+                    'triggerHeading'   => __('When to run', 'bertanex-flow'),
+                    'triggerNone'      => __('Evaluate without event filter', 'bertanex-flow'),
+                    'triggerEvents'    => __('On automation events', 'bertanex-flow'),
+                    'triggerSchedule'  => __('On a schedule (cron)', 'bertanex-flow'),
+                    'customEventsLabel'=> __('Additional event names (comma-separated)', 'bertanex-flow'),
+                    'eventsSelectedCount' => __('%1$s of %2$s events selected', 'bertanex-flow'),
+                    'eventsSelectedHint' => __('Rule runs when any selected event fires.', 'bertanex-flow'),
+                    'eventsNoneSelectedHint' => __('Select at least one event or add custom names below.', 'bertanex-flow'),
+                    'selectAllEvents'  => __('Select all', 'bertanex-flow'),
+                    'clearEvents'      => __('Clear', 'bertanex-flow'),
+                    'eventsGridLabel'  => __('Automation events', 'bertanex-flow'),
+                    'eventsCatalogEmpty' => __('No automation events are registered yet. Add custom event names below.', 'bertanex-flow'),
+                    'hookLabel'        => __('Cron hook', 'bertanex-flow'),
+                    'recurrenceLabel'  => __('Recurrence', 'bertanex-flow'),
+                    'conditionsHeading'=> __('Conditions (all must match)', 'bertanex-flow'),
+                    'fieldCol'         => __('Field', 'bertanex-flow'),
+                    'opCol'            => __('Operator', 'bertanex-flow'),
+                    'patternCol'       => __('Pattern (regex)', 'bertanex-flow'),
+                    'valueCol'         => __('Value (JSON)', 'bertanex-flow'),
+                    'valueColShort'    => __('Value', 'bertanex-flow'),
+                    'customField'      => __('Custom…', 'bertanex-flow'),
+                    'fieldPlaceholder' => __('State field key', 'bertanex-flow'),
+                    'removeRow'        => __('Remove', 'bertanex-flow'),
+                    'addCondition'     => __('Add condition', 'bertanex-flow'),
+                    'actionsHeading'   => __('Actions', 'bertanex-flow'),
+                    'actionType'       => __('Type', 'bertanex-flow'),
+                    'templateId'       => __('template_id', 'bertanex-flow'),
+                    'delaySeconds'     => __('delay_seconds', 'bertanex-flow'),
+                    'delayLabel'       => __('Delay', 'bertanex-flow'),
+                    'delayRunImmediately' => __('Run immediately when the rule matches', 'bertanex-flow'),
+                    'delayModeImmediateHint' => __('When the rule matches', 'bertanex-flow'),
+                    'delayModeSchedule'    => __('Schedule', 'bertanex-flow'),
+                    'delayModeScheduleHint' => __('Pick date and time after now', 'bertanex-flow'),
+                    'delayTimeNoneShort'   => __('No extra delay', 'bertanex-flow'),
+                    'delayClockOnDay'      => __('At time on that day', 'bertanex-flow'),
+                    'delayClockHint'       => __('Combine with the date above — e.g. in 1 day at 11:00', 'bertanex-flow'),
+                    'delayExtraTimeHint'   => __('Optional extra wait after the date and clock time above.', 'bertanex-flow'),
+                    'delayAfterMatch'      => __('after the rule matches', 'bertanex-flow'),
+                    'delayPreviewFromMatch' => __('%1$s %2$s', 'bertanex-flow'),
+                    'delayPreviewDaysAt'   => __('In %1$s at %2$s %3$s', 'bertanex-flow'),
+                    'delayPreviewDaysOnly' => __('In %1$s %2$s', 'bertanex-flow'),
+                    'delayPreviewDateAt'   => __('On %1$s at %2$s %3$s', 'bertanex-flow'),
+                    'delayPreviewOnDate'   => __('On %1$s %2$s', 'bertanex-flow'),
+                    'delayPreviewTodayAt'  => __('On the same day at %1$s %2$s', 'bertanex-flow'),
+                    'delayPreviewPlusExtra' => __('(plus %s more)', 'bertanex-flow'),
+                    'delaySummaryDaysAt'   => __('In %1$s at %2$s', 'bertanex-flow'),
+                    'delaySummaryAt'       => __('At %s', 'bertanex-flow'),
+                    'delayDateLegend'  => __('Date', 'bertanex-flow'),
+                    'delayDateToday'   => __('Today', 'bertanex-flow'),
+                    'delayDateInDays'  => __('In', 'bertanex-flow'),
+                    'delayDateDaysLabel' => __('days', 'bertanex-flow'),
+                    'delayDateOn'      => __('On', 'bertanex-flow'),
+                    'delayTimeLegend'  => __('Time', 'bertanex-flow'),
+                    'delayTimeNone'    => __('Same time (date offset only)', 'bertanex-flow'),
+                    'delayTimeSeconds' => __('seconds', 'bertanex-flow'),
+                    'delayTimeMinutes' => __('minutes', 'bertanex-flow'),
+                    'delayTimeHours'   => __('hours', 'bertanex-flow'),
+                    'delayTimeAt'      => __('At', 'bertanex-flow'),
+                    'delayPreviewLabel' => __('Preview:', 'bertanex-flow'),
+                    'delayImmediate'   => __('Immediately when the rule matches', 'bertanex-flow'),
+                    'delayImmediateShort' => __('Immediate', 'bertanex-flow'),
+                    'delayPreviewAt'   => __('Scheduled at %1$s %2$s (about %3$s from now)', 'bertanex-flow'),
+                    'delayPreviewSeconds' => __('About %s seconds after the rule matches', 'bertanex-flow'),
+                    'delayPreviewRelative' => __('About %s after the rule matches', 'bertanex-flow'),
+                    'delayOneDay'      => __('1 day', 'bertanex-flow'),
+                    'delayDays'        => __('%s days', 'bertanex-flow'),
+                    'delayOneHour'     => __('1 hour', 'bertanex-flow'),
+                    'delayHours'       => __('%s hours', 'bertanex-flow'),
+                    'delayOneMinute'   => __('1 minute', 'bertanex-flow'),
+                    'delayMinutes'     => __('%s minutes', 'bertanex-flow'),
+                    'delayOneSecond'   => __('1 second', 'bertanex-flow'),
+                    'delaySecondsUnit' => __('%s seconds', 'bertanex-flow'),
+                    'jalaliDay'        => __('Day', 'bertanex-flow'),
+                    'jalaliMonth'      => __('Month', 'bertanex-flow'),
+                    'jalaliYear'       => __('Year', 'bertanex-flow'),
+                    'paramsJson'       => __('params (JSON object)', 'bertanex-flow'),
+                    'removeAction'     => __('Remove action', 'bertanex-flow'),
+                    'addAction'        => __('Add action', 'bertanex-flow'),
+                    'regexPatternPlaceholder' => __('/^...$/', 'bertanex-flow'),
+                    'valueJsonPlaceholder' => __('Examples: true, false, 3, "text", []', 'bertanex-flow'),
+                    'valueSelectPlaceholder' => __('Select a value…', 'bertanex-flow'),
+                    'customValue'          => __('Custom value (JSON)…', 'bertanex-flow'),
+                    'conditionsLimitReached' => __('Maximum number of conditions reached (%s).', 'bertanex-flow'),
+                    'actionsLimitReached'    => __('Maximum number of actions reached (%s).', 'bertanex-flow'),
+                    'templateSelect'         => __('SMS template', 'bertanex-flow'),
+                    'templateCustom'         => __('Custom template ID…', 'bertanex-flow'),
+                    'templatePreview'        => __('Preview:', 'bertanex-flow'),
+                    'templateConfigHint'     => __('Edit message text under Message patterns.', 'bertanex-flow'),
                 ],
             ]
         );
@@ -596,22 +596,22 @@ final class RulesController
     private static function operatorSlugLabel(string $op): string
     {
         return match ($op) {
-            'eq' => __('Equals', 'growth-orchestrator'),
-            'neq' => __('Not equals', 'growth-orchestrator'),
-            'gt' => __('Greater than', 'growth-orchestrator'),
-            'gte' => __('Greater than or equal', 'growth-orchestrator'),
-            'lt' => __('Less than', 'growth-orchestrator'),
-            'lte' => __('Less than or equal', 'growth-orchestrator'),
-            'in' => __('In list', 'growth-orchestrator'),
-            'not_in' => __('Not in list', 'growth-orchestrator'),
-            'empty' => __('Is empty', 'growth-orchestrator'),
-            'not_empty' => __('Is not empty', 'growth-orchestrator'),
-            'truthy' => __('Is truthy', 'growth-orchestrator'),
-            'falsy' => __('Is falsy', 'growth-orchestrator'),
-            'regex' => __('Matches regex', 'growth-orchestrator'),
-            'starts_with' => __('Starts with', 'growth-orchestrator'),
-            'ends_with' => __('Ends with', 'growth-orchestrator'),
-            'contains' => __('Contains', 'growth-orchestrator'),
+            'eq' => __('Equals', 'bertanex-flow'),
+            'neq' => __('Not equals', 'bertanex-flow'),
+            'gt' => __('Greater than', 'bertanex-flow'),
+            'gte' => __('Greater than or equal', 'bertanex-flow'),
+            'lt' => __('Less than', 'bertanex-flow'),
+            'lte' => __('Less than or equal', 'bertanex-flow'),
+            'in' => __('In list', 'bertanex-flow'),
+            'not_in' => __('Not in list', 'bertanex-flow'),
+            'empty' => __('Is empty', 'bertanex-flow'),
+            'not_empty' => __('Is not empty', 'bertanex-flow'),
+            'truthy' => __('Is truthy', 'bertanex-flow'),
+            'falsy' => __('Is falsy', 'bertanex-flow'),
+            'regex' => __('Matches regex', 'bertanex-flow'),
+            'starts_with' => __('Starts with', 'bertanex-flow'),
+            'ends_with' => __('Ends with', 'bertanex-flow'),
+            'contains' => __('Contains', 'bertanex-flow'),
             default => $op,
         };
     }
@@ -636,11 +636,11 @@ final class RulesController
     private static function actionTypeSlugLabel(string $slug): string
     {
         return match ($slug) {
-            'send_sms' => __('Send SMS', 'growth-orchestrator'),
-            'send_email' => __('Send email', 'growth-orchestrator'),
-            'send_discount' => __('Send discount', 'growth-orchestrator'),
-            'webhook' => __('Webhook', 'growth-orchestrator'),
-            'log' => __('Log', 'growth-orchestrator'),
+            'send_sms' => __('Send SMS', 'bertanex-flow'),
+            'send_email' => __('Send email', 'bertanex-flow'),
+            'send_discount' => __('Send discount', 'bertanex-flow'),
+            'webhook' => __('Webhook', 'bertanex-flow'),
+            'log' => __('Log', 'bertanex-flow'),
             default => $slug,
         };
     }
@@ -688,10 +688,10 @@ final class RulesController
     private static function recurrenceSlugLabel(string $slug): string
     {
         return match ($slug) {
-            'hourly' => __('Hourly', 'growth-orchestrator'),
-            'twicedaily' => __('Twice daily', 'growth-orchestrator'),
-            'daily' => __('Daily', 'growth-orchestrator'),
-            'weekly' => __('Weekly', 'growth-orchestrator'),
+            'hourly' => __('Hourly', 'bertanex-flow'),
+            'twicedaily' => __('Twice daily', 'bertanex-flow'),
+            'daily' => __('Daily', 'bertanex-flow'),
+            'weekly' => __('Weekly', 'bertanex-flow'),
             default => $slug,
         };
     }
@@ -701,8 +701,8 @@ final class RulesController
         I18n::loadTextdomain();
 
         add_menu_page(
-            __('Automation Rules', 'growth-orchestrator'),
-            __('Rules', 'growth-orchestrator'),
+            __('Automation Rules', 'bertanex-flow'),
+            __('Rules', 'bertanex-flow'),
             'manage_options',
             self::PAGE_SLUG,
             [$this, 'render'],
@@ -716,7 +716,7 @@ final class RulesController
         I18n::loadTextdomain();
 
         if (! current_user_can('manage_options')) {
-            wp_die(esc_html__('You do not have permission to access this page.', 'growth-orchestrator'));
+            wp_die(esc_html__('You do not have permission to access this page.', 'bertanex-flow'));
         }
 
         $draft = get_transient(self::DRAFT_TRANSIENT_PREFIX . get_current_user_id());
@@ -746,12 +746,12 @@ final class RulesController
      */
     private static function assetFileVersion(string $relativePath): string
     {
-        $path = \GROWTH_ORCH_PLUGIN_DIR . ltrim($relativePath, '/');
+        $path = \BERTANEX_FLOW_PLUGIN_DIR . ltrim($relativePath, '/');
         $mtime = @filemtime($path);
 
         return $mtime !== false
             ? (string) $mtime
-            : (\defined('GROWTH_ORCH_VERSION') ? (string) \GROWTH_ORCH_VERSION : '0');
+            : (\defined('BERTANEX_FLOW_VERSION') ? (string) \BERTANEX_FLOW_VERSION : '0');
     }
 
     private function errorCodeForThrowable(\Throwable $e): string

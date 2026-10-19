@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
 /**
  * Real send path. Throw on hard failure so the worker can apply retry policy.

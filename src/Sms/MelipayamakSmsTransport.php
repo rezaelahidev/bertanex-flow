@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
-use GrowthOrchestrator\Sms\Exception\SmsTransportException;
+use BertanexFlow\Sms\Exception\SmsTransportException;
 
 /**
  * Melipayamak REST SendSMS ({@see https://rest.payamak-panel.com/api/SendSMS/SendSMS}) via {@see wp_remote_post()}
@@ -83,7 +83,7 @@ final class MelipayamakSmsTransport implements SmsTransportInterface
             ],
             'body'         => $fields,
             'sslverify'    => (bool) apply_filters('gro_melipayamak_http_sslverify', true),
-            'user-agent'   => 'GrowthOrchestrator/WP;' . (\defined('GROWTH_ORCH_VERSION') ? (string) GROWTH_ORCH_VERSION : ''),
+            'user-agent'   => 'BertanexFlow/WP;' . (\defined('BERTANEX_FLOW_VERSION') ? (string) BERTANEX_FLOW_VERSION : ''),
         ];
 
         $args = apply_filters('gro_melipayamak_http_request_args', $args, $to, $meta);

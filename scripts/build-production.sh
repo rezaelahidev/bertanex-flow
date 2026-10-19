@@ -59,13 +59,13 @@ fi
 PLUGIN_SLUG="$(basename "$ROOT")"
 OUT_DIR="$(dirname "$ROOT")"
 VERSION="$(
-  grep -m1 'Version:' "$ROOT/growth-orchestrator.php" \
+  grep -m1 'Version:' "$ROOT/bertanex-flow.php" \
     | sed -E 's/.*Version:[[:space:]]+//' \
     | tr -d '\r\n' \
     | awk '{print $1}'
 )"
 ZIP="$OUT_DIR/${PLUGIN_SLUG}-${VERSION}.zip"
-STAGING="$(mktemp -d "${TMPDIR:-/tmp}/growth-orchestrator-build.XXXXXX")"
+STAGING="$(mktemp -d "${TMPDIR:-/tmp}/bertanex-flow-build.XXXXXX")"
 cleanup() {
   rm -rf "$STAGING"
 }

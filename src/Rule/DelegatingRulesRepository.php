@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
-use GrowthOrchestrator\Db\RulesDbSchema;
+use BertanexFlow\Db\RulesDbSchema;
 
 /**
  * Resolves rule sources dynamically: filtered file override → database rows → legacy option/doc → bundled JSON fallback.

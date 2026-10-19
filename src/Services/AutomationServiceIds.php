@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Services;
+namespace BertanexFlow\Services;
 
 /**
  * Built-in registry keys for {@see AutomationServices}.

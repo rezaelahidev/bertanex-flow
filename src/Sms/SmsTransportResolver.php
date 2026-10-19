@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
-use GrowthOrchestrator\Support\FeatureFlags;
+use BertanexFlow\Support\FeatureFlags;
 
 /**
- * Resolves the active SMS transport from options on each call so Growth Orchestrator → SMS admin changes apply immediately.
+ * Resolves the active SMS transport from options on each call so Bertanex Flow → SMS admin changes apply immediately.
  */
 final class SmsTransportResolver
 {
-    private const OPTION_PROVIDER = 'growth_orchestrator_sms_transport_provider';
+    private const OPTION_PROVIDER = 'bertanex_flow_sms_transport_provider';
 
     public function resolve(): SmsTransportInterface
     {

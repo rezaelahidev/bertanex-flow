@@ -1,6 +1,6 @@
 # Integrated consumers
 
-Growth Orchestrator ships without domain-specific rules, SMS patterns, condition fields, or event catalogs. Integrated themes and plugins register a `ConsumerDefinition` on:
+Bertanex Flow ships without domain-specific rules, SMS patterns, condition fields, or event catalogs. Integrated themes and plugins register a `ConsumerDefinition` on:
 
 ```php
 do_action('gro_register_orchestrator_consumers', ConsumerRegistry $registry);

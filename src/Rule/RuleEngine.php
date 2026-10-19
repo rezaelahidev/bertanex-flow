@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
-use GrowthOrchestrator\Event\EventDispatcher;
-use GrowthOrchestrator\Event\EventInterface;
+use BertanexFlow\Event\EventDispatcher;
+use BertanexFlow\Event\EventInterface;
 
 /**
  * Event-driven evaluation of JSON rules: trigger → conditions → actions (with optional delay).

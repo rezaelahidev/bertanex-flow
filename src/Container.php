@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator;
+namespace BertanexFlow;
 
 /**
  * Lightweight service locator with shared (singleton) factories.

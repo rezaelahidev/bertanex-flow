@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
 /**
  * Twilio credentials: wp-config constants and/or {@see 'gro_twilio_sms_config'} filter.
  *
  * Define in wp-config.php (recommended):
  * <code>
- * define('GROWTH_ORCH_TWILIO_ACCOUNT_SID', 'AC...');
- * define('GROWTH_ORCH_TWILIO_AUTH_TOKEN', '...');
- * define('GROWTH_ORCH_TWILIO_FROM_NUMBER', '+15005550006'); // E.164 or Twilio number
+ * define('BERTANEX_FLOW_TWILIO_ACCOUNT_SID', 'AC...');
+ * define('BERTANEX_FLOW_TWILIO_AUTH_TOKEN', '...');
+ * define('BERTANEX_FLOW_TWILIO_FROM_NUMBER', '+15005550006'); // E.164 or Twilio number
  * </code>
  */
 final class TwilioSmsConfig
@@ -24,9 +24,9 @@ final class TwilioSmsConfig
         /** @var array{account_sid?: string, auth_token?: string, from?: string}|null $filtered */
         $filtered = apply_filters('gro_twilio_sms_config', null);
 
-        $sid   = $this->stringFrom($filtered['account_sid'] ?? null, defined('GROWTH_ORCH_TWILIO_ACCOUNT_SID') ? (string) GROWTH_ORCH_TWILIO_ACCOUNT_SID : '');
-        $token = $this->stringFrom($filtered['auth_token'] ?? null, defined('GROWTH_ORCH_TWILIO_AUTH_TOKEN') ? (string) GROWTH_ORCH_TWILIO_AUTH_TOKEN : '');
-        $from  = $this->stringFrom($filtered['from'] ?? null, defined('GROWTH_ORCH_TWILIO_FROM_NUMBER') ? (string) GROWTH_ORCH_TWILIO_FROM_NUMBER : '');
+        $sid   = $this->stringFrom($filtered['account_sid'] ?? null, defined('BERTANEX_FLOW_TWILIO_ACCOUNT_SID') ? (string) BERTANEX_FLOW_TWILIO_ACCOUNT_SID : '');
+        $token = $this->stringFrom($filtered['auth_token'] ?? null, defined('BERTANEX_FLOW_TWILIO_AUTH_TOKEN') ? (string) BERTANEX_FLOW_TWILIO_AUTH_TOKEN : '');
+        $from  = $this->stringFrom($filtered['from'] ?? null, defined('BERTANEX_FLOW_TWILIO_FROM_NUMBER') ? (string) BERTANEX_FLOW_TWILIO_FROM_NUMBER : '');
 
         if ($sid === '' || $token === '' || $from === '') {
             return null;

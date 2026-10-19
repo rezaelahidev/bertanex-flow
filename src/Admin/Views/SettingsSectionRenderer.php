@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin\Views;
+namespace BertanexFlow\Admin\Views;
 
 /**
  * Renders a single Settings API section (for split config cards).

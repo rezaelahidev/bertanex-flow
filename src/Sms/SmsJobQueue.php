@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
 /**
  * Queues SMS jobs for Action Scheduler (async) or WP-Cron fallback.
@@ -10,7 +10,7 @@ namespace GrowthOrchestrator\Sms;
 final class SmsJobQueue
 {
     public const HOOK  = 'gro_sms_deliver';
-    public const GROUP = 'growth-orchestrator-sms';
+    public const GROUP = 'bertanex-flow-sms';
 
     /**
      * @param array<string, mixed> $job Must include: user_id, template_id, to, body, attempt (int). Optional: meta.

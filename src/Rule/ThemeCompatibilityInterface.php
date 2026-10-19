@@ -1,6 +1,6 @@
 <?php
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 interface ThemeCompatibilityInterface
 {

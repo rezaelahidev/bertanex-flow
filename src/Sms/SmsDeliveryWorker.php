@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
-use GrowthOrchestrator\Sms\Exception\SmsTransportException;
+use BertanexFlow\Sms\Exception\SmsTransportException;
 
 /**
  * Action Scheduler / WP-Cron worker: delivers one queued SMS with backoff retries.

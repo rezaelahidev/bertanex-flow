@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
-use GrowthOrchestrator\Sms\Exception\SmsTransportException;
+use BertanexFlow\Sms\Exception\SmsTransportException;
 
 /**
  * Twilio Messages API via {@see wp_remote_post()}. Throws {@see SmsTransportException} on failure so
@@ -48,7 +48,7 @@ final class TwilioSmsTransport implements SmsTransportInterface
                 'Content-Type'  => 'application/x-www-form-urlencoded',
             ],
             /** @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent — identify integration */
-            'user-agent'  => 'GrowthOrchestrator/WP;' . (\defined('GROWTH_ORCH_VERSION') ? (string) GROWTH_ORCH_VERSION : ''),
+            'user-agent'  => 'BertanexFlow/WP;' . (\defined('BERTANEX_FLOW_VERSION') ? (string) BERTANEX_FLOW_VERSION : ''),
             'body'        => [
                 'To'   => $to,
                 'From' => $creds['from'],

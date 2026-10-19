@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
 /**
  * Evaluates rules tied to a recurring WP-Cron hook (see JSON {@code trigger.schedule}).

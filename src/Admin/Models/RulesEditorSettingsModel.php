@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin\Models;
+namespace BertanexFlow\Admin\Models;
 
 /**
  * Visual rules editor panel options (Settings API), exposed on the Rules → Config tab.
@@ -11,11 +11,11 @@ final class RulesEditorSettingsModel
 {
     public const SETTINGS_GROUP = RulesAdminConfig::SETTINGS_GROUP;
 
-    public const OPTION_MAX_CONDITIONS = 'growth_orchestrator_rules_max_conditions';
+    public const OPTION_MAX_CONDITIONS = 'bertanex_flow_rules_max_conditions';
 
-    public const OPTION_MAX_ACTIONS = 'growth_orchestrator_rules_max_actions';
+    public const OPTION_MAX_ACTIONS = 'bertanex_flow_rules_max_actions';
 
-    public const OPTION_DISPLAY_COLUMNS = 'growth_orchestrator_rules_display_columns';
+    public const OPTION_DISPLAY_COLUMNS = 'bertanex_flow_rules_display_columns';
 
     public const DEFAULT_MAX_CONDITIONS = 1;
 
@@ -64,7 +64,7 @@ final class RulesEditorSettingsModel
                 echo '<p class="gro-settings-card__lede">' .
                     esc_html__(
                         'Limits and layout for the visual rule builder lists.',
-                        'growth-orchestrator'
+                        'bertanex-flow'
                     ) .
                     '</p>';
             },
@@ -73,7 +73,7 @@ final class RulesEditorSettingsModel
 
         add_settings_field(
             self::OPTION_MAX_CONDITIONS,
-            __('Max conditions per rule', 'growth-orchestrator'),
+            __('Max conditions per rule', 'bertanex-flow'),
             [$this, 'renderMaxConditionsField'],
             self::SETTINGS_GROUP,
             'gro_rules_editor_panel_section',
@@ -82,7 +82,7 @@ final class RulesEditorSettingsModel
 
         add_settings_field(
             self::OPTION_MAX_ACTIONS,
-            __('Max actions per rule', 'growth-orchestrator'),
+            __('Max actions per rule', 'bertanex-flow'),
             [$this, 'renderMaxActionsField'],
             self::SETTINGS_GROUP,
             'gro_rules_editor_panel_section',
@@ -91,7 +91,7 @@ final class RulesEditorSettingsModel
 
         add_settings_field(
             self::OPTION_DISPLAY_COLUMNS,
-            __('Display columns', 'growth-orchestrator'),
+            __('Display columns', 'bertanex-flow'),
             [$this, 'renderDisplayColumnsField'],
             self::SETTINGS_GROUP,
             'gro_rules_editor_panel_section',
@@ -117,11 +117,11 @@ final class RulesEditorSettingsModel
             name="<?php echo esc_attr(self::OPTION_DISPLAY_COLUMNS); ?>"
             id="<?php echo esc_attr(self::OPTION_DISPLAY_COLUMNS); ?>"
         >
-            <option value="1" <?php selected($v, 1); ?>><?php echo esc_html__('1 column', 'growth-orchestrator'); ?></option>
-            <option value="2" <?php selected($v, 2); ?>><?php echo esc_html__('2 columns', 'growth-orchestrator'); ?></option>
+            <option value="1" <?php selected($v, 1); ?>><?php echo esc_html__('1 column', 'bertanex-flow'); ?></option>
+            <option value="2" <?php selected($v, 2); ?>><?php echo esc_html__('2 columns', 'bertanex-flow'); ?></option>
         </select>
         <p class="description">
-            <?php echo esc_html__('Applies to the rules list and condition/action lists inside each rule.', 'growth-orchestrator'); ?>
+            <?php echo esc_html__('Applies to the rules list and condition/action lists inside each rule.', 'bertanex-flow'); ?>
         </p>
         <?php
     }

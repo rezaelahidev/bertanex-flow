@@ -122,7 +122,7 @@
 				}
 				el.setAttribute(
 					'name',
-					name.replace(/growth_orchestrator_sms_templates\[[^\]]+]/, 'growth_orchestrator_sms_templates[' + index + ']')
+					name.replace(/bertanex_flow_sms_templates\[[^\]]+]/, 'bertanex_flow_sms_templates[' + index + ']')
 				);
 			});
 		});

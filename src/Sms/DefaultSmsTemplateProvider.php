@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
-use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
+use BertanexFlow\Admin\Models\SmsTemplatesModel;
 
 /**
  * SMS bodies from admin-configured templates ({@see SmsTemplatesModel}) plus {@see 'gro_sms_templates'} filter.

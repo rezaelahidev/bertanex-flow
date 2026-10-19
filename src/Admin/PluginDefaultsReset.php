@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin;
+namespace BertanexFlow\Admin;
 
-use GrowthOrchestrator\Admin\Models\RulesDocumentModel;
-use GrowthOrchestrator\Admin\Models\RulesEditorSettingsModel;
-use GrowthOrchestrator\Admin\Models\SmsSettingsModel;
-use GrowthOrchestrator\Admin\Models\SmsTemplatesModel;
-use GrowthOrchestrator\Consumer\ConsumerDefaultsResolver;
-use GrowthOrchestrator\Rule\OptionRulesRepository;
-use GrowthOrchestrator\Sms\MelipayamakSmsConfig;
+use BertanexFlow\Admin\Models\RulesDocumentModel;
+use BertanexFlow\Admin\Models\RulesEditorSettingsModel;
+use BertanexFlow\Admin\Models\SmsSettingsModel;
+use BertanexFlow\Admin\Models\SmsTemplatesModel;
+use BertanexFlow\Consumer\ConsumerDefaultsResolver;
+use BertanexFlow\Rule\OptionRulesRepository;
+use BertanexFlow\Sms\MelipayamakSmsConfig;
 
 /**
  * Restores plugin admin customizations to consumer-shipped defaults (empty stored overrides).
@@ -50,7 +50,7 @@ final class PluginDefaultsReset
         $json = $this->consumerDefaults->mergedRulesDocumentJson();
         if (trim($json) === '') {
             throw new \RuntimeException(
-                __('No default rules are registered by integrated consumers.', 'growth-orchestrator')
+                __('No default rules are registered by integrated consumers.', 'bertanex-flow')
             );
         }
 

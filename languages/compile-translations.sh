@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
-# Compile Persian translations after editing growth-orchestrator-fa_IR.po
+# Compile Persian translations after editing bertanex-flow-fa_IR.po
 set -e
 cd "$(dirname "$0")"
-msgfmt -o growth-orchestrator-fa_IR.mo growth-orchestrator-fa_IR.po
-cp growth-orchestrator-fa_IR.mo growth-orchestrator-fa.mo
-echo "Compiled growth-orchestrator-fa_IR.mo (and fa alias)"
+msgfmt -o bertanex-flow-fa_IR.mo bertanex-flow-fa_IR.po
+cp bertanex-flow-fa_IR.mo bertanex-flow-fa.mo
+echo "Compiled bertanex-flow-fa_IR.mo (and fa alias)"

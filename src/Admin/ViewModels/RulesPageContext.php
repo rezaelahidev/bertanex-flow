@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin\ViewModels;
+namespace BertanexFlow\Admin\ViewModels;
 
 /**
  * View model for the Rules admin screen (presentation-only data).
@@ -10,7 +10,7 @@ namespace GrowthOrchestrator\Admin\ViewModels;
 final class RulesPageContext
 {
     /**
-     * @param list<\GrowthOrchestrator\Rule\RuleDefinition> $definitions Parsed rules for the overview table (empty if parse error).
+     * @param list<\BertanexFlow\Rule\RuleDefinition> $definitions Parsed rules for the overview table (empty if parse error).
      */
     public function __construct(
         public readonly string $pageSlug,

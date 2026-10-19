@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
-use GrowthOrchestrator\Consumer\ConsumerRegistry;
+use BertanexFlow\Consumer\ConsumerRegistry;
 
 /**
  * Translates default rule labels for the admin UI while keeping English msgids in persisted JSON/DB.

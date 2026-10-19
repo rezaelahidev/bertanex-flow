@@ -1,6 +1,6 @@
 {
-  "name": "growth-orchestrator/plugin",
-  "description": "WordPress growth orchestration plugin (events, rules, SMS, background jobs)",
+  "name": "bertanex-flow/plugin",
+  "description": "Bertanex Flow WordPress plugin (events, rules, SMS, background jobs)",
   "type": "wordpress-plugin",
   "license": "GPL-2.0-or-later",
   "require": {
@@ -9,7 +9,7 @@
   },
   "autoload": {
     "psr-4": {
-      "GrowthOrchestrator\\": "src/"
+      "BertanexFlow\\": "src/"
     }
   },
   "config": {

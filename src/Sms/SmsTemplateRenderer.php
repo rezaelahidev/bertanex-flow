@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
 /**
  * Renders SMS templates: placeholders {@code {variable_name}} replaced from a flat variable map.

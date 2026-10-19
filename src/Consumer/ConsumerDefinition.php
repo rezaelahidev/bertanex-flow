@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Consumer;
+namespace BertanexFlow\Consumer;
 
 /**
  * Declares domain defaults supplied by an integrated consumer (theme, plugin, etc.).

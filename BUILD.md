@@ -11,7 +11,7 @@ The plugin ships **built assets** in git (`assets/admin/*.js`, `languages/*.mo`,
 ## Build
 
 ```bash
-cd wp-content/plugins/growth-orchestrator
+cd wp-content/plugins/bertanex-flow
 npm run build:production
 ```
 
@@ -19,8 +19,8 @@ This runs `scripts/build-production.sh`, which:
 
 1. **`composer install --no-dev`** — `vendor/` (Action Scheduler, autoload)
 2. **Vite production bundle** — `assets/admin/rules-visual-editor.bundle.js` (minified, no source maps)
-3. **`msgfmt`** — `languages/growth-orchestrator-fa_IR.mo` and `growth-orchestrator-fa.mo`
-4. **Release ZIP** — `../growth-orchestrator-{version}.zip` (one level above the plugin root, e.g. `wp-content/plugins/growth-orchestrator-0.1.0.zip`)
+3. **`msgfmt`** — `languages/bertanex-flow-fa_IR.mo` and `bertanex-flow-fa.mo`
+4. **Release ZIP** — `../bertanex-flow-{version}.zip` (one level above the plugin root, e.g. `wp-content/plugins/bertanex-flow-0.1.0.zip`)
 
 ## Development-only commands
 
@@ -35,9 +35,9 @@ This runs `scripts/build-production.sh`, which:
 The production build writes a WordPress-ready zip automatically:
 
 ```text
-wp-content/plugins/growth-orchestrator-{version}.zip
-  └── growth-orchestrator/
-        ├── growth-orchestrator.php
+wp-content/plugins/bertanex-flow-{version}.zip
+  └── bertanex-flow/
+        ├── bertanex-flow.php
         ├── vendor/
         ├── assets/
         └── …

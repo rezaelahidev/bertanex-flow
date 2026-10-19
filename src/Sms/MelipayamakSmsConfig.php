@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Sms;
+namespace BertanexFlow\Sms;
 
 /**
  * Melipayamak (Payamak-Panel) REST credentials: options, wp-config constants, and {@see 'gro_melipayamak_sms_config'}.
  *
  * Recommended production: define secrets in wp-config.php and leave admin password empty, or use filters.
  *
- * Options (when using admin UI): {@see \GrowthOrchestrator\Admin\Models\SmsSettingsModel}.
+ * Options (when using admin UI): {@see \BertanexFlow\Admin\Models\SmsSettingsModel}.
  */
 final class MelipayamakSmsConfig
 {
-    public const OPTION_USERNAME = 'growth_orchestrator_melipayamak_username';
+    public const OPTION_USERNAME = 'bertanex_flow_melipayamak_username';
 
-    public const OPTION_PASSWORD = 'growth_orchestrator_melipayamak_password';
+    public const OPTION_PASSWORD = 'bertanex_flow_melipayamak_password';
 
-    public const OPTION_FROM = 'growth_orchestrator_melipayamak_from';
+    public const OPTION_FROM = 'bertanex_flow_melipayamak_from';
 
     /**
      * @return array{username: string, password: string, from: string}|null
@@ -30,17 +30,17 @@ final class MelipayamakSmsConfig
         $user = $this->stringFrom(
             $filtered['username'] ?? null,
             (string) get_option(self::OPTION_USERNAME, ''),
-            defined('GROWTH_ORCH_MELIPAYAMAK_USERNAME') ? (string) GROWTH_ORCH_MELIPAYAMAK_USERNAME : ''
+            defined('BERTANEX_FLOW_MELIPAYAMAK_USERNAME') ? (string) BERTANEX_FLOW_MELIPAYAMAK_USERNAME : ''
         );
         $pass = $this->passwordFrom(
             $filtered['password'] ?? null,
             (string) get_option(self::OPTION_PASSWORD, ''),
-            defined('GROWTH_ORCH_MELIPAYAMAK_PASSWORD') ? (string) GROWTH_ORCH_MELIPAYAMAK_PASSWORD : ''
+            defined('BERTANEX_FLOW_MELIPAYAMAK_PASSWORD') ? (string) BERTANEX_FLOW_MELIPAYAMAK_PASSWORD : ''
         );
         $from = $this->stringFrom(
             $filtered['from'] ?? null,
             (string) get_option(self::OPTION_FROM, ''),
-            defined('GROWTH_ORCH_MELIPAYAMAK_FROM') ? (string) GROWTH_ORCH_MELIPAYAMAK_FROM : ''
+            defined('BERTANEX_FLOW_MELIPAYAMAK_FROM') ? (string) BERTANEX_FLOW_MELIPAYAMAK_FROM : ''
         );
 
         if ($user === '' || $pass === '') {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin\Views;
+namespace BertanexFlow\Admin\Views;
 
-use GrowthOrchestrator\Admin\ViewModels\RulesPageContext;
+use BertanexFlow\Admin\ViewModels\RulesPageContext;
 
 /**
  * View: renders the Rules admin UI from a template (no request handling).
@@ -16,7 +16,7 @@ final class RulesPageView
         $template = __DIR__ . '/templates/rules-page.php';
 
         if (! is_readable($template)) {
-            echo '<div class="wrap"><p>' . esc_html__('Rules template missing.', 'growth-orchestrator') . '</p></div>';
+            echo '<div class="wrap"><p>' . esc_html__('Rules template missing.', 'bertanex-flow') . '</p></div>';
 
             return;
         }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Consumer;
+namespace BertanexFlow\Consumer;
 
 /**
  * Merges bundled defaults from all registered consumers.

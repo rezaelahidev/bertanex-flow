@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin\Models;
+namespace BertanexFlow\Admin\Models;
 
-use GrowthOrchestrator\Sms\MelipayamakSmsConfig;
-use GrowthOrchestrator\Support\FeatureFlags;
+use BertanexFlow\Sms\MelipayamakSmsConfig;
+use BertanexFlow\Support\FeatureFlags;
 
 /**
  * Registers SMS provider options (Settings API) and field renderers.
@@ -14,7 +14,7 @@ final class SmsSettingsModel
 {
     public const SETTINGS_GROUP = RulesAdminConfig::SETTINGS_GROUP;
 
-    public const OPTION_PROVIDER = 'growth_orchestrator_sms_transport_provider';
+    public const OPTION_PROVIDER = 'bertanex_flow_sms_transport_provider';
 
     public function registerSettings(): void
     {
@@ -75,11 +75,11 @@ final class SmsSettingsModel
                 $lede = FeatureFlags::twilioEnabled()
                     ? __(
                         'Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, then Twilio, otherwise the logging driver.',
-                        'growth-orchestrator'
+                        'bertanex-flow'
                     )
                     : __(
                         'Choose which transport delivers queued SMS. Automatic uses Melipayamak when configured, otherwise the logging driver.',
-                        'growth-orchestrator'
+                        'bertanex-flow'
                     );
                 echo '<p class="gro-settings-card__lede">' . esc_html($lede) . '</p>';
             },
@@ -88,7 +88,7 @@ final class SmsSettingsModel
 
         add_settings_field(
             self::OPTION_PROVIDER,
-            __('Provider', 'growth-orchestrator'),
+            __('Provider', 'bertanex-flow'),
             [$this, 'renderProviderField'],
             self::SETTINGS_GROUP,
             'gro_sms_provider_section',
@@ -102,7 +102,7 @@ final class SmsSettingsModel
                 echo '<p class="gro-settings-card__lede">' .
                     esc_html__(
                         'Credentials for rest.payamak-panel.com SendSMS. Use wp-config constants or leave password empty to keep the saved value.',
-                        'growth-orchestrator'
+                        'bertanex-flow'
                     ) .
                     '</p>';
             },
@@ -111,7 +111,7 @@ final class SmsSettingsModel
 
         add_settings_field(
             MelipayamakSmsConfig::OPTION_USERNAME,
-            __('Username', 'growth-orchestrator'),
+            __('Username', 'bertanex-flow'),
             [$this, 'renderUsernameField'],
             self::SETTINGS_GROUP,
             'gro_sms_melipayamak_section',
@@ -120,7 +120,7 @@ final class SmsSettingsModel
 
         add_settings_field(
             MelipayamakSmsConfig::OPTION_PASSWORD,
-            __('Password', 'growth-orchestrator'),
+            __('Password', 'bertanex-flow'),
             [$this, 'renderPasswordField'],
             self::SETTINGS_GROUP,
             'gro_sms_melipayamak_section',
@@ -129,7 +129,7 @@ final class SmsSettingsModel
 
         add_settings_field(
             MelipayamakSmsConfig::OPTION_FROM,
-            __('Sender line (from)', 'growth-orchestrator'),
+            __('Sender line (from)', 'bertanex-flow'),
             [$this, 'renderFromField'],
             self::SETTINGS_GROUP,
             'gro_sms_melipayamak_section',
@@ -157,12 +157,12 @@ final class SmsSettingsModel
 
         ?>
         <select name="<?php echo esc_attr(self::OPTION_PROVIDER); ?>" id="<?php echo esc_attr($id); ?>">
-            <option value="auto" <?php selected($current, 'auto'); ?>><?php esc_html_e('Automatic', 'growth-orchestrator'); ?></option>
-            <option value="melipayamak" <?php selected($current, 'melipayamak'); ?>><?php esc_html_e('Melipayamak', 'growth-orchestrator'); ?></option>
+            <option value="auto" <?php selected($current, 'auto'); ?>><?php esc_html_e('Automatic', 'bertanex-flow'); ?></option>
+            <option value="melipayamak" <?php selected($current, 'melipayamak'); ?>><?php esc_html_e('Melipayamak', 'bertanex-flow'); ?></option>
             <?php if (FeatureFlags::twilioEnabled()) : ?>
-                <option value="twilio" <?php selected($current, 'twilio'); ?>><?php esc_html_e('Twilio', 'growth-orchestrator'); ?></option>
+                <option value="twilio" <?php selected($current, 'twilio'); ?>><?php esc_html_e('Twilio', 'bertanex-flow'); ?></option>
             <?php endif; ?>
-            <option value="logging" <?php selected($current, 'logging'); ?>><?php esc_html_e('Logging only (development)', 'growth-orchestrator'); ?></option>
+            <option value="logging" <?php selected($current, 'logging'); ?>><?php esc_html_e('Logging only (development)', 'bertanex-flow'); ?></option>
         </select>
         <?php
     }
@@ -190,7 +190,7 @@ final class SmsSettingsModel
             id="<?php echo esc_attr(MelipayamakSmsConfig::OPTION_PASSWORD); ?>"
             value=""
             autocomplete="new-password"
-            placeholder="<?php echo esc_attr__('Leave blank to keep the current password', 'growth-orchestrator'); ?>"
+            placeholder="<?php echo esc_attr__('Leave blank to keep the current password', 'bertanex-flow'); ?>"
         />
         <?php
     }
@@ -204,11 +204,11 @@ final class SmsSettingsModel
             name="<?php echo esc_attr(MelipayamakSmsConfig::OPTION_FROM); ?>"
             id="<?php echo esc_attr(MelipayamakSmsConfig::OPTION_FROM); ?>"
             value="<?php echo esc_attr($v); ?>"
-            placeholder="<?php echo esc_attr__('e.g. short line number from panel', 'growth-orchestrator'); ?>"
+            placeholder="<?php echo esc_attr__('e.g. short line number from panel', 'bertanex-flow'); ?>"
         />
         <?php
     }
 
     /** Former submenu slug; redirects to Rules → Config. */
-    public const LEGACY_PAGE_SLUG = 'growth-orchestrator-sms';
+    public const LEGACY_PAGE_SLUG = 'bertanex-flow-sms';
 }

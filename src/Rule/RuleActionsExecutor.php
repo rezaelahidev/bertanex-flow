@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
-use GrowthOrchestrator\Services\ActionDispatcher;
-use GrowthOrchestrator\Services\OutboundAction;
+use BertanexFlow\Services\ActionDispatcher;
+use BertanexFlow\Services\OutboundAction;
 
 /**
  * Runs rule actions immediately or defers them via {@see DelayedActionScheduler}.

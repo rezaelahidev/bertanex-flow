@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator;
+namespace BertanexFlow;
 
 /**
  * Loads plugin translations, including explicit fa_IR when the locale is any Persian variant (fa, fa_IR, …).
  */
 final class I18n
 {
-    private const TEXT_DOMAIN = 'growth-orchestrator';
+    private const TEXT_DOMAIN = 'bertanex-flow';
 
     private static bool $baseLoaded = false;
 
@@ -17,13 +17,13 @@ final class I18n
 
     public static function loadTextdomain(): void
     {
-        if (! \defined('GROWTH_ORCH_PLUGIN_DIR') || ! \defined('GROWTH_ORCH_PLUGIN_FILE')) {
+        if (! \defined('BERTANEX_FLOW_PLUGIN_DIR') || ! \defined('BERTANEX_FLOW_PLUGIN_FILE')) {
             return;
         }
 
         if (! self::$baseLoaded) {
             self::$baseLoaded = true;
-            $relative = dirname(\plugin_basename(\GROWTH_ORCH_PLUGIN_FILE)) . '/languages';
+            $relative = dirname(\plugin_basename(\BERTANEX_FLOW_PLUGIN_FILE)) . '/languages';
             \load_plugin_textdomain(self::TEXT_DOMAIN, false, $relative);
         }
 
@@ -36,7 +36,7 @@ final class I18n
             return;
         }
 
-        $mofile = \GROWTH_ORCH_PLUGIN_DIR . 'languages/' . self::TEXT_DOMAIN . '-fa_IR.mo';
+        $mofile = \BERTANEX_FLOW_PLUGIN_DIR . 'languages/' . self::TEXT_DOMAIN . '-fa_IR.mo';
         if (! is_readable($mofile)) {
             return;
         }

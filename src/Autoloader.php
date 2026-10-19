@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator;
+namespace BertanexFlow;
 
 /**
  * Minimal PSR-4 autoloader when Composer's vendor/ is not present.

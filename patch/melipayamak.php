@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Melipayamak REST reference (Payamak-Panel). Production code: {@see \GrowthOrchestrator\Sms\MelipayamakSmsTransport}.
+ * Melipayamak REST reference (Payamak-Panel). Production code: {@see \BertanexFlow\Sms\MelipayamakSmsTransport}.
  *
  * @see https://rest.payamak-panel.com/api/SendSMS/SendSMS
  */

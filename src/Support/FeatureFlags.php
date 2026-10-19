@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Support;
+namespace BertanexFlow\Support;
 
 /**
  * Temporary feature toggles. Flip constants here to re-enable hidden integrations.

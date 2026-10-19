@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Rule;
+namespace BertanexFlow\Rule;
 
-use GrowthOrchestrator\Db\RulesDbSchema;
+use BertanexFlow\Db\RulesDbSchema;
 
 /**
- * Persists normalized {@see RuleDefinition} rows into `{prefix}growth_orchestrator_rules`.
+ * Persists normalized {@see RuleDefinition} rows into `{prefix}bertanex_flow_rules`.
  */
 final class DatabaseRulesSync
 {
@@ -70,7 +70,7 @@ final class DatabaseRulesSync
 
         DatabaseRulesRepository::storeCompiledSnapshot($definitions);
 
-        do_action('growth_orchestrator_rules_persisted');
+        do_action('bertanex_flow_rules_persisted');
 
         return true;
     }

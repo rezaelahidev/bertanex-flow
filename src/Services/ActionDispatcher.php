@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Services;
+namespace BertanexFlow\Services;
 
-use GrowthOrchestrator\Sms\SmsServiceInterface;
+use BertanexFlow\Sms\SmsServiceInterface;
 
 /**
  * Routes rule actions to registered services and WordPress hooks for extension.

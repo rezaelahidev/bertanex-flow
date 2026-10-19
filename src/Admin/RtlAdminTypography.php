@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace GrowthOrchestrator\Admin;
+namespace BertanexFlow\Admin;
 
 /**
  * RTL typography hooks for the rules admin UI. Theme or site code registers faces via
@@ -17,7 +17,7 @@ final class RtlAdminTypography
         }
 
         /**
-         * Enqueue RTL font faces for the Growth Orchestrator rules editor.
+         * Enqueue RTL font faces for the Bertanex Flow rules editor.
          *
          * @param string $styleHandle Primary rules editor stylesheet handle.
          */
